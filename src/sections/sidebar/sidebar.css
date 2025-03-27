@@ -1,47 +1,172 @@
- /* Import the theme colors */
-
-.sidebar {
-    width: 200px;
-    position: fixed;
+:root {
+    /* Light Theme */
+    --bg-color-light: #ffffff;
+    --text-color-light: #333333;
+    --primary-color-light: #4a6bff;
+    --hover-color-light: #3a56d4;
+    --active-color-light: #2a42b0;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+  
+    /* Dark Theme */
+    --bg-color-dark: #1a1a2e;
+    --text-color-dark: #f1f1f1;
+    --primary-color-dark: #4a6bff;
+    --hover-color-dark: #5a7bff;
+    --active-color-dark: #3a56d4;
+    --shadow-dark: rgba(0, 0, 0, 0.3);
+  
+    /* Current Theme (default light) */
+    --bg-color: var(--bg-color-light);
+    --text-color: var(--text-color-light);
+    --primary-color: var(--primary-color-light);
+    --hover-color: var(--hover-color-light);
+    --active-color: var(--active-color-light);
+    --shadow: var(--shadow-light);
+  }
+  
+  [data-theme="dark"] {
+    --bg-color: var(--bg-color-dark);
+    --text-color: var(--text-color-dark);
+    --primary-color: var(--primary-color-dark);
+    --hover-color: var(--hover-color-dark);
+    --active-color: var(--active-color-dark);
+    --shadow: var(--shadow-dark);
+  }
+  
+  [data-theme="blue"] {
+    --bg-color: #e6f2ff;
+    --text-color: #003366;
+    --primary-color: #0066cc;
+    --hover-color: #0052a3;
+    --active-color: #003d7a;
+  }
+  
+  .sidebar {
+    width: 250px;
     height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
     background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px var(--shadow);
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  
+  .sidebar-header {
     padding: 20px;
-    padding-top: 100px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-    transition: background 0.3s ease-in-out;
-}
-
-h2 {
-    color: var(--text-color);
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+  }
+  
+  .sidebar-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
     text-align: center;
-}
-
-.btn {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: var(--btn-bg);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-.btn:hover {
-    background-color: var(--btn-hover);
-}
-
-/* Theme Toggle Dropdown */
-.theme-select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: var(--btn-bg);
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+  }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 5px 10px;
     color: var(--text-color);
-    border: none;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(74, 107, 255, 0.1);
+    color: var(--primary-color);
+  }
+  
+  .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .nav-link.active .nav-icon {
+    color: white;
+  }
+  
+  .nav-icon {
+    font-size: 1.2rem;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-selector {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .theme-selector label {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+  }
+  
+  .theme-select {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
+    transition: all 0.2s ease;
+  }
+  
+  .theme-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.2);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 70px;
+      overflow: hidden;
+    }
+    
+    .sidebar-header h2,
+    .nav-label,
+    .theme-selector label {
+      display: none;
+    }
+    
+    .nav-link {
+      justify-content: center;
+      padding: 15px 0;
+    }
+    
+    .nav-icon {
+      margin-right: 0;
+      font-size: 1.4rem;
+    }
+    
+    .theme-select {
+      padding: 8px 4px;
+    }
+  }
