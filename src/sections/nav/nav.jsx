@@ -83,7 +83,7 @@ const Navbar = () => {
       {/* Left side - Logo and main links */}
       <div className="navbar-left">
         <div className="navbar-logo">My Dashboard</div>
-        
+
         {/* <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
           <li><a href="#">Home</a></li>
           <li><a href="#">About</a></li>
@@ -111,23 +111,26 @@ const Navbar = () => {
         </div> */}
 
         <div className="profile-container">
-          <div 
-            className="profile-icon" 
-            onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-          >
-            <img 
-              src="https://via.placeholder.com/32" 
-              alt="Profile" 
-              className="profile-pic"
-            />
+          <div className="navprofile">
+            <div className="profilename"> <h5>Mohamed safvan vp</h5> <p className="profilerole">admin</p></div>
+            <div
+              className="profile-icon"
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+            >
+              <img
+                src="https://via.placeholder.com/32"
+                alt="Profile"
+                className="profile-pic"
+              />
+            </div>
           </div>
-          
+
           {profileMenuOpen && (
             <div className="profile-dropdown">
               <div className="dropdown-header">
-                <img 
-                  src="https://via.placeholder.com/64" 
-                  alt="Profile" 
+                <img
+                  src="https://via.placeholder.com/64"
+                  alt="Profile"
                   className="dropdown-profile-pic"
                 />
                 <div className="profile-info">
@@ -144,8 +147,8 @@ const Navbar = () => {
           )}
         </div>
 
-        <button 
-          className="menu-toggle" 
+        <button
+          className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >

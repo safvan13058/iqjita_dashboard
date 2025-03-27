@@ -107,14 +107,18 @@ const AdmissionForm = ({ onBack }) => {
     };
     const isStudentDataComplete = () => {
         return Object.entries(studentData).every(([key, value]) => {
-            if (key === "discount") return true; // ✅ Ignore `discount` field
-
-            if (Array.isArray(value)) {
-                return value.length > 0; // Ensure arrays like `documents_submitted` are not empty
+            if (key === "discount" || key === "documents_submitted") {
+                return true; // ✅ Ignore `discount` and allow `documents_submitted` to be null
             }
-            return value !== ""; // Ensure all other fields are filled
+    
+            if (Array.isArray(value)) {
+                return value.length > 0; // Ensure arrays are not empty
+            }
+    
+            return value !== "" && value !== null; // Ensure all other fields are filled
         });
     };
+    
 
 
     // Step 1: Submit Student Admission
@@ -163,7 +167,7 @@ const AdmissionForm = ({ onBack }) => {
                 setFeeData({
                     admission_number: result.student_id,
                     course: studentData.course,
-                    final_fee: studentData.exact_fee,
+                    final_fee: studentData.final_fee,
                     name: studentData.name,
                     course: studentData.course,
                     contact_number: studentData.contact_number
@@ -405,7 +409,7 @@ const AdmissionForm = ({ onBack }) => {
 
                             <label>Discount</label>
                             <input
-                                type="number"
+                                type=""
                                 name="discount"
                                 placeholder="Enter Discount"
                                 value={studentData.discount || ""}
@@ -451,10 +455,13 @@ const AdmissionForm = ({ onBack }) => {
                             </select>
                         </div>
                     </div>
-
-                    <button type="button" onClick={resetAdmission}>clear</button>
-                    <button type="button"  onClick={() => navigate("/")}>Home</button>
-                    <button type="button" onClick={() => setStep(2)}>Next: Submit Admission</button>
+                    <div className="btn-grp">
+                        <div>
+                            <button type="button" onClick={resetAdmission}>Clear</button>
+                            <button type="button" onClick={() => navigate("/")}>Home</button>
+                        </div>
+                        <button type="button" onClick={() => setStep(2)}>Next: Submit Admission</button>
+                    </div>
                 </form>
             )}
 
@@ -514,18 +521,20 @@ const AdmissionForm = ({ onBack }) => {
                         <label>Course</label>
                         <input type="text" name="course" value={feeData.course} readOnly />
 
-                        <label>Exact Fee</label>
+                        <label>Final Fee</label>
                         <input
                             type="number"
                             name="exact_fee"
-                            value={feeData.exact_fee}
+                            value={feeData.final_fee}
                             // onChange={(e) => setFeeData({ ...feeData, exact_fee: e.target.value })}
                             required
                         />
+                        <div className="btn-grp">
                         <button type="button" onClick={() => setStep(2)}>Back</button>
                         <button type="submit" disabled={loading}>
                             {loading ? "Processing..." : "Next: Generate Receipt"}
                         </button>
+                        </div>
                     </form>
 
                 )

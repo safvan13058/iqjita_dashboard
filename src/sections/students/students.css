@@ -1,7 +1,7 @@
 .students-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    /* padding: 20px; */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -18,11 +18,13 @@
     justify-content: space-between;
     align-items: center;
 }
-
+.controls h3{
+  font-size: medium;
+}
 .search-filter {
     display: flex;
     gap: 15px;
-    width: 100%;
+    width: 80%;
 }
 
 .search-input {
@@ -31,6 +33,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
+     /* width: 200px !important; */
 }
 
 .course-select {
@@ -38,7 +41,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
-    min-width: 250px;
+    /* width: 200px; */
 }
 
 /* Loading & Error Messages */
@@ -184,8 +187,27 @@
     padding: 15px;
     border-radius: 6px;
     margin-bottom: 15px;
+   
   }
-  
+  .section1{
+    display: flex;
+    justify-content: space-between;
+    
+  }
+  .pr-image{
+    display:flex ;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+   
+  }
+  .pr-image img{
+    width: 120px;
+    height: 150px;
+    border-radius: 14px;
+    border: 1px solid black;
+
+  }
   .detail-section h3, .detail-section h4 {
     margin-top: 0;
     color: #2c3e50;

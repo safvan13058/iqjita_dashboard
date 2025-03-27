@@ -174,7 +174,26 @@
     cursor: pointer;
     color: var(--text-color);
   }
-  
+  .navprofile{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .profilename{
+    display: flex;
+    flex-direction: column;
+    
+  }
+  .profilename h5,p{
+    margin: 0;
+    padding: 0;
+  }
+  .profilerole{
+    margin: 0;
+    padding: 0;
+    font-size: xx-small;
+    align-self:flex-end;
+  }
   @media (max-width: 768px) {
     .navbar {
       flex-direction: column;

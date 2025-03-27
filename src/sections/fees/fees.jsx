@@ -8,7 +8,7 @@ const FeeForm = ({ onBack, currentUser }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(location.state?.student || null);
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("MPESA");
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [transactionId, setTransactionId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
@@ -38,63 +38,63 @@ const FeeForm = ({ onBack, currentUser }) => {
     if (location.state?.student) {
       setSearchQuery(`${location.state.student.name} (${location.state.student.admission_number})`);
       selected(true);
-    } else { 
-    fetchStudents();
-  }
+    } else {
+      fetchStudents();
+    }
   }, [location.state]);
   const fetchStudents = async () => {
     setLoading(true);
     try {
-        const response = await fetch(
-            "https://software.iqjita.com/administration.php?action=liststudentbycourse",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ course: selectedCourse }), // ✅ Dynamic course filtering
-            }
-        );
-
-        const text = await response.text(); // Read raw response
-        console.log("🔍 Raw API Response:", text); // Debugging log
-
-        // Extract only the last valid JSON object (if multiple exist)
-        const jsonObjects = text.trim().split("\n"); // Split by newline
-        const lastJson = jsonObjects.pop(); // Get last valid JSON object
-
-        let result;
-        try {
-            result = JSON.parse(lastJson);
-        } catch (error) {
-            throw new Error("❌ Invalid JSON response from server:\n" + text);
+      const response = await fetch(
+        "https://software.iqjita.com/administration.php?action=liststudentbycourse",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ course: selectedCourse }), // ✅ Dynamic course filtering
         }
+      );
 
-        if (response.ok) {
-            console.log("✅ Parsed API Response:", result); // Debugging log
+      const text = await response.text(); // Read raw response
+      console.log("🔍 Raw API Response:", text); // Debugging log
 
-            if (result.status === "success") {
-                const formattedStudents = result.students.map((student) => ({
-                    admission_number: student.admission_number.toString(),
-                    name: student.name,
-                    course: student.course,
-                    total_paid: parseFloat(student.final_fee) - parseFloat(student.exact_fee),
-                    total_pending: parseFloat(student.final_fee),
-                }));
-                setStudents(formattedStudents);
-            } else {
-                setError("Failed to fetch students: " + (result.error || "Unknown error"));
-            }
+      // Extract only the last valid JSON object (if multiple exist)
+      const jsonObjects = text.trim().split("\n"); // Split by newline
+      const lastJson = jsonObjects.pop(); // Get last valid JSON object
+
+      let result;
+      try {
+        result = JSON.parse(lastJson);
+      } catch (error) {
+        throw new Error("❌ Invalid JSON response from server:\n" + text);
+      }
+
+      if (response.ok) {
+        console.log("✅ Parsed API Response:", result); // Debugging log
+
+        if (result.status === "success") {
+          const formattedStudents = result.students.map((student) => ({
+            admission_number: student.admission_number.toString(),
+            name: student.name,
+            course: student.course,
+            total_paid: parseFloat(student.final_fee) - parseFloat(student.exact_fee),
+            total_pending: parseFloat(student.final_fee),
+          }));
+          setStudents(formattedStudents);
         } else {
-            setError("❌ Server Error: " + response.statusText);
+          setError("Failed to fetch students: " + (result.error || "Unknown error"));
         }
+      } else {
+        setError("❌ Server Error: " + response.statusText);
+      }
     } catch (err) {
-        console.error("Error fetching students:", err);
-        setError("Failed to load student data. Please try again.");
+      console.error("Error fetching students:", err);
+      setError("Failed to load student data. Please try again.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
   const handleSelectStudent = (student) => {
@@ -107,7 +107,7 @@ const FeeForm = ({ onBack, currentUser }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedStudent || !amount) {
       setError("Please select a student and enter an amount");
       return;
@@ -140,55 +140,55 @@ const FeeForm = ({ onBack, currentUser }) => {
         }
       );
 
-     
+
 
       const text = await response.text();
-      console.log("🔍 Raw API Response:", text);
+      console.log("🔍 Raw API Response feee:", text);
 
       // ✅ Split response if multiple JSON objects exist
-      const jsonObjects = text.trim().split("\n"); 
+      const jsonObjects = text.trim().split("\n");
       const lastJson = jsonObjects.pop(); // Take the second (last) JSON object
 
       let result;
       try {
-          result = JSON.parse(lastJson); // ✅ Parse the correct JSON
+        result = JSON.parse(lastJson); // ✅ Parse the correct JSON
       } catch (error) {
-          throw new Error("❌ Invalid JSON response from server:\n" + text);
+        throw new Error("❌ Invalid JSON response from server:\n" + text);
       }
 
       // ✅ Check if API returned success or error
       if (result.status === "success") {
-          console.log("✅ Payment Successful:", result);
-          const receipt = {
-            date: format(new Date(), 'yyyy-MM-dd HH:mm'),
-            studentName: selectedStudent.name,
-            admissionNumber: selectedStudent.admission_number,
-            course: selectedStudent.course,
-            amount: parseFloat(amount),
-            paymentMethod,
-            transactionId,
-            processedBy: currentUser?.username || "admin",
-            newBalance: result.TotalPending
-          };
-    
-          setPaymentStatus({
-            message: result.message,
-            admissionNumber: result.admission_number,
-            totalPaid: result.TotalPaid,
-            totalPending: result.TotalPending,
-            receipt
-          });
-    
-          setReceiptData(receipt);
-          setAmount("");
-          setTransactionId("");
-         
+        console.log("✅ Payment Successful:", result);
+        const receipt = {
+          date: format(new Date(), 'yyyy-MM-dd HH:mm'),
+          studentName: selectedStudent.name,
+          admissionNumber: selectedStudent.admission_number,
+          course: selectedStudent.course,
+          amount: parseFloat(amount),
+          paymentMethod,
+          transactionId,
+          processedBy: currentUser?.username || "admin",
+          newBalance: result.TotalPending
+        };
+
+        setPaymentStatus({
+          message: result.message,
+          admissionNumber: result.admission_number,
+          totalPaid: result.TotalPaid,
+          totalPending: result.TotalPending,
+          receipt
+        });
+
+        setReceiptData(receipt);
+        // setAmount("");
+        setTransactionId("");
+
       } else {
-          throw new Error(result.error || "Payment failed. Please try again.");
+        throw new Error(result.error || "Payment failed. Please try again.");
       }
 
       // Generate receipt data
-     
+
     } catch (err) {
       setError(err.message);
       console.error("Payment error:", err);
@@ -213,64 +213,104 @@ const FeeForm = ({ onBack, currentUser }) => {
 
   return (
     <div className="fee-form-container">
-      {/* <div onClick style={{ cursor: "pointer", fontSize: "20px" }}>
-    ⬅ Back
-</div> */}
-
       <h2 className="fee-form-title">Fee Payment System</h2>
 
       {!selectedStudent ? (
-        <div className="fee-form-search-container">
-          <input
-            type="text"
-            className="fee-form-search-input"
-            placeholder="Search Student by Name or Admission Number"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            autoFocus
-          />
-           {/* 🔽 Course Filter Dropdown */}
-      <label>Filter by Course:</label>
-      <select
-        value={selectedCourse}
-        onChange={(e) => setSelectedCourse(e.target.value)}
-        className="fee-form-input"
-      >
-        {courseOptions.map((course) => (
-          <option key={course} value={course}>
-            {course}
-          </option>
-        ))}
-      </select>
+        <div className="student-list-section">
+          <div className="list-controls">
+            <h3 className="student-list-title">Student Records</h3>
+            
+            <div className="search-filter-container">
+              <div className="search-container">
+                <input
+                  type="text"
+                  className="fee-form-search-input"
+                  placeholder="Search by name or admission number"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoFocus
+                />
+                
+                {searchQuery && (
+                  <div className="dropdown-container">
+                    <ul className="fee-form-dropdown">
+                      {students
+                        .filter(student => 
+                          student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          student.admission_number.includes(searchQuery)
+                        )
+                        .map(student => (
+                          <li
+                            key={student.admission_number}
+                            className="fee-form-dropdown-item"
+                            onClick={() => handleSelectStudent(student)}
+                          >
+                            <div className="student-info">
+                              <strong>{student.name}</strong>
+                              <span>{student.admission_number}</span>
+                            </div>
+                            <div className="student-course">
+                              {student.course}
+                            </div>
+                            <div className="student-balance">
+                              Paid: {student.total_paid?.toLocaleString()} |
+                              Pending: {student.total_pending?.toLocaleString()}
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
 
-          {searchQuery && (
-            <ul className="fee-form-dropdown">
-              {students
-                .filter((student) =>
-                  student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  student.admission_number.includes(searchQuery)
-                )
-                .map((student) => (
-                  <li
-                    key={student.admission_number}
-                    className="fee-form-dropdown-item"
+              <div className="filter-container">
+                <label>Filter by Course:</label>
+                <select
+                  value={selectedCourse}
+                  onChange={(e) => setSelectedCourse(e.target.value)}
+                  className="fee-form-input"
+                >
+                  {courseOptions.map(course => (
+                    <option key={course} value={course}>
+                      {course}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="student-list-header">
+            <span>Admission No.</span>
+            <span>Student Name</span>
+            <span>Course</span>
+            <span>Paid </span>
+            <span>Pending </span>
+            <span>Actions</span>
+          </div>
+
+          <div className="student-list">
+            {students.map(student => (
+              <div
+                key={student.admission_number}
+                className={`student-list-item ${selectedStudent?.admission_number === student.admission_number ? 'active' : ''}`}
+              >
+                <span>{student.admission_number}</span>
+                <span>{student.name}</span>
+                <span>{student.course}</span>
+                <span>{student.total_paid?.toLocaleString()}</span>
+                <span>{student.total_pending?.toLocaleString()}</span>
+                <span>
+                  <button
+                    className="select-student-btn"
                     onClick={() => handleSelectStudent(student)}
                   >
-                    <div className="student-info">
-                      <strong>{student.name}</strong>
-                      <span>{student.admission_number}</span>
-                    </div>
-                    <div className="student-course">
-                      {student.course}
-                    </div>
-                    <div className="student-balance">
-                      Paid: KES {student.total_paid?.toLocaleString()} | 
-                      Pending: KES {student.total_pending?.toLocaleString()}
-                    </div>
-                  </li>
-                ))}
-            </ul>
-          )}
+                    Select
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <form className="fee-form" onSubmit={handleSubmit}>
@@ -281,7 +321,7 @@ const FeeForm = ({ onBack, currentUser }) => {
 
           <div className="form-grid">
             <div className="fee-form-field">
-              <label className="fee-form-label">Amount (KES)</label>
+              <label className="fee-form-label">Amount</label>
               <input
                 type="number"
                 className="fee-form-input"
@@ -302,10 +342,10 @@ const FeeForm = ({ onBack, currentUser }) => {
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
-                <option value="MPESA">MPESA</option>
                 <option value="BANK">Bank Transfer</option>
                 <option value="CASH">Cash</option>
                 <option value="CHEQUE">Cheque</option>
+                <option value="ONLINE">Online</option>
                 <option value="OTHER">Other</option>
               </select>
             </div>
@@ -354,46 +394,6 @@ const FeeForm = ({ onBack, currentUser }) => {
         </form>
       )}
 
-      {/* Student List Section */}
-      {!selecteds && (
-        <div className="student-list-section">
-          <h3 className="student-list-title">Student Records</h3>
-          <div className="student-list-header">
-            <span>Admission No.</span>
-            <span>Student Name</span>
-            <span>Course</span>
-            <span>Paid (KES)</span>
-            <span>Pending (KES)</span>
-            <span>Actions</span>
-          </div>
-          
-          <div className="student-list">
-            {students.map((student) => (
-              <div 
-                key={student.admission_number} 
-                className={`student-list-item ${
-                  selectedStudent?.admission_number === student.admission_number ? 'active' : ''
-                }`}
-              >
-                <span>{student.admission_number}</span>
-                <span>{student.name}</span>
-                <span>{student.course}</span>
-                <span>{student.total_paid?.toLocaleString()}</span>
-                <span>{student.total_pending?.toLocaleString()}</span>
-                <span>
-                  <button 
-                    className="select-student-btn"
-                    onClick={() => handleSelectStudent(student)}
-                  >
-                    Select
-                  </button>
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {paymentStatus && (
         <div className="payment-success-container">
           <div className="payment-success">
@@ -403,15 +403,15 @@ const FeeForm = ({ onBack, currentUser }) => {
               </svg>
               <h3>Payment Successful</h3>
             </div>
-            
+
             <div className="payment-details">
               <p><strong>Student:</strong> {selectedStudent.name}</p>
               <p><strong>Admission No:</strong> {paymentStatus.admissionNumber}</p>
-              <p><strong>Amount Paid:</strong> KES {parseFloat(amount).toLocaleString()}</p>
+              <p><strong>Amount Paid:</strong>  {parseFloat(amount)}</p>
               <p><strong>Payment Method:</strong> {paymentMethod}</p>
               {transactionId && <p><strong>Transaction ID:</strong> {transactionId}</p>}
-              <p><strong>Total Paid:</strong> KES {paymentStatus.totalPaid?.toLocaleString()}</p>
-              <p><strong>Balance:</strong> KES {paymentStatus.totalPending?.toLocaleString()}</p>
+              <p><strong>Total Paid:</strong>  {paymentStatus.totalPaid?.toLocaleString()}</p>
+              <p><strong>Balance:</strong>  {paymentStatus.totalPending?.toLocaleString()}</p>
               <p><strong>Processed By:</strong> {currentUser?.username || "admin"}</p>
               <p><strong>Date:</strong> {format(new Date(), 'yyyy-MM-dd HH:mm')}</p>
             </div>
@@ -439,7 +439,7 @@ const FeeForm = ({ onBack, currentUser }) => {
             <p><strong>Admission No:</strong> {paymentStatus.admissionNumber}</p>
             <p><strong>Course:</strong> {selectedStudent.course}</p>
             <hr />
-            <p><strong>Amount Paid:</strong> KES {parseFloat(amount).toLocaleString()}</p>
+            <p><strong>Amount Paid:</strong>  {parseFloat(amount).toLocaleString()}</p>
             <p><strong>Payment Method:</strong> {paymentMethod}</p>
             {transactionId && <p><strong>Transaction ID:</strong> {transactionId}</p>}
             <hr />

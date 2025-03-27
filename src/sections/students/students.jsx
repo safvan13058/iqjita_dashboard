@@ -128,13 +128,9 @@ const handleCloseModal = () => {
       <h1>Student Management</h1>
       
       <div className="controls">
+        <h3>Student of {selectedCourse}</h3>
         <div className="search-filter">
-          <input
-            type="text"
-            placeholder="Search students..."
-            onChange={handleSearch}
-            className="search-input"
-          />
+          
           
           <select 
             value={selectedCourse} 
@@ -145,6 +141,12 @@ const handleCloseModal = () => {
               <option key={course} value={course}>{course}</option>
             ))}
           </select>
+          <input
+            type="text"
+            placeholder="Search students..."
+            onChange={handleSearch}
+            className="search-input"
+          />
         </div>
       </div>
 
@@ -210,7 +212,8 @@ const handleCloseModal = () => {
             <>
               <h2>Student Details</h2>
               <div className="student-details-grid">
-                <div className="detail-section">
+                <div className="detail-section section1">
+                  <div className='pr-container'>
                   <h3>Personal Information</h3>
                   <p><strong>Name:</strong> {selectedStudent.name}</p>
                   <p><strong>Admission Number:</strong> {selectedStudent.admission_number}</p>
@@ -218,6 +221,10 @@ const handleCloseModal = () => {
                   <p><strong>Parent Contact:</strong> {selectedStudent.parent_contact}</p>
                   <p><strong>Email:</strong> {selectedStudent.email}</p>
                   <p><strong>Location:</strong> {selectedStudent.location}</p>
+                  </div>
+                  <div className='pr-image'>
+                    <img src="" alt="" />
+                  </div>
                 </div>
 
                 <div className="detail-section">
@@ -225,23 +232,23 @@ const handleCloseModal = () => {
                   <p><strong>Course:</strong> {selectedStudent.course}</p>
                   <p><strong>Duration:</strong> {selectedStudent.duration} year(s)</p>
                   <p><strong>Batch Time:</strong> {selectedStudent.batch_time}</p>
-                  <p><strong>Exact Fee:</strong> KES {selectedStudent.exact_fee}</p>
-                  <p><strong>Discount:</strong> KES {selectedStudent.discount}</p>
-                  <p><strong>Final Fee:</strong> KES {selectedStudent.final_fee}</p>
+                  <p><strong>Exact Fee:</strong>  {selectedStudent.exact_fee}</p>
+                  <p><strong>Discount:</strong> {selectedStudent.discount}</p>
+                  <p><strong>Final Fee:</strong> {selectedStudent.final_fee}</p>
                 </div>
 
                 <div className="detail-section">
                   <h3>Payment Information</h3>
-                  <p><strong>Admission Fee:</strong> KES {selectedStudent.admission_fee}</p>
-                  <p><strong>Total Paid:</strong> KES {selectedStudent.TotalPaid}</p>
-                  <p><strong>Total Pending:</strong> KES {selectedStudent.TotalPending}</p>
+                  <p><strong>Admission Fee:</strong> {selectedStudent.admission_fee}</p>
+                  <p><strong>Total Paid:</strong>  {selectedStudent.TotalPaid}</p>
+                  <p><strong>Total Pending:</strong>  {selectedStudent.TotalPending}</p>
                   
                   <h4>Installments</h4>
-                  <p><strong>Installment 1:</strong> KES {selectedStudent.install1} (Balance: KES {selectedStudent.bal1})</p>
-                  <p><strong>Installment 2:</strong> KES {selectedStudent.install2} (Balance: KES {selectedStudent.bal2})</p>
-                  <p><strong>Installment 3:</strong> KES {selectedStudent.install3} (Balance: KES {selectedStudent.bal3})</p>
-                  <p><strong>Installment 4:</strong> KES {selectedStudent.install4} (Balance: KES {selectedStudent.bal4})</p>
-                  <p><strong>Installment 5:</strong> KES {selectedStudent.install5} (Balance: KES {selectedStudent.bal5})</p>
+                  <p><strong>Installment 1:</strong>  {selectedStudent.install1} (Balance:  {selectedStudent.bal1})</p>
+                  <p><strong>Installment 2:</strong>  {selectedStudent.install2} (Balance:  {selectedStudent.bal2})</p>
+                  <p><strong>Installment 3:</strong> {selectedStudent.install3} (Balance:  {selectedStudent.bal3})</p>
+                  <p><strong>Installment 4:</strong> {selectedStudent.install4} (Balance:  {selectedStudent.bal4})</p>
+                  <p><strong>Installment 5:</strong> {selectedStudent.install5} (Balance: {selectedStudent.bal5})</p>
                 </div>
 
                 <div className="detail-section">

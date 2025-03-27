@@ -137,7 +137,14 @@ p {
 strong {
     color: #34495e;
 }
-
+.btn-grp{
+    display: flex;
+    justify-content: space-between;
+}
+.btn-grp div{
+    display: flex;
+    gap: 20px;
+}
 /* Navigation Buttons */
 .button-group {
     display: flex;
