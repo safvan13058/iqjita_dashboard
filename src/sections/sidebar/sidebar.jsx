@@ -2,22 +2,26 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./sidebar.css";
 import { IoHomeOutline } from "react-icons/io5";
+import { PiStudentFill } from "react-icons/pi";
+import { MdOutlinePersonOutline,MdAccountBalanceWallet  } from "react-icons/md";
+import { BsGraphUpArrow } from "react-icons/bs";
+import logo from '../images/logo.png'
 const Sidebar = () => {
   const location = useLocation();
 
   // Define your navigation items
   const navItems = [
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
-    { path: "/students", label: "Students", icon: "👨‍🎓" },
-    { path: "/faculty", label: "Faculty", icon: "👩‍🏫" },
-    { path: "/sales", label: "Sales", icon: "💰" },
-    { path: "/accounts", label: "Accounts", icon: "📊" },
+    { path: "/students", label: "Students", icon: <PiStudentFill /> },
+    { path: "/faculty", label: "Faculty", icon: <MdOutlinePersonOutline /> },
+    { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
+    { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
   ];
 
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>Dashboard</h2>
+          <div className="navbar-logo"><img src={logo} alt="" /></div>
       </div>
       
       <nav className="sidebar-nav">
