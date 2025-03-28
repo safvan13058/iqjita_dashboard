@@ -16,7 +16,7 @@
 
 .step {
     padding: 10px;
-    background: #ddd;
+    background: var(--background-light);
     border-radius: 50%;
     text-align: center;
     width: 10px;
@@ -26,29 +26,28 @@
 }
 
 .step.active {
-    background: #2ecc71;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-light);
 }
 
 /* Line Between Steps */
 .line {
     width: 50%;
     height: 5px;
-    background: #ddd;
+    background: var(--background-light);
 }
 
 .line.active-line {
-    background: #2ecc71;
+    background: var(--primary-color);
 }
 
 /* Form Input */
 .form-container {
-    /* max-width: 600px; */
     margin: auto;
     padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-light);
     text-align: center;
 }
 
@@ -70,41 +69,51 @@ label {
     font-weight: bold;
     margin-top: 10px;
     text-align: left;
+    color: var(--text-heading);
 }
 
 /* Input Fields */
-input ,select{
+input, select {
     width: 100%;
     padding: 10px 0 10px 10px;
     margin: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius);
+    background: var(--input-background);
+    color: var(--input-text);
 }
 
 /* Submit Button */
 button {
     margin-top: 20px;
     padding: 10px;
-    background: #3498db;
-    color: white;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
     border: none;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 5px;
-    transition: background 0.3s;
+    border-radius: var(--border-radius);
+    transition: background var(--transition-speed);
+}
+
+button:hover {
+    background: var(--button-hover-bg);
+    box-shadow: 0px 4px 6px var(--button-hover-shadow);
 }
 
 button:disabled {
     background: #95a5a6;
     cursor: not-allowed;
 }
+
+/* Preview Section */
 .preview-container {
-    width:95% ;
+    width: 95%;
     margin: auto;
     padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-light);
     text-align: center;
 }
 
@@ -118,13 +127,13 @@ button:disabled {
     flex: 1;
     text-align: left;
     padding: 10px;
-    background: #f9f9f9;
-    border-radius: 5px;
+    background: var(--background-light);
+    border-radius: var(--border-radius);
 }
 
 h4 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    color: var(--text-heading);
+    border-bottom: 2px solid var(--primary-color);
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
@@ -132,19 +141,13 @@ h4 {
 p {
     font-size: 16px;
     margin: 5px 0;
+    color: var(--text-paragraph);
 }
 
 strong {
-    color: #34495e;
+    color: var(--text-primary);
 }
-.btn-grp{
-    display: flex;
-    justify-content: space-between;
-}
-.btn-grp div{
-    display: flex;
-    gap: 20px;
-}
+
 /* Navigation Buttons */
 .button-group {
     display: flex;
@@ -157,37 +160,38 @@ strong {
     border: none;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
 }
 
 .button-group button:first-child {
-    background: #e74c3c;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--text-light);
 }
 
 .button-group button:last-child {
-    background: #3498db;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-light);
 }
 
 .button-group button:hover {
     opacity: 0.8;
 }
+
+/* Receipt Container */
 .receipt-container {
     max-width: 500px;
     margin: 20px auto;
     padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    /* text-align: center; */
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-light);
 }
 
 .receipt-box {
     padding: 15px;
-    border: 2px solid #2ecc71;
-    border-radius: 8px;
-    background: #f9f9f9;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    background: var(--background-light);
     margin-bottom: 15px;
     align-items: flex-start;
 }
@@ -196,30 +200,48 @@ strong {
     font-size: 16px;
     margin: 5px 0;
     font-weight: bold;
-    color: #34495e;
+    color: var(--text-heading);
     text-align: left;
 }
-
-/* Print and New Admission Buttons */
+.payment-success-container{
+    margin-top: 20px;
+}
+.success-header{display: flex;
+}
+.success-icon{
+    width: 20px;
+}
+.receipt-actions{
+    display: flex;
+    justify-content: space-around;
+}
+/* Print and Ne Admission Buttons */
 .receipt-container button {
     padding: 10px 15px;
     margin: 10px;
     border: none;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
 }
 
 .receipt-container button:first-child {
-    background: #3498db;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-light);
 }
 
 .receipt-container button:last-child {
-    background: #e74c3c;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--text-light);
 }
-
+.btn-grp{
+    display: flex;
+    justify-content: space-between;
+}
+.btn-grp div{
+    display: flex;
+    gap:20px;
+}
 /* Responsive Design */
 @media (max-width: 600px) {
     .form-row {

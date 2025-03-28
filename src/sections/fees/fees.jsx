@@ -221,7 +221,7 @@ const FeeForm = ({ onBack, currentUser }) => {
             <h3 className="student-list-title">Student Records</h3>
             
             <div className="search-filter-container">
-              <div className="search-container">
+              <div className="fee-search-container">
                 <input
                   type="text"
                   className="fee-form-search-input"
@@ -323,7 +323,7 @@ const FeeForm = ({ onBack, currentUser }) => {
             <div className="fee-form-field">
               <label className="fee-form-label">Amount</label>
               <input
-                type="number"
+                type=" "
                 className="fee-form-input"
                 placeholder="Enter amount"
                 value={amount}
@@ -367,7 +367,7 @@ const FeeForm = ({ onBack, currentUser }) => {
             )}
           </div>
 
-          {error && <div className="fee-form-error">{error}</div>}
+          {error && <div className="fee-form-error error">{error}</div>}
 
           <div className="fee-form-buttons">
             <button

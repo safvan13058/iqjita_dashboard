@@ -1,11 +1,101 @@
 /* Default Light Theme */
 :root {
-    --bg-color:  #90ee90; /* Light green */
-   /* Light green */
-    --text-color: #2c3e50;
-    --btn-bg: #aef6ae; /* Light green button */
-    --btn-hover: #7ccd7c;
+    /* Primary Brand Colors */
+    --primary-color: #0F6D66; /* Teal */
+    --secondary-color: #9B5A2A; /* Brown */
+    
+    /* Backgrounds */
+    --background-light: #F4F4F4; /* Light Gray for overall background */
+    --background-dark: #0F6D66; /* Darker version of teal for contrast */
+    --card-background: #FFFFFF; /* White for cards and containers */
+  
+    /* Text Colors */
+    --text-primary: #0F6D66; /* Main text in teal */
+    --text-secondary: #9B5A2A; /* Brown for highlights */
+    --text-heading: #0D4A46; /* Darker teal for headings */
+    --text-paragraph: #333333; /* Dark gray for readability */
+    --text-light: #FFFFFF; /* White for dark backgrounds */
+  
+    /* Buttons */
+    --button-primary-bg: #0F6D66; /* Teal background */
+    --button-primary-text: #FFFFFF; /* White text */
+    --button-secondary-bg: #9B5A2A; /* Brown background */
+    --button-secondary-text: #FFFFFF; /* White text */
+    --button-hover-bg: #0D4A46; /* Darker teal on hover */
+    --button-hover-shadow: rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
+  
+    /* Box Shadows */
+    --box-shadow-light: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    --box-shadow-dark: 0px 4px 6px rgba(0, 0, 0, 1);
+  
+    /* Forms & Inputs */
+    --input-border: #CCCCCC; /* Light gray border */
+    --input-focus-border: #0F6D66; /* Teal on focus */
+    --input-background: #FFFFFF; /* White background */
+    --input-text: #333333; /* Dark text for readability */
+  
+    /* Table Styles */
+    --table-header-bg: #0F6D66; /* Teal for table headers */
+    --table-header-text: #FFFFFF; /* White text */
+    --table-row-bg: #FFFFFF; /* White for rows */
+    --table-row-alt-bg: #F4F4F4; /* Light gray for alternating rows */
+    --table-text: #333333; /* Dark gray text */
+  
+    /* Links */
+    --link-color: #0F6D66; /* Teal links */
+    --link-hover-color: #9B5A2A; /* Brown on hover */
+  
+    /* Miscellaneous */
+    --border-radius: 6px; /* Rounded corners for buttons & inputs */
+    --transition-speed: 0.3s ease-in-out; /* Smooth animations */
+  }
+  :roo1 {
+    /* Primary Brand Colors */
+    --primary-color: #0F6D66; /* Teal */
+    --secondary-color: #9B5A2A; /* Brown */
+    
+    /* Backgrounds */
+    --background-light: #F8F5F2; /* Soft beige background */
+    --background-dark: #0F6D66; /* Teal for contrast */
+    --card-background: #FFFFFF;
+  
+    /* Text Colors */
+    --text-primary: #0F6D66;
+    --text-secondary: #C48C5A; /* Lighter warm brown */
+    --text-heading: #0D4A46;
+    --text-paragraph: #5C5C5C; /* Softer gray for readability */
+    --text-light: #FFFFFF;
+  
+    /* Buttons */
+    --button-primary-bg: #0F6D66;
+    --button-primary-text: #FFFFFF;
+    --button-secondary-bg: #C48C5A; /* Softer brown */
+    --button-secondary-text: #FFFFFF;
+    --button-hover-bg: #0D4A46;
+    --button-hover-shadow: rgba(0, 0, 0, 0.2);
+  
+    /* Box Shadows */
+    --box-shadow-light: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    --box-shadow-dark: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  
+    /* Forms & Inputs */
+    --input-border: #DDDDDD;
+    --input-focus-border: #0F6D66;
+    --input-background: #FFFFFF;
+    --input-text: #5C5C5C;
+  
+    /* Table Styles */
+    --table-header-bg: #0F6D66;
+    --table-header-text: #FFFFFF;
+    --table-row-bg: #FFFFFF;
+    --table-row-alt-bg: #F8F5F2;
+    --table-text: #5C5C5C;
+  
+    /* Links */
+    --link-color: #0F6D66;
+    --link-hover-color: #C48C5A;
 }
+
 /* Dark Theme */
 .dark-theme {
     --bg-color: #2c3e50; /* Dark green */

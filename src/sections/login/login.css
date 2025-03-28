@@ -1,0 +1,105 @@
+.login-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--background-light);
+}
+.login-side img {
+    border-radius: 20px;
+    background-color: #FFFFFF; /* White background for logo */
+    padding: 20px; /* Add spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  /* Full height */
+}
+
+.login-side {
+    height: 100%;
+    width: 50%;
+    background-color: var(--background-dark);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-side img {
+    width: 60%;
+}
+
+.login-section {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+
+.login-card {
+    background: var(--card-background);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-light);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-card h2 {
+    margin: 0;
+    padding: 0;
+    color: var(--text-heading);
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-top: 0;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-group input {
+    width: 100%;
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    outline: none;
+    padding: 10px;
+    background: var(--input-background);
+    color: var(--input-text);
+}
+
+.login-btn {
+    min-width: 100px;
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background var(--transition-speed);
+}
+
+button:hover {
+    background-color: var(--button-hover-bg);
+    box-shadow: 0px 4px 6px var(--button-hover-shadow);
+}
+
+button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.login-error {
+    color: var(--secondary-color);
+    background-color: rgba(155, 90, 42, 0.1);
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
