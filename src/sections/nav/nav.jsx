@@ -85,14 +85,14 @@ console.log("user==", user);
             </div>
           )}
         </div>
-
+{/* 
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
-          ☰
-        </button>
+          
+        </button> */}
       </div>
     </nav>
   );

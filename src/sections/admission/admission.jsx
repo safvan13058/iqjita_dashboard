@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./admission.css"; // Import CSS file
 import { useNavigate } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { Country, State, City } from "country-state-city";
 const AdmissionForm = ({ onBack }) => {
     const navigate = useNavigate();
     const [showPopup, setShowPopup] = useState(false);
@@ -9,6 +12,9 @@ const AdmissionForm = ({ onBack }) => {
     const [error, setError] = useState(null);
     const [courseOptions, setCourseOptions] = useState([]);
     const [discountcal, setdiscountcal] = useState({});
+    const [selectedCountry, setSelectedCountry] = useState("");
+    const [selectedState, setSelectedState] = useState("");
+    const [selectedCity, setSelectedCity] = useState("");
     const [step, setStep] = useState(() => {
         return parseInt(localStorage.getItem("admissionStep")) || 1;
     });
@@ -24,8 +30,7 @@ const AdmissionForm = ({ onBack }) => {
 
     const [feeData, setFeeData] = useState(() => {
         return JSON.parse(localStorage.getItem("feeData")) || {
-            admission_number: "", course: "", final_fee
-                : "", name: "", contact_number: ""
+            admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
         };
     });
 
@@ -149,6 +154,43 @@ const AdmissionForm = ({ onBack }) => {
 
         setStudentData(updatedForm);
     };
+    const handleCountryChange = (e) => {
+        const countryCode = e.target.value;
+        const country = Country.getAllCountries().find((c) => c.isoCode === countryCode);
+        setSelectedCountry(countryCode);
+        setSelectedState("");
+        setSelectedCity("");
+        setStudentData((prev) => ({
+            ...prev,
+            country: country ? country.name : "",
+            state: "",
+            city: "",
+            district: "",
+        }));
+    };
+
+    // Handle state selection
+    const handleStateChange = (e) => {
+        const stateCode = e.target.value;
+        const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === stateCode);
+        setSelectedState(stateCode);
+        setSelectedCity("");
+        setStudentData((prev) => ({
+            ...prev,
+            state: state ? state.name : "",
+            city: "",
+            district: "",
+        }));
+    };
+
+    // Handle city selection
+    const handleCityChange = (e) => {
+        setSelectedCity(e.target.value);
+        setStudentData((prev) => ({
+            ...prev,
+            city: e.target.value,
+        }));
+    };
 
     const handleFeeChange = (e) => {
         const { name, value } = e.target;
@@ -183,6 +225,8 @@ const AdmissionForm = ({ onBack }) => {
         setLoading(true);
         setError(null);
 
+        console.log("studentdata==",studentData)
+
         // Validate before sending request
         if (!isStudentDataComplete()) {
             setError("Please fill all required fields before submitting.");
@@ -200,7 +244,7 @@ const AdmissionForm = ({ onBack }) => {
         try {
             const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                // headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedStudentData)
             });
 
@@ -217,8 +261,7 @@ const AdmissionForm = ({ onBack }) => {
             } catch (error) {
                 throw new Error("❌ Invalid JSON response from server:\n");
             }
-
-            if (response.ok) {
+            if (result.status==="success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
                 setFeeData({
                     admission_number: result.student_id,
@@ -239,42 +282,169 @@ const AdmissionForm = ({ onBack }) => {
             setLoading(false);
         }
     };
+    // const handleSubmitStudent = async (e) => {
+    //     // e.preventDefault();
+    //     setLoading(true);
+    //     setError(null);
+    
+    //     // ✅ Create FormData
+    //     const formData = new FormData();
+    
+    //     // Append all fields except 'photoPreview'
+    //     Object.keys(studentData).forEach((key) => {
+    //         if (key !== "photoPreview") {
+    //             formData.append(key, studentData[key]);
+    //         }
+    //     });
+    
+    //     // Append photo only if it's a valid file
+    //     if (studentData.photo instanceof File) {
+    //         formData.append("photo", studentData.photo);
+    //     }
+    
+    //     // ✅ Debug FormData before sending
+    //     for (let pair of formData.entries()) {
+    //         console.log(`${pair[0]}:`, pair[1]);  // Logs each key-value pair
+    //     }
+    
+    //     try {
+    //         const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
+    //             method: "POST",
+    //             body: formData, // ✅ No need to set headers
+    //         });
+    
+    //         const text = await response.text();
+    //         console.log("🔍 Raw API Response:", text);
+    
+    //         let result;
+    //         try {
+    //             result = JSON.parse(text.trim());
+    //         } catch (error) {
+    //             throw new Error("❌ Invalid JSON response from server.");
+    //         }
+    
+    //         if (result.status === "success") {
+    //             console.log("✅ Parsed API Response:", result);
+    //             setStep(3);
+    //         } else {
+    //             setError(result.message || "❌ Failed to submit admission.");
+    //         }
+    //     } catch (error) {
+    //         console.error("🚨 Error submitting admission:", error);
+    //         setError(error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    
+    
 
 
 
 
     // Step 2: Submit Admission Fee
+    // const handleSubmitFee = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+    //     setError(null);
+
+    //     try {
+    //         const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify(feeData),
+    //         });
+
+    //         const text = await response.text(); // Read raw response
+    //         console.log("🔍 Raw API Response:", text); // Debugging log
+
+    //         // Extract only the valid JSON part
+    //         const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find the second "{"
+    //         const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON
+    //         let result;
+
+    //         try {
+    //             result = JSON.parse(response);
+    //         } catch (error) {
+    //             throw new Error("❌ Invalid JSON response from server:\n" + text);
+    //         }
+
+    //         if (response.ok && result.status === "success") {
+    //             console.log("✅ Parsed API Response:", result); // Debugging log
+    //             setReceipt(result);
+    //             setStep(4);
+
+    //             // Proceed with transaction API call
+    //             const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
+    //                 method: "POST",
+    //                 headers: { "Content-Type": "application/json" },
+    //                 body: JSON.stringify({
+    //                     amount: 1000,
+    //                     type: "credit",
+    //                     category: "Admission",
+    //                     remark: feeData.admission_number || "N/A", // Use admission_number if available
+    //                     updated_by: "admin",
+    //                 }),
+    //             });
+
+    //             const transactionText = await transactionResponse.text();
+    //             console.log("🔍 Transaction API Response:", transactionText); // Debugging log
+
+    //             // Extract valid JSON from transaction API response
+    //             const transJsonStartIndex = transactionText.indexOf("{", transactionText.indexOf("{") + 1);
+    //             const cleanTransJson = transactionText.slice(transJsonStartIndex);
+
+    //             let transactionResult;
+    //             try {
+    //                 transactionResult = JSON.parse(cleanTransJson);
+    //             } catch (error) {
+    //                 throw new Error("❌ Invalid JSON response from transaction API:\n" + transactionText);
+    //             }
+
+    //             if (transactionResponse.ok && transactionResult.status === "success") {
+    //                 console.log("✅ Transaction Successful:", transactionResult);
+    //                 alert(transactionResult.message);
+    //             } else {
+    //                 console.error("❌ Transaction Failed:", transactionResult);
+    //                 alert(transactionResult.message || "Transaction failed.");
+    //             }
+    //         } else {
+    //             setError(result.message || "❌ Failed to submit fee details.");
+    //         }
+    //     } catch (error) {
+    //         console.error("🚨 Error submitting fee details:", error);
+    //         setError(error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     const handleSubmitFee = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
+    
         try {
             const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(feeData),
             });
-
-            const text = await response.text(); // Read raw response
+    
+            const text = await response.text();
             console.log("🔍 Raw API Response:", text); // Debugging log
-
-            // Extract only the valid JSON part
-            const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find the second "{"
-            const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON
+    
             let result;
-
             try {
-                result = JSON.parse(cleanJson);
+                result = JSON.parse(text); // Parse response correctly
             } catch (error) {
                 throw new Error("❌ Invalid JSON response from server:\n" + text);
             }
-
+    
             if (response.ok && result.status === "success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
                 setReceipt(result);
                 setStep(4);
-
+    
                 // Proceed with transaction API call
                 const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
                     method: "POST",
@@ -283,25 +453,21 @@ const AdmissionForm = ({ onBack }) => {
                         amount: 1000,
                         type: "credit",
                         category: "Admission",
-                        remark: feeData.admission_number || "N/A", // Use admission_number if available
+                        remark: feeData.admission_number || "N/A",
                         updated_by: "admin",
                     }),
                 });
-
+    
                 const transactionText = await transactionResponse.text();
                 console.log("🔍 Transaction API Response:", transactionText); // Debugging log
-
-                // Extract valid JSON from transaction API response
-                const transJsonStartIndex = transactionText.indexOf("{", transactionText.indexOf("{") + 1);
-                const cleanTransJson = transactionText.slice(transJsonStartIndex);
-
+    
                 let transactionResult;
                 try {
-                    transactionResult = JSON.parse(cleanTransJson);
+                    transactionResult = JSON.parse(transactionText);
                 } catch (error) {
                     throw new Error("❌ Invalid JSON response from transaction API:\n" + transactionText);
                 }
-
+    
                 if (transactionResponse.ok && transactionResult.status === "success") {
                     console.log("✅ Transaction Successful:", transactionResult);
                     alert(transactionResult.message);
@@ -319,6 +485,7 @@ const AdmissionForm = ({ onBack }) => {
             setLoading(false);
         }
     };
+    
 
     const handleCalculate = async () => {
         setLoading(true);
@@ -452,14 +619,32 @@ const AdmissionForm = ({ onBack }) => {
                             />
 
                             <label>Contact Number</label>
-                            <input
-                                type="text"
+                            {/* <input
+                                type="tel"
                                 name="contact_number"
                                 placeholder="Enter Contact Number"
                                 value={studentData.contact_number || ""}
                                 onChange={handleChange}
                                 required
+                            /> */}
+                            <PhoneInput
+                                country={"in"} // Default country (India)
+                                value={studentData.contact_number || ""}
+                                placeholder="Enter Contact Number"
+                                onChange={(phone) =>
+                                    setStudentData((prev) => ({
+                                        ...prev,
+                                        contact_number: phone, // Directly store the phone number
+                                    }))
+                                }
+                                inputProps={{
+                                    name: "contact_number",
+                                    // required: true,
+                                }}
+                                containerStyle={{ width: "100%" }}
+                                inputStyle={{ width: "100%", paddingLeft: "50px" }}
                             />
+
                             <div className="addission-pic">
                                 <div className="pic-input">
                                     <label>Photo</label>
@@ -484,13 +669,30 @@ const AdmissionForm = ({ onBack }) => {
                             </div>
 
                             <label>Parent Contact</label>
-                            <input
-                                type="text"
+                            {/* <input
+                                type="tel"
                                 name="parent_contact"
                                 placeholder="Enter Parent Contact"
                                 value={studentData.parent_contact || ""}
                                 onChange={handleChange}
                                 required
+                            /> */}
+                            <PhoneInput
+                                country={"in"} // Default country (India)
+                                value={studentData.parent_contact || ""}
+                                placeholder="Enter Parent Contact"
+                                onChange={(phone) =>
+                                    setStudentData((prev) => ({
+                                        ...prev,
+                                        parent_contact: phone, // Directly store the phone number
+                                    }))
+                                }
+                                inputProps={{
+                                    name: "parent_contact",
+                                    // required: true,
+                                }}
+                                containerStyle={{ width: "100%" }}
+                                inputStyle={{ width: "100%", paddingLeft: "50px" }}
                             />
 
                             <label>Email</label>
@@ -503,6 +705,92 @@ const AdmissionForm = ({ onBack }) => {
                                 required
                             />
 
+                            {/* Country Selection */}
+                            <label>Country</label>
+                            <select value={selectedCountry} onChange={handleCountryChange}>
+                                <option value="">Select Country</option>
+                                {Country.getAllCountries().map((c) => (
+                                    <option key={c.isoCode} value={c.isoCode}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {/* State Selection */}
+                            <label>State</label>
+                            <select value={selectedState} onChange={handleStateChange} disabled={!selectedCountry}>
+                                <option value="">Select State</option>
+                                {selectedCountry &&
+                                    State.getStatesOfCountry(selectedCountry).map((s) => (
+                                        <option key={s.isoCode} value={s.isoCode}>
+                                            {s.name}
+                                        </option>
+                                    ))}
+                            </select>
+                            {/* District Selection
+                            <label>District</label>
+                            <select value={selectedDistrict} onChange={handleDistrictChange} disabled={!selectedState}>
+                                <option value="">Select District</option>
+                                {selectedState &&
+                                    getDistricts(selectedState).map((d) => (
+                                        <option key={d} value={d}>
+                                            {d}
+                                        </option>
+                                    ))}
+                            </select>
+
+                            {/* City Selection */}
+                            {/* <label>City</label>
+                            <select value={selectedCity} onChange={handleCityChange} disabled={!selectedState}>
+                                <option value="">Select City</option>
+                                {selectedState &&
+                                    City.getCitiesOfState(selectedCountry, selectedState).map((c) => (
+                                        <option key={c.name} value={c.name}>
+                                            {c.name}
+                                        </option>
+                                    ))}
+                            </select> */} 
+
+                            {/* <label>Country</label>
+                            <input
+                                type="text"
+                                name="country"
+                                placeholder="Enter Country"
+                                value={studentData.country || ""}
+                                onChange={handleChange}
+                                required
+                            /> */}
+                            {/* <label>State</label>
+                            <input
+                                type="text"
+                                name="state"
+                                placeholder="Enter State"
+                                value={studentData.state || ""}
+                                onChange={handleChange}
+                                required
+                            />}*/}
+                            <label>District</label>
+                            <input
+                                type="text"
+                                name="district"
+                                placeholder="Enter District"
+                                value={studentData.district || ""}
+                                onChange={handleChange}
+                                required
+                            />
+                            <label>City</label>
+                            <input
+                                type="text"
+                                name="city"
+                                placeholder="Enter City"
+                                value={studentData.city || ""}
+                                onChange={handleChange}
+                                required
+                            /> 
+                        </div>
+
+                        {/* Right Side: Course Details */}
+                        <div className="form-column">
                             <label>Address</label>
                             <input
                                 type="text"
@@ -512,7 +800,6 @@ const AdmissionForm = ({ onBack }) => {
                                 onChange={handleChange}
                                 required
                             />
-
                             <label>Pin Code</label>
                             <input
                                 type="text"
@@ -523,50 +810,8 @@ const AdmissionForm = ({ onBack }) => {
                                 required
                             />
 
-                            <label>City</label>
-                            <input
-                                type="text"
-                                name="city"
-                                placeholder="Enter City"
-                                value={studentData.city || ""}
-                                onChange={handleChange}
-                                required
-                            />
-
-                            <label>District</label>
-                            <input
-                                type="text"
-                                name="district"
-                                placeholder="Enter District"
-                                value={studentData.district || ""}
-                                onChange={handleChange}
-                                required
-                            />
 
 
-                        </div>
-
-                        {/* Right Side: Course Details */}
-                        <div className="form-column">
-                            <label>State</label>
-                            <input
-                                type="text"
-                                name="state"
-                                placeholder="Enter State"
-                                value={studentData.state || ""}
-                                onChange={handleChange}
-                                required
-                            />
-
-                            <label>Country</label>
-                            <input
-                                type="text"
-                                name="country"
-                                placeholder="Enter Country"
-                                value={studentData.country || ""}
-                                onChange={handleChange}
-                                required
-                            />
                             <label>Course</label>
                             <select name="course" value={studentData.course} onChange={handleChange} required>
                                 <option value="">Select Course</option>

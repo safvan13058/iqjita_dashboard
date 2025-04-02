@@ -73,7 +73,7 @@ label {
 }
 
 /* Input Fields */
-input, select {
+input, select,PhoneInput {
     width: 100%;
     padding: 10px 0 10px 10px;
     margin: 5px 0;
@@ -357,12 +357,15 @@ strong {
     align-items: flex-end; /* Aligns items at the bottom */
     /* gap: 10px; Adds spacing between elements */
     /* Adjust as needed */
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .Preview-pic img {
+    transition: 2s ease-in;
     align-self: flex-end; /* Ensures the image is at the bottom */
 }
-
+.Preview-pic img:hover {
+   transform: scale(3); /* Ensures the image is at the bottom */
+}
 .addission-pic{
     display: flex;
     /* align-items: baseline; */

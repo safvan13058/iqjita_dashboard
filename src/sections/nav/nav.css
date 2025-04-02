@@ -118,13 +118,15 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px var(--box-shadow-dark);
   padding: 1rem 0;
-  z-index: 1000;
-  display: none; /* Initially hidden */
+  z-index: 10000;
+  /* display: none; Initially hidden */
 }
-
-.profile-container:hover .profile-dropdown {
+.profile-dropdown.show {
+  display: block; /* Show when class "show" is added */
+}
+/* .profile-container:hover .profile-dropdown {
   display: block; /* Show dropdown on hover */
-}
+
 
 .dropdown-header {
   display: flex;
