@@ -8,11 +8,40 @@ const StudentsPage = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('Computer Science');
-  const [courses, setCourses] = useState(['Computer Science', 'Business Administration', 'Mechanical Engineering']);
+  const [courses, setCourses] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
   const [viewError, setViewError] = useState(null)
+  const [transactions, setTransactions] = useState([]);
+  const [tranpop,setTranpop]=useState(false)
   const navigate = useNavigate();
+
+
+  // const fetchTransactions = async (id) => {
+  //   try {
+  //     const response = await fetch("https://software.iqjita.com/administration.php?action=listindividualtransaction", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ id: id }),
+  //     });
+      
+  //     console.log("logss",response)
+  //     const data = await response.json();
+
+  //     if (data.status === "success") {
+  //       setTransactions(data.student);
+  //       setTranpop(true);
+  //     } else {
+  //       alert("Failed to fetch transactions");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching transactions:", error);
+  //     alert("Error fetching transactions");
+  //   }
+  // };
+
 
   const handlePayment = (student) => {
     // Navigate to FeeForm page with student data as state
@@ -58,6 +87,48 @@ const StudentsPage = () => {
         setLoading(false);
     }
 };
+
+
+const fetchCourseOptions = async () => {
+  console.log("working");
+  try {
+      const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const text = await response.text(); // Read raw response
+      console.log("Raw Response:", text); // Debugging: check raw response
+
+      // Try parsing JSON safely
+      let data;
+      try {
+          data = JSON.parse(text);
+      } catch (jsonError) {
+          throw new Error("Failed to parse JSON: " + jsonError.message);
+      }
+
+      console.log("Parsed Data:", data);
+
+      if (data.status === "success") {
+          const formattedCourses = data.courses.map(course => ({
+              course: course.course,
+          }));
+
+          console.log("✅ Transformed Course Options:", formattedCourses);
+          setCourses(formattedCourses); // Set the fetched courses in state
+      } else {
+          console.error("❌ Failed to fetch courses:", data);
+      }
+  } catch (error) {
+      console.error("🚨 Error fetching courses:", error.message);
+  }
+};
+
+    useEffect(() => {
+        fetchCourseOptions();
+    }, []);
 const fetchStudentDetails = async (admissionNumber) => {
   setViewLoading(true);
   setViewError(null);
@@ -137,8 +208,9 @@ const handleCloseModal = () => {
             onChange={(e) => setSelectedCourse(e.target.value)}
             className="course-select"
           >
+            {console.log("courses",courses)}
             {courses.map(course => (
-              <option key={course} value={course}>{course}</option>
+              <option key={course.course} value={course.course}>{course.course}</option>
             ))}
           </select>
           <input
@@ -249,6 +321,7 @@ const handleCloseModal = () => {
                   <p><strong>Installment 3:</strong> {selectedStudent.install3} (Balance:  {selectedStudent.bal3})</p>
                   <p><strong>Installment 4:</strong> {selectedStudent.install4} (Balance:  {selectedStudent.bal4})</p>
                   <p><strong>Installment 5:</strong> {selectedStudent.install5} (Balance: {selectedStudent.bal5})</p>
+                  {/* <button onClick={fetchTransactions(selectedStudent.admission_number)}>View transations</button> */}
                 </div>
 
                 <div className="detail-section">
@@ -276,10 +349,52 @@ const handleCloseModal = () => {
         </div>
       </div>
     )}
-     </div>
-
-
+     {tranpop && (
+        <div className="transpop-overlay">
+          <div className="transpop-content">
+            <h2>Transactions</h2>
+            <button className="transpop-close-btn" onClick={() => setTranpop(false)}>×</button>
+            <table className="transpop-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Bill Number</th>
+                  <th>Current Balance</th>
+                  <th>Remark</th>
+                  <th>Updated By</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((transaction) => (
+                  <tr key={transaction.transaction_id}>
+                    <td>{transaction.transaction_id}</td>
+                    <td>{parseFloat(transaction.amount).toLocaleString()}</td>
+                    <td>
+                      <span className={`transpop-status ${transaction.type.toLowerCase()}`}>
+                        {transaction.type}
+                      </span>
+                    </td>
+                    <td>{transaction.category}</td>
+                    <td>{transaction.bill_number}</td>
+                    <td>{parseFloat(transaction.current_balance).toLocaleString()}</td>
+                    <td>{transaction.remark}</td>
+                    <td>{transaction.updated_by}</td>
+                    <td>{transaction.created_at}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button className="transpop-close-btn" onClick={() => setTranpop(false)}>Close</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
+
 
 export default StudentsPage;

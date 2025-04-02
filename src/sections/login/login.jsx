@@ -37,6 +37,40 @@ function Login() {
       setIsLoading(false);
     }
   };
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+  
+    try {
+      const response = await fetch("https://software.iqjita.com/authentication.php?action=login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.status === "success") {
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store user data in localStorage
+        login(data.user); // Implement login function to update state/context
+        navigate("/"); // Redirect after login
+      } else {
+        setError(data.message || "Invalid email or password");
+      }
+    } catch (err) {
+      setError("An error occurred during login");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
 
   return (
     <div className="login-container">
@@ -45,7 +79,7 @@ function Login() {
       <div className="login-card">
     
         <h2>LOGIN</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           {error && <div className="login-error">{error}</div>}
 
           <div className="form-group">

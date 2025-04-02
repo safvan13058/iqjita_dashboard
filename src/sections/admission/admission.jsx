@@ -3,19 +3,22 @@ import "./admission.css"; // Import CSS file
 import { useNavigate } from "react-router-dom";
 const AdmissionForm = ({ onBack }) => {
     const navigate = useNavigate();
+    const [showPopup, setShowPopup] = useState(false);
+    const [discountData, setDiscountData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    const [courseOptions, setCourseOptions] = useState([]);
+    const [discountcal, setdiscountcal] = useState({});
     const [step, setStep] = useState(() => {
         return parseInt(localStorage.getItem("admissionStep")) || 1;
     });
-
+    const user = JSON.parse(localStorage.getItem('user'));
     const [studentData, setStudentData] = useState(() => {
         return JSON.parse(localStorage.getItem("studentData")) || {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", updated_by: "admin"
+            documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "", branch: user.branch_id, photo: null, photoPreview: null
         };
     });
 
@@ -37,12 +40,59 @@ const AdmissionForm = ({ onBack }) => {
     //     "Graphic Design": 30000
     // };
     // Course Data in JSON format
-    const courseOptions = [
-        { name: "Computer Science", exact_fee: 50000, duration: "4 Years" },
-        { name: "Business Administration", exact_fee: 45000, duration: "3 Years" },
-        { name: "Mechanical Engineering", exact_fee: 55000, duration: "4 Years" },
-        { name: "Graphic Design", exact_fee: 30000, duration: "2 Years" }
-    ];
+    // const courseOptions = [
+    //     { name: "Computer Science", exact_fee: 50000, duration: "4 Years" },
+    //     { name: "Business Administration", exact_fee: 45000, duration: "3 Years" },
+    //     { name: "Mechanical Engineering", exact_fee: 55000, duration: "4 Years" },
+    //     { name: "Graphic Design", exact_fee: 30000, duration: "2 Years" }
+    // ];
+
+    const fetchCourseOptions = async () => {
+        try {
+            const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const text = await response.text(); // Read raw response
+            console.log("Raw Response:", text); // Debugging: check raw response
+
+            // Trim extra characters and safely parse JSON
+            const jsonStartIndex = text.indexOf("{"); // Find first "{"
+            const cleanJson = jsonStartIndex !== -1 ? text.slice(jsonStartIndex).trim() : text;
+
+            let data;
+            try {
+                data = JSON.parse(cleanJson);
+            } catch (jsonError) {
+                throw new Error("Failed to parse JSON: " + jsonError.message);
+            }
+
+            console.log("Parsed Data:", data);
+
+            if (data.status === "success") {
+                const formattedCourses = data.courses.map(course => ({
+                    name: course.course,
+                    exact_fee: parseFloat(course.exact_fee), // Convert fee to number
+                    duration: course.duration
+                }));
+
+                console.log("✅ Transformed Course Options:", formattedCourses);
+                setCourseOptions(formattedCourses); // Update state
+            } else {
+                console.error("❌ Failed to fetch courses:", data);
+            }
+        } catch (error) {
+            console.error("🚨 Error fetching courses:", error.message);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchCourseOptions();
+    }, []);
+
 
     useEffect(() => {
         localStorage.setItem("admissionStep", step);
@@ -70,14 +120,13 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "",
+            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null
         });
         setFeeData({
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
         });
         setReceipt(null);
     };
-
     // Handle Input Change
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -110,15 +159,22 @@ const AdmissionForm = ({ onBack }) => {
             if (key === "discount" || key === "documents_submitted") {
                 return true; // ✅ Ignore `discount` and allow `documents_submitted` to be null
             }
-    
+
             if (Array.isArray(value)) {
                 return value.length > 0; // Ensure arrays are not empty
             }
-    
+
             return value !== "" && value !== null; // Ensure all other fields are filled
         });
     };
-    
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const previewURL = URL.createObjectURL(file);
+            setStudentData((prev) => ({ ...prev, photo: file, photoPreview: previewURL }));
+        }
+    };
 
 
     // Step 1: Submit Student Admission
@@ -138,7 +194,7 @@ const AdmissionForm = ({ onBack }) => {
         // ✅ Add "updated_by" field dynamically
         const updatedStudentData = {
             ...studentData,
-            updated_by: "Admin" // Change this value based on the user role
+            updated_by: user.name // Change this value based on the user role
         };
 
         try {
@@ -159,7 +215,7 @@ const AdmissionForm = ({ onBack }) => {
             try {
                 result = JSON.parse(lastJson);
             } catch (error) {
-                throw new Error("❌ Invalid JSON response from server:\n" + text);
+                throw new Error("❌ Invalid JSON response from server:\n");
             }
 
             if (response.ok) {
@@ -197,27 +253,62 @@ const AdmissionForm = ({ onBack }) => {
             const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(feeData)
+                body: JSON.stringify(feeData),
             });
 
             const text = await response.text(); // Read raw response
             console.log("🔍 Raw API Response:", text); // Debugging log
 
-            // Extract only the second JSON object (if multiple exist)
-            const jsonObjects = text.trim().split("\n"); // Split response by newline
-            const lastJson = jsonObjects.pop(); // Get the last valid JSON object
-
+            // Extract only the valid JSON part
+            const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find the second "{"
+            const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON
             let result;
+
             try {
-                result = JSON.parse(lastJson);
+                result = JSON.parse(cleanJson);
             } catch (error) {
                 throw new Error("❌ Invalid JSON response from server:\n" + text);
             }
 
-            if (response.ok) {
+            if (response.ok && result.status === "success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
                 setReceipt(result);
                 setStep(4);
+
+                // Proceed with transaction API call
+                const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: 1000,
+                        type: "credit",
+                        category: "Admission",
+                        remark: feeData.admission_number || "N/A", // Use admission_number if available
+                        updated_by: "admin",
+                    }),
+                });
+
+                const transactionText = await transactionResponse.text();
+                console.log("🔍 Transaction API Response:", transactionText); // Debugging log
+
+                // Extract valid JSON from transaction API response
+                const transJsonStartIndex = transactionText.indexOf("{", transactionText.indexOf("{") + 1);
+                const cleanTransJson = transactionText.slice(transJsonStartIndex);
+
+                let transactionResult;
+                try {
+                    transactionResult = JSON.parse(cleanTransJson);
+                } catch (error) {
+                    throw new Error("❌ Invalid JSON response from transaction API:\n" + transactionText);
+                }
+
+                if (transactionResponse.ok && transactionResult.status === "success") {
+                    console.log("✅ Transaction Successful:", transactionResult);
+                    alert(transactionResult.message);
+                } else {
+                    console.error("❌ Transaction Failed:", transactionResult);
+                    alert(transactionResult.message || "Transaction failed.");
+                }
             } else {
                 setError(result.message || "❌ Failed to submit fee details.");
             }
@@ -229,12 +320,72 @@ const AdmissionForm = ({ onBack }) => {
         }
     };
 
+    const handleCalculate = async () => {
+        setLoading(true);
+        setDiscountData(null); // Clear previous results
+
+        try {
+            const response = await fetch("https://software.iqjita.com/administration.php?action=discount", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    courseFee: parseFloat(studentData.exact_fee) || 0,
+                    offerPrice: parseFloat(discountcal.offerPrice) || 0,
+                    groupDiscountPercentage: parseFloat(discountcal.groupDiscountPercentage) || 0,
+                    oneTimePaymentDiscountPercentage: parseFloat(discountcal.oneTimePaymentDiscountPercentage) || 0,
+                }),
+            });
+
+            const text = await response.text(); // Read raw response
+            console.log("🔍 Raw API Response:", text); // Debugging log
+
+            // Extract only the second JSON object (if multiple exist)
+            const jsonObjects = text.trim().split("\n"); // Split by newline
+            const lastJson = jsonObjects.pop(); // Get last valid JSON object
+
+            let result;
+            try {
+                result = JSON.parse(lastJson);
+            } catch (error) {
+                throw new Error("❌ Invalid JSON response from server:\n");
+            }
+
+            if (response.ok && result.status === "success" && result.finalPrice !== undefined) {
+                console.log("✅ Parsed API Response:", result); // Debugging log
+                setDiscountData(result);
+                setStudentData((prev) => ({
+                    ...prev,
+                    discount: result.totalDiscountAmount,
+                    final_fee: result.finalPrice
+                }));
+
+
+            } else {
+                alert("Error calculating discount: " + (result.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error fetching discount:", error);
+            alert("Failed to fetch discount. Please try again.");
+        }
+
+        setLoading(false);
+    };
+
+
     // Handle Input Change
     const handleDocumentsChange = (e) => {
         const selectedDocs = [...e.target.selectedOptions].map(option => option.value);
         setStudentData(prevData => ({
             ...prevData,
             documents_submitted: selectedDocs // ✅ Always stores an array
+        }));
+    };
+
+    const handlediscount = (e) => {
+        const { name, value } = e.target;
+        setdiscountcal((prev) => ({
+            ...prev,
+            [name]: value, // Update the specific field in the state
         }));
     };
 
@@ -279,6 +430,16 @@ const AdmissionForm = ({ onBack }) => {
                                 onChange={handleChange}
                                 required
                             />
+                            <label>Date of Birth</label>
+                            <input
+                                type="date"
+                                name="dob"
+                                value={studentData.dob || ""}
+                                onChange={handleChange}
+                                // max={new Date().toISOString().split("T")[0]} // Restricts future dates
+                                required
+                            />
+
 
                             <label>Location</label>
                             <input
@@ -299,6 +460,28 @@ const AdmissionForm = ({ onBack }) => {
                                 onChange={handleChange}
                                 required
                             />
+                            <div className="addission-pic">
+                                <div className="pic-input">
+                                    <label>Photo</label>
+                                    <input
+                                        type="file"
+                                        name="photo"
+                                        accept="image/*"
+                                        // placeholder="Enter Contact Number"
+                                        // value={studentData.photo || ""}
+                                        onChange={handlePhotoChange}
+                                    />
+                                </div>
+                                {studentData.photoPreview && (
+                                    <div className="Preview-pic">
+                                        <img
+                                            src={studentData.photoPreview}
+                                            alt="Preview"
+                                            style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ccc" }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
                             <label>Parent Contact</label>
                             <input
@@ -360,6 +543,11 @@ const AdmissionForm = ({ onBack }) => {
                                 required
                             />
 
+
+                        </div>
+
+                        {/* Right Side: Course Details */}
+                        <div className="form-column">
                             <label>State</label>
                             <input
                                 type="text"
@@ -379,10 +567,6 @@ const AdmissionForm = ({ onBack }) => {
                                 onChange={handleChange}
                                 required
                             />
-                        </div>
-
-                        {/* Right Side: Course Details */}
-                        <div className="form-column">
                             <label>Course</label>
                             <select name="course" value={studentData.course} onChange={handleChange} required>
                                 <option value="">Select Course</option>
@@ -406,15 +590,28 @@ const AdmissionForm = ({ onBack }) => {
                                 value={studentData.exact_fee || ""}
                                 readOnly
                             />
+                            <div className="discountinput">
+                                <div>
+                                    <label>Discount</label>
+                                    <input
+                                        type=""
+                                        name="discount"
+                                        placeholder="Enter Discount"
+                                        value={studentData.discount || ""}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="adm-btn-grp">
 
-                            <label>Discount</label>
-                            <input
-                                type=""
-                                name="discount"
-                                placeholder="Enter Discount"
-                                value={studentData.discount || ""}
-                                onChange={handleChange}
-                            />
+                                    <button onClick={() => setShowPopup(true)}>Calculate</button>
+                                    <button type="button" onClick={() => setStudentData((prev) => ({ ...prev, discount: '', final_fee: prev.exact_fee }))}>
+                                        Clear
+                                    </button>
+                                </div>
+
+                            </div>
+
+
 
                             <label>Final Fee</label>
                             <input
@@ -440,6 +637,7 @@ const AdmissionForm = ({ onBack }) => {
                                 <option value="Passport">Passport</option>
                             </select>
 
+
                             {/* Show Selected Documents */}
                             {studentData.documents_submitted.length > 0 && (
                                 <p><strong>Selected Documents:</strong> {studentData.documents_submitted.join(", ")}</p>
@@ -463,7 +661,60 @@ const AdmissionForm = ({ onBack }) => {
                         <button type="button" onClick={() => setStep(2)}>Next: Submit Admission</button>
                     </div>
                 </form>
+            )}{showPopup && (
+                <div className="home-popup-overlay">
+                    <div className="home-popup-content">
+                        <h2>Calculate Discount</h2>
+                        <button
+                            className="close-button"
+                            onClick={() => setShowPopup(false)}
+                        >
+                            ×
+                        </button>
+
+                        <div className="popup-discountinputs">
+                            <div className="discount-column">
+                                <label>Course Fee</label>
+                                <input type="number" name="courseFee" value={studentData.exact_fee} readOnly />
+
+                                <label>Group Discount (%)</label>
+                                <input type="number" name="groupDiscountPercentage" value={discountcal.groupDiscountPercentage || ""} onChange={handlediscount} />
+                            </div>
+
+                            <div className="discount-column">
+                                <label>Offer Price</label>
+                                <input type="number" name="offerPrice" value={discountcal.offerPrice || ""} onChange={handlediscount} />
+
+                                <label>One-Time Payment Discount (%)</label>
+                                <input type="number" name="oneTimePaymentDiscountPercentage" value={discountcal.oneTimePaymentDiscountPercentage || ""} onChange={handlediscount} />
+                            </div>
+
+                            <div className="discount-buttons">
+                                <button onClick={handleCalculate} disabled={loading}>{loading ? "Calculating..." : "Calculate"}</button>
+                                <button onClick={() => setdiscountcal({})}>Clear</button>
+                            </div>
+                        </div>
+
+
+                        {discountData && (
+                            <div className="discount-results">
+                                <h3>Discount Results</h3>
+                                <div className="discount-results-para">
+                                    <p><strong>Final Price:</strong> {discountData.finalPrice}</p>
+                                    <p><strong>Total Discount Amount:</strong> {discountData.totalDiscountAmount}</p>
+                                    <p><strong>Group Discount:</strong> {discountData.groupDiscountAmount}</p>
+                                    <p><strong>One-Time Payment Discount:</strong> {discountData.oneTimePaymentDiscountAmount}</p>
+                                    <p><strong>Offer Price:</strong> {discountData.offerPrice}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* <button className="close-btn" onClick={() => setShowPopup(false)}>Close</button> */}
+                    </div>
+                </div>
             )}
+
+
 
             {step === 2 && (
                 <div className="preview-container">
@@ -474,6 +725,7 @@ const AdmissionForm = ({ onBack }) => {
                         <div className="preview-column">
                             <h4>Personal Details</h4>
                             <p><strong>Full Name:</strong> {studentData.name}</p>
+                            <p><strong>Date of Birth:</strong> {studentData.dob}</p>
                             <p><strong>Contact Number:</strong> {studentData.contact_number}</p>
                             <p><strong>Email:</strong> {studentData.email}</p>
                             <p><strong>Address:</strong> {studentData.address}, {studentData.city}, {studentData.state} - {studentData.pin_code}, {studentData.country}</p>
@@ -530,10 +782,10 @@ const AdmissionForm = ({ onBack }) => {
                             required
                         />
                         <div className="btn-grp">
-                        <button type="button" onClick={() => setStep(2)}>Back</button>
-                        <button type="submit" disabled={loading}>
-                            {loading ? "Processing..." : "Next: Generate Receipt"}
-                        </button>
+                            <button type="button" onClick={() => setStep(2)}>Back</button>
+                            <button type="submit" disabled={loading}>
+                                {loading ? "Processing..." : "Next: Generate Receipt"}
+                            </button>
                         </div>
                     </form>
 

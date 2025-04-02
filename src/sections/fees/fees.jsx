@@ -19,16 +19,73 @@ const FeeForm = ({ onBack, currentUser }) => {
   const [viewLoading, setViewLoading] = useState(false);
   const [viewError, setViewError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState("Computer Science");
-
-  const courseOptions = [
-    "Computer Science",
-    "Business Administration",
-    "Mechanical Engineering",
-    "Electrical Engineering",
-    "Data Science",
-  ]; // ✅ List of courses
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedInstallment, setSelectedInstallment] = useState(1); // Stores selected installment
+  const [allStudents, setAllStudents] = useState([]); // Stores all students
+  const [courseOptions, setCourses] = useState([]); // Stores all students
+  // const courseOptions = [
+  //   "Computer Science",
+  //   "Business Administration",
+  //   "Mechanical Engineering",
+  //   "Electrical Engineering",
+  //   "Data Science",
+  // ]; // ✅ List of courses
   // Fetch students from API when selectedCourse changes
+  const user = JSON.parse(localStorage.getItem('user'));
+  // const fetchCourseOptions = async () => {
+  //        try {
+  //            const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
+  //           //  const text = await response.text(); // Read raw response
+
+  //           //  // Extract only the valid JSON part
+  //           //  const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find the second "{"
+  //           //  const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON
+
+  //            const data = JSON.parse(response); // Parse cleaned JSON
+
+  //            if (data.status === "success") {
+  //                const formattedCourses = data.courses.map(course => ({
+  //                  course: course.course,
+  //                }));
+
+  //                console.log("✅ Transformed Course Options:", formattedCourses);
+  //                setCourses(formattedCourses); // Set the fetched courses in state
+  //            } else {
+  //                console.error("❌ Failed to fetch courses:", data);
+  //            }
+  //        } catch (error) {
+  //            console.error("🚨 Error fetching courses:", error);
+  //        }
+  //    };
+  const fetchCourseOptions = async () => {
+    try {
+      const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json(); // Correct way to parse JSON response
+
+      if (data.status === "success") {
+        const formattedCourses = data.courses.map(course => ({
+          course: course.course,
+        }));
+
+        console.log("✅ Transformed Course Options:", formattedCourses);
+        setCourses(formattedCourses); // Set the fetched courses in state
+      } else {
+        console.error("❌ Failed to fetch courses:", data);
+      }
+    } catch (error) {
+      console.error("🚨 Error fetching courses:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourseOptions();
+  }, []);
+
   useEffect(() => {
     fetchStudents();
   }, [selectedCourse]);
@@ -46,45 +103,49 @@ const FeeForm = ({ onBack, currentUser }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://software.iqjita.com/administration.php?action=liststudentbycourse",
+        "https://software.iqjita.com/administration.php?action=liststudentbypendingfee",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ course: selectedCourse }), // ✅ Dynamic course filtering
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ installmentnumber: selectedInstallment }), // Fetch all students for the selected installment
         }
       );
 
-      const text = await response.text(); // Read raw response
-      console.log("🔍 Raw API Response:", text); // Debugging log
+      const text = await response.text();
+      console.log("🔍 Raw API Response:", text);
 
-      // Extract only the last valid JSON object (if multiple exist)
-      const jsonObjects = text.trim().split("\n"); // Split by newline
-      const lastJson = jsonObjects.pop(); // Get last valid JSON object
+      // Extract the last valid JSON object
+      const jsonObjects = text.trim().split("\n");
+      const lastJson = jsonObjects.pop();
 
       let result;
       try {
         result = JSON.parse(lastJson);
       } catch (error) {
-        throw new Error("❌ Invalid JSON response from server:\n" + text);
+        throw new Error("❌ Invalid JSON response from server:\n");
       }
 
       if (response.ok) {
-        console.log("✅ Parsed API Response:", result); // Debugging log
+        console.log("✅ Parsed API Response:", result);
 
         if (result.status === "success") {
-          const formattedStudents = result.students.map((student) => ({
-            admission_number: student.admission_number.toString(),
-            name: student.name,
-            course: student.course,
-            total_paid: parseFloat(student.final_fee) - parseFloat(student.exact_fee),
-            total_pending: parseFloat(student.final_fee),
-          }));
-          setStudents(formattedStudents);
+          if (result.students.length === 0) {
+            setAllStudents(null); // If no students, set state to null
+          } else {
+            const formattedStudents = result.students.map((student) => ({
+              admission_number: student.admission_number.toString(),
+              name: student.name,
+              course: student.course,
+              total_paid: student[`install${selectedInstallment}`], // ✅ Dynamically select the correct installment
+              total_pending: student[`bal${selectedInstallment}`],
+            }));
+            setAllStudents(formattedStudents); // Store all students, filtering happens in UI
+          }
         } else {
-          setError("Failed to fetch students: " + (result.error || "Unknown error"));
+          setAllStudents(null); 
+          console.error("Failed to fetch student data");
         }
+
       } else {
         setError("❌ Server Error: " + response.statusText);
       }
@@ -95,6 +156,15 @@ const FeeForm = ({ onBack, currentUser }) => {
       setLoading(false);
     }
   };
+  const filteredStudents = selectedCourse
+    ? allStudents.filter((student) => student.course === selectedCourse) // ✅ Filters by course
+    : allStudents; // ✅ Shows all students if no course is selected
+
+  // Fetch students when installment changes
+  useEffect(() => {
+    fetchStudents();
+  }, [selectedInstallment]);
+
 
 
   const handleSelectStudent = (student) => {
@@ -122,6 +192,7 @@ const FeeForm = ({ onBack, currentUser }) => {
     setError(null);
 
     try {
+      // ✅ First API Call: Submit the Course Fee
       const response = await fetch(
         "https://software.iqjita.com/administration.php?action=course_fee",
         {
@@ -133,32 +204,28 @@ const FeeForm = ({ onBack, currentUser }) => {
             admission_number: selectedStudent.admission_number,
             course: selectedStudent.course,
             paying_fee: parseFloat(amount),
-            // payment_method: paymentMethod,
-            // transaction_id: transactionId,
             updated_by: currentUser?.username || "admin"
           }),
         }
       );
 
-
-
       const text = await response.text();
       console.log("🔍 Raw API Response feee:", text);
 
-      // ✅ Split response if multiple JSON objects exist
+      // ✅ Extract the last JSON object
       const jsonObjects = text.trim().split("\n");
-      const lastJson = jsonObjects.pop(); // Take the second (last) JSON object
+      const lastJson = jsonObjects.pop();
 
       let result;
       try {
-        result = JSON.parse(lastJson); // ✅ Parse the correct JSON
+        result = JSON.parse(lastJson);
       } catch (error) {
-        throw new Error("❌ Invalid JSON response from server:\n" + text);
+        throw new Error("❌ Invalid JSON response from server:\n");
       }
 
-      // ✅ Check if API returned success or error
       if (result.status === "success") {
         console.log("✅ Payment Successful:", result);
+
         const receipt = {
           date: format(new Date(), 'yyyy-MM-dd HH:mm'),
           studentName: selectedStudent.name,
@@ -167,7 +234,7 @@ const FeeForm = ({ onBack, currentUser }) => {
           amount: parseFloat(amount),
           paymentMethod,
           transactionId,
-          processedBy: currentUser?.username || "admin",
+          processedBy: user?.name || "admin",
           newBalance: result.TotalPending
         };
 
@@ -180,22 +247,56 @@ const FeeForm = ({ onBack, currentUser }) => {
         });
 
         setReceiptData(receipt);
-        // setAmount("");
         setTransactionId("");
 
+        // ✅ Second API Call: Log the Transaction
+        const transactionResponse = await fetch(
+          "https://software.iqjita.com/administration.php?action=transaction",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: parseFloat(amount),
+              type: "credit",
+              category: "Fee",
+              remark: selectedStudent.admission_number.toString(), // Admission number as remark
+              updated_by: user?.name || "admin"
+            }),
+          }
+        );
+
+        const transactionText = await transactionResponse.text();
+        console.log("🔍 Raw API Response transaction:", transactionText);
+
+        // ✅ Extract the last JSON object from the response
+        const transactionJsonObjects = transactionText.trim().split("\n");
+        const transactionLastJson = transactionJsonObjects.pop();
+
+        let transactionResult;
+        try {
+          transactionResult = JSON.parse(transactionLastJson);
+        } catch (error) {
+          throw new Error("❌ Invalid JSON response from server:\n");
+        }
+
+        if (transactionResult.status === "success") {
+          console.log("✅ Transaction Logged Successfully:", transactionResult);
+        } else {
+          throw new Error(transactionResult.error || "Failed to log transaction.");
+        }
       } else {
         throw new Error(result.error || "Payment failed. Please try again.");
       }
-
-      // Generate receipt data
-
     } catch (err) {
       setError(err.message);
-      console.error("Payment error:", err);
+      console.error("🚨 Error:", err);
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   const printReceipt = () => {
     // In a real app, you would implement proper receipt printing
@@ -219,7 +320,7 @@ const FeeForm = ({ onBack, currentUser }) => {
         <div className="student-list-section">
           <div className="list-controls">
             <h3 className="student-list-title">Student Records</h3>
-            
+
             <div className="search-filter-container">
               <div className="fee-search-container">
                 <input
@@ -230,12 +331,12 @@ const FeeForm = ({ onBack, currentUser }) => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
                 />
-                
+
                 {searchQuery && (
                   <div className="dropdown-container">
                     <ul className="fee-form-dropdown">
-                      {students
-                        .filter(student => 
+                      {(filteredStudents || []) 
+                        .filter(student =>
                           student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           student.admission_number.includes(searchQuery)
                         )
@@ -264,19 +365,40 @@ const FeeForm = ({ onBack, currentUser }) => {
               </div>
 
               <div className="filter-container">
-                <label>Filter by Course:</label>
-                <select
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  className="fee-form-input"
-                >
-                  {courseOptions.map(course => (
-                    <option key={course} value={course}>
-                      {course}
-                    </option>
-                  ))}
-                </select>
+                {/* Installment Filter */}
+                <div>
+                  <label>Filter by Installment:</label>
+                  <select
+                    value={selectedInstallment}
+                    onChange={(e) => setSelectedInstallment(Number(e.target.value))}
+                    className="fee-filter-input"
+                  >
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <option key={num} value={num}>
+                        Installment {num}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Course Filter */}
+                <div>
+                  <label>Filter by Course:</label>
+                  <select
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    className="fee-form-input"
+                  >
+                    <option value="">All Courses</option> {/* Show all students when no filter is selected */}
+                    {courseOptions.map((course) => (
+                      <option key={course.course} value={course.course}>
+                        {course.course}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+
             </div>
           </div>
 
@@ -284,16 +406,16 @@ const FeeForm = ({ onBack, currentUser }) => {
             <span>Admission No.</span>
             <span>Student Name</span>
             <span>Course</span>
-            <span>Paid </span>
-            <span>Pending </span>
+            <span>Paid</span>
+            <span>Pending</span>
             <span>Actions</span>
           </div>
 
           <div className="student-list">
-            {students.map(student => (
+            {(filteredStudents || []).map((student) => (
               <div
                 key={student.admission_number}
-                className={`student-list-item ${selectedStudent?.admission_number === student.admission_number ? 'active' : ''}`}
+                className={`student-list-item ${selectedStudent?.admission_number === student.admission_number ? "active" : ""}`}
               >
                 <span>{student.admission_number}</span>
                 <span>{student.name}</span>
@@ -301,22 +423,24 @@ const FeeForm = ({ onBack, currentUser }) => {
                 <span>{student.total_paid?.toLocaleString()}</span>
                 <span>{student.total_pending?.toLocaleString()}</span>
                 <span>
-                  <button
-                    className="select-student-btn"
-                    onClick={() => handleSelectStudent(student)}
-                  >
+                  <button className="select-student-btn" onClick={() => handleSelectStudent(student)}>
                     Select
                   </button>
                 </span>
               </div>
             ))}
           </div>
+
         </div>
       ) : (
         <form className="fee-form" onSubmit={handleSubmit}>
           <div className="student-header">
             <h3>{selectedStudent.name}</h3>
             <p>Admission: {selectedStudent.admission_number} | {selectedStudent.course}</p>
+            <div className="student-balance">
+              Paid: {selectedStudent.total_paid?.toLocaleString()} |
+              Pending: {selectedStudent.total_pending?.toLocaleString()}
+            </div>
           </div>
 
           <div className="form-grid">

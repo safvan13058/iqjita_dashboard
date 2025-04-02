@@ -32,6 +32,7 @@ function App() {
             <Route path="/admission" element={<AdmissionForm />} />
             <Route path="/fee-payment" element={<FeeForm />} />
             <Route path="/course" element={<CourseForm />} />
+            <Route path="/alumni" element={<h1>📊 Alumni Page</h1>} />
           </Route>
           
           {/* Redirect all other paths to login if not authenticated */}

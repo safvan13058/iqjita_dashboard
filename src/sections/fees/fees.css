@@ -69,7 +69,9 @@
   box-sizing: border-box;
   transition: all var(--transition-speed);
 }
-
+.fee-form-search-input input{
+  width: 60%;
+}
 .fee-form-search-input:focus {
   border-color: var(--input-focus-border);
   box-shadow: 0 0 0 3px rgba(15, 109, 102, 0.2);
@@ -269,6 +271,14 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+}
+.filter-container{
+  display: flex;
+  gap: 20px;
+
+}
+.fee-filter-input{
+  width: 200px;
 }
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -242,6 +242,135 @@ strong {
     display: flex;
     gap:20px;
 }
+
+.home-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    
+  }
+  
+  .home-popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    /* width: 300px; */
+    text-align: center;
+    overflow-y: scroll;
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+  
+  .close-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  /* .discountinput{
+    display: grid;
+  } */
+
+  .discountinput{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    
+    /* align-items: baseline; */
+  }
+  .discountinput button{
+    padding: 0 20px;
+    margin-top: 32px;
+    height: 40px;
+    /* display: flex; */
+  align-items: end;
+  
+  }
+.adm-btn-grp{
+    display: flex;
+    gap: 10px;
+}
+.popup-discountinputs {
+    display: flex;
+    /* gap: 20px; */
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.discount-column {
+    width: 48%; /* Each column takes half the width */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.discount-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    /* margin-top: 20px; */
+}
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    /* color: #333; */
+    color: black;
+    font-weight: bold;
+    transition: 1s ease-in-out;
+}
+.close-button:hover{
+    color: white;
+}
+.discount-results-para p{
+    width: fit-content !important;
+}
+.discount-results-para{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+   /* margin-left: 50px; */
+}
+.pic-input{
+    width: 100%;
+
+}
+.Preview-pic {
+    display: flex;
+    align-items: flex-end; /* Aligns items at the bottom */
+    /* gap: 10px; Adds spacing between elements */
+    /* Adjust as needed */
+    margin-bottom: 10px;
+}
+.Preview-pic img {
+    align-self: flex-end; /* Ensures the image is at the bottom */
+}
+
+.addission-pic{
+    display: flex;
+    /* align-items: baseline; */
+}
+
+/* .discount-buttons button{
+ padding: 0 15px;   
+} */
 /* Responsive Design */
 @media (max-width: 600px) {
     .form-row {

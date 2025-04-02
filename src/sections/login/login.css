@@ -59,21 +59,28 @@
 .form-group label {
     display: block;
     margin-top: 0;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--text-primary);
 }
 
 .form-group input {
     width: 100%;
-    border: 1px solid var(--input-border);
-    border-radius: var(--border-radius);
+    border: 2px solid var(--input-border);
+    border-radius:0;
+    border-top: none;
+    border-right: none;
+    border-left: none;
     font-size: 1rem;
     outline: none;
     padding: 10px;
+    padding-bottom: 5px;
     background: var(--input-background);
     color: var(--input-text);
+    transition: 1s ease-in-out;
 }
-
+.form-group input:hover{
+    border-color: var(--button-primary-bg);
+}
 .login-btn {
     min-width: 100px;
     background-color: var(--button-primary-bg);

@@ -10,6 +10,8 @@ const Navbar = () => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));  
+console.log("user==", user);
 
   // Load saved theme from localStorage
   useEffect(() => {
@@ -44,8 +46,9 @@ const Navbar = () => {
         <div className="profile-container">
           <div className="navprofile">
             <div className="profilename">
-              <h5>Mohamed safvan vp</h5>
-              <p className="profilerole">admin</p>
+              <h5>{user.name}</h5>
+              {console.log("name==",user.name)}
+              <p className="profilerole">{user.role}</p>
             </div>
             <div
               className="profile-icon"
@@ -68,8 +71,8 @@ const Navbar = () => {
                   className="dropdown-profile-pic"
                 />
                 <div className="profile-info">
-                  <div className="profile-name">John Doe</div>
-                  <div className="profile-email">john@example.com</div>
+                  <div className="profile-name">{user.name}</div>
+                  <div className="profile-email">{user.email}</div>
                 </div>
               </div>
               <div className="dropdown-divider"></div>
