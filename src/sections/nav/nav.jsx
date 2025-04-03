@@ -4,14 +4,16 @@ import "../common/colour.css";
 import { useAuth } from "../login/auth";
 import { useNavigate } from "react-router-dom";
 import logo from '../images/logo.png'
+import profile from '../images/profile.png'
 const Navbar = () => {
   const [theme, setTheme] = useState("light-theme");
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showAccountPopup, setShowAccountPopup] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));  
-console.log("user==", user);
+  const user = JSON.parse(localStorage.getItem('user'));
+  console.log("user==", user);
 
   // Load saved theme from localStorage
   useEffect(() => {
@@ -34,6 +36,76 @@ console.log("user==", user);
     setProfileMenuOpen(false);
   };
 
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [profilePic, setProfilePic] = useState(user.profilePic || null);
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePic(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (editMode) {
+      if (!formData.name.trim()) newErrors.name = 'Name is required';
+      if (!formData.email.trim()) newErrors.email = 'Email is required';
+      else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = 'Email is invalid';
+
+      if (formData.newPassword) {
+        if (!formData.currentPassword) newErrors.currentPassword = 'Current password is required';
+        if (formData.newPassword.length < 6) newErrors.newPassword = 'Password must be at least 6 characters';
+        if (formData.newPassword !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const updatedUser = {
+      ...user,
+      name: formData.name,
+      email: formData.email,
+      profilePic: profilePic,
+    };
+
+    if (formData.newPassword) {
+      // Handle password change logic here
+      console.log('Password changed');
+    }
+
+    // onSave(updatedUser);
+    setEditMode(false);
+  };
+
   return (
     <nav className="navbar">
       {/* Left side - Logo and main links */}
@@ -47,7 +119,7 @@ console.log("user==", user);
           <div className="navprofile">
             <div className="profilename">
               <h5>{user.name}</h5>
-              {console.log("name==",user.name)}
+              {console.log("name==", user.name)}
               <p className="profilerole">{user.role}</p>
             </div>
             <div
@@ -55,7 +127,7 @@ console.log("user==", user);
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
             >
               <img
-                src="https://via.placeholder.com/32"
+                src={profile}
                 alt="Profile"
                 className="profile-pic"
               />
@@ -66,7 +138,7 @@ console.log("user==", user);
             <div className="profile-dropdown">
               <div className="dropdown-header">
                 <img
-                  src="https://via.placeholder.com/64"
+                  src={profile}
                   alt="Profile"
                   className="dropdown-profile-pic"
                 />
@@ -76,7 +148,13 @@ console.log("user==", user);
                 </div>
               </div>
               <div className="dropdown-divider"></div>
-              <a href="#" className="dropdown-item">My Account</a>
+              <a href="#" className="dropdown-item" onClick={(e) => {
+                e.preventDefault();
+                setProfileMenuOpen(false);
+                setShowAccountPopup(true);
+              }}>
+                My Account
+              </a>
               <a href="#" className="dropdown-item">Settings</a>
               <div className="dropdown-divider"></div>
               <button className="dropdown-item logout-item" onClick={handleLogout}>
@@ -84,8 +162,219 @@ console.log("user==", user);
               </button>
             </div>
           )}
+          {showAccountPopup && (
+            // <div className="account-popup-overlay">
+            //   <div className="account-popup">
+            //     <button className="close-btn" onClick={() => setShowAccountPopup(false)}>×</button>
+
+            //     <h2>My Account</h2>
+
+            //     <div className="profile-pic-section">
+            //       <div className="profile-pic-container">
+            //         <img
+            //           src={profilePic || '/default-profile.png'}
+            //           alt="Profile"
+            //           className="account-profile-pic"
+            //         />
+            //         {editMode && (
+            //           <div className="profile-pic-upload">
+            //             <label htmlFor="profile-upload" className="upload-btn">
+            //               Change Photo
+            //             </label>
+            //             <input
+            //               id="profile-upload"
+            //               type="file"
+            //               accept="image/*"
+            //               onChange={handleFileChange}
+            //               style={{ display: 'none' }}
+            //             />
+            //           </div>
+            //         )}
+            //       </div>
+            //     </div>
+
+            //     <form onSubmit={handleSubmit}>
+            //       <div className="form-group">
+            //         <label>Name</label>
+            //         {editMode ? (
+            //           <>
+            //             <input
+            //               type="text"
+            //               name="name"
+            //               value={formData.name}
+            //               onChange={handleChange}
+            //               className={errors.name ? 'error' : ''}
+            //             />
+            //             {errors.name && <span className="error-message">{errors.name}</span>}
+            //           </>
+            //         ) : (
+            //           <div className="form-value">{user.name}</div>
+            //         )}
+            //       </div>
+
+            //       <div className="form-group">
+            //         <label>Email</label>
+            //         {editMode ? (
+            //           <>
+            //             <input
+            //               type="email"
+            //               name="email"
+            //               value={formData.email}
+            //               onChange={handleChange}
+            //               className={errors.email ? 'error' : ''}
+            //             />
+            //             {errors.email && <span className="error-message">{errors.email}</span>}
+            //           </>
+            //         ) : (
+            //           <div className="form-value">{user.email}</div>
+            //         )}
+            //       </div>
+
+            //       <div className="form-group">
+            //         <label>Role</label>
+            //         <div className="form-value">{user.role}</div>
+            //       </div>
+
+            //       {editMode && (
+            //         <>
+            //           <div className="password-section">
+            //             <h4>Change Password</h4>
+
+            //             <div className="form-group">
+            //               <label>Current Password</label>
+            //               <input
+            //                 type="password"
+            //                 name="currentPassword"
+            //                 value={formData.currentPassword}
+            //                 onChange={handleChange}
+            //                 className={errors.currentPassword ? 'error' : ''}
+            //               />
+            //               {errors.currentPassword && (
+            //                 <span className="error-message">{errors.currentPassword}</span>
+            //               )}
+            //             </div>
+
+            //             <div className="form-group">
+            //               <label>New Password</label>
+            //               <input
+            //                 type="password"
+            //                 name="newPassword"
+            //                 value={formData.newPassword}
+            //                 onChange={handleChange}
+            //                 className={errors.newPassword ? 'error' : ''}
+            //               />
+            //               {errors.newPassword && (
+            //                 <span className="error-message">{errors.newPassword}</span>
+            //               )}
+            //             </div>
+
+            //             <div className="form-group">
+            //               <label>Confirm Password</label>
+            //               <input
+            //                 type="password"
+            //                 name="confirmPassword"
+            //                 value={formData.confirmPassword}
+            //                 onChange={handleChange}
+            //                 className={errors.confirmPassword ? 'error' : ''}
+            //               />
+            //               {errors.confirmPassword && (
+            //                 <span className="error-message">{errors.confirmPassword}</span>
+            //               )}
+            //             </div>
+            //           </div>
+            //         </>
+            //       )}
+
+            //       <div className="action-buttons">
+            //         {editMode ? (
+            //           <>
+            //             <button type="button" className="cancel-btn" onClick={() => setEditMode(false)}>
+            //               Cancel
+            //             </button>
+            //             <button type="submit" className="save-btn">
+            //               Save Changes
+            //             </button>
+            //           </>
+            //         ) : (
+            //           <>
+            //             <button type="button" className="edit-btn" onClick={() => setEditMode(true)}>
+            //               Edit Profile
+            //             </button>
+            //           </>
+            //         )}
+            //       </div>
+            //     </form>
+            //   </div>
+            // </div>
+            <div className="account-popup-overlay">
+      <div className="account-popup">
+        <button className="close-btn" >×</button>
+
+        <div className="profile-header">
+          <img src={formData.profilePic || "/default-profile.png"} alt="Profile" className="profile-pics" />
+          <div>
+            <h2>{formData.name}</h2>
+            <p>{formData.email}</p>
+          </div>
         </div>
-{/* 
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Name</label>
+            {editMode ? (
+              <input type="text" name="name" value={formData.name} onChange={handleChange} />
+            ) : (
+              <div className="form-value">{formData.name}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Email Address</label>
+            {editMode ? (
+              <input type="email" name="email" value={formData.email} onChange={handleChange} />
+            ) : (
+              <div className="form-value">{formData.email}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Username</label>
+            {editMode ? (
+              <input type="text" name="username" value={formData.username} onChange={handleChange} />
+            ) : (
+              <div className="form-value">{formData.username}</div>
+            )}
+          </div>
+
+          {editMode && (
+            <div className="form-group profile-pic-upload">
+              <label>Profile Picture</label>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+            </div>
+          )}
+
+          <div className="action-buttons">
+            {editMode ? (
+              <>
+                <button type="button" className="cancel-btn" onClick={() => setEditMode(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="save-btn">
+                  Save
+                </button>
+              </>
+            ) : (
+              <button type="button" className="edit-btn" onClick={() => setEditMode(true)}>
+                Edit Profile
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
+          )}
+        </div>
+        {/* 
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -94,7 +383,9 @@ console.log("user==", user);
           
         </button> */}
       </div>
+
     </nav>
+
   );
 };
 

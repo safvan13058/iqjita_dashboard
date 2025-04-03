@@ -49,10 +49,11 @@
     transition: background-color 0.3s;
   }
   
-  .add-course-button:hover {
-    /* background-color: #40a9ff; */
+ 
+  .course-table-cell-btn{
+    display: flex;
+    gap: 20px;
   }
-  
   .add-course-icon {
     margin-right: 5px;
   }

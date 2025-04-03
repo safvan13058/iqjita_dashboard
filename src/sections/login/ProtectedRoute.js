@@ -6,10 +6,14 @@ import Sidebar from "../sidebar/sidebar";
 
 function ProtectedLayout() {
   const { isAuthenticated } = useAuth();
-
+  const user = JSON.parse(localStorage.getItem('user') );
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
+
+  // if (user.role==="admin") {
+  //   return <Navigate to="/unauth" replace />;
+  // }
 
   return (
     <>

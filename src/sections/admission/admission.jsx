@@ -24,7 +24,8 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "", branch: user.branch_id, photo: null, photoPreview: null
+            documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "",
+             branch: user.branch_id, photo: null, photoPreview: null,gender:''
         };
     });
 
@@ -125,7 +126,7 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null
+            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null,gender:''
         });
         setFeeData({
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
@@ -198,8 +199,8 @@ const AdmissionForm = ({ onBack }) => {
     };
     const isStudentDataComplete = () => {
         return Object.entries(studentData).every(([key, value]) => {
-            if (key === "discount" || key === "documents_submitted") {
-                return true; // ✅ Ignore `discount` and allow `documents_submitted` to be null
+            if (["discount", "documents_submitted", "photo", "photoPreview"].includes(key)) {
+                return true; // ✅ Explicitly allow null for these fields
             }
 
             if (Array.isArray(value)) {
@@ -209,6 +210,7 @@ const AdmissionForm = ({ onBack }) => {
             return value !== "" && value !== null; // Ensure all other fields are filled
         });
     };
+
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
@@ -225,7 +227,7 @@ const AdmissionForm = ({ onBack }) => {
         setLoading(true);
         setError(null);
 
-        console.log("studentdata==",studentData)
+        console.log("studentdata==", studentData)
 
         // Validate before sending request
         if (!isStudentDataComplete()) {
@@ -238,13 +240,16 @@ const AdmissionForm = ({ onBack }) => {
         // ✅ Add "updated_by" field dynamically
         const updatedStudentData = {
             ...studentData,
+            documents_submitted: Array.isArray(studentData.documents_submitted)
+                ? studentData.documents_submitted.join(", ")  // Convert array to string
+                : studentData.documents_submitted,  // If already a string, use as is
             updated_by: user.name // Change this value based on the user role
         };
-
+        console.log("correct", updatedStudentData)
         try {
             const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
                 method: "POST",
-                // headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedStudentData)
             });
 
@@ -261,7 +266,7 @@ const AdmissionForm = ({ onBack }) => {
             } catch (error) {
                 throw new Error("❌ Invalid JSON response from server:\n");
             }
-            if (result.status==="success") {
+            if (result.status === "success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
                 setFeeData({
                     admission_number: result.student_id,
@@ -286,43 +291,43 @@ const AdmissionForm = ({ onBack }) => {
     //     // e.preventDefault();
     //     setLoading(true);
     //     setError(null);
-    
+
     //     // ✅ Create FormData
     //     const formData = new FormData();
-    
+
     //     // Append all fields except 'photoPreview'
     //     Object.keys(studentData).forEach((key) => {
     //         if (key !== "photoPreview") {
     //             formData.append(key, studentData[key]);
     //         }
     //     });
-    
+
     //     // Append photo only if it's a valid file
     //     if (studentData.photo instanceof File) {
     //         formData.append("photo", studentData.photo);
     //     }
-    
+
     //     // ✅ Debug FormData before sending
     //     for (let pair of formData.entries()) {
     //         console.log(`${pair[0]}:`, pair[1]);  // Logs each key-value pair
     //     }
-    
+
     //     try {
     //         const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
     //             method: "POST",
     //             body: formData, // ✅ No need to set headers
     //         });
-    
+
     //         const text = await response.text();
     //         console.log("🔍 Raw API Response:", text);
-    
+
     //         let result;
     //         try {
     //             result = JSON.parse(text.trim());
     //         } catch (error) {
     //             throw new Error("❌ Invalid JSON response from server.");
     //         }
-    
+
     //         if (result.status === "success") {
     //             console.log("✅ Parsed API Response:", result);
     //             setStep(3);
@@ -336,8 +341,8 @@ const AdmissionForm = ({ onBack }) => {
     //         setLoading(false);
     //     }
     // };
-    
-    
+
+
 
 
 
@@ -422,29 +427,29 @@ const AdmissionForm = ({ onBack }) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-    
+
         try {
             const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(feeData),
             });
-    
+
             const text = await response.text();
             console.log("🔍 Raw API Response:", text); // Debugging log
-    
+
             let result;
             try {
                 result = JSON.parse(text); // Parse response correctly
             } catch (error) {
                 throw new Error("❌ Invalid JSON response from server:\n" + text);
             }
-    
+
             if (response.ok && result.status === "success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
                 setReceipt(result);
                 setStep(4);
-    
+
                 // Proceed with transaction API call
                 const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
                     method: "POST",
@@ -457,17 +462,17 @@ const AdmissionForm = ({ onBack }) => {
                         updated_by: "admin",
                     }),
                 });
-    
+
                 const transactionText = await transactionResponse.text();
                 console.log("🔍 Transaction API Response:", transactionText); // Debugging log
-    
+
                 let transactionResult;
                 try {
                     transactionResult = JSON.parse(transactionText);
                 } catch (error) {
                     throw new Error("❌ Invalid JSON response from transaction API:\n" + transactionText);
                 }
-    
+
                 if (transactionResponse.ok && transactionResult.status === "success") {
                     console.log("✅ Transaction Successful:", transactionResult);
                     alert(transactionResult.message);
@@ -485,7 +490,7 @@ const AdmissionForm = ({ onBack }) => {
             setLoading(false);
         }
     };
-    
+
 
     const handleCalculate = async () => {
         setLoading(true);
@@ -606,6 +611,38 @@ const AdmissionForm = ({ onBack }) => {
                                 // max={new Date().toISOString().split("T")[0]} // Restricts future dates
                                 required
                             />
+                            <label>Gender</label>
+                            <div className="gender-ratio">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="male"
+                                    checked={studentData.gender === "male"}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <label>Male</label>
+
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="female"
+                                    checked={studentData.gender === "female"}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <label>Female</label>
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="others"
+                                    checked={studentData.gender === "others"}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <label>Others</label>
+                            </div>
+
 
 
                             <label>Location</label>
@@ -749,7 +786,7 @@ const AdmissionForm = ({ onBack }) => {
                                             {c.name}
                                         </option>
                                     ))}
-                            </select> */} 
+                            </select> */}
 
                             {/* <label>Country</label>
                             <input
@@ -786,7 +823,7 @@ const AdmissionForm = ({ onBack }) => {
                                 value={studentData.city || ""}
                                 onChange={handleChange}
                                 required
-                            /> 
+                            />
                         </div>
 
                         {/* Right Side: Course Details */}

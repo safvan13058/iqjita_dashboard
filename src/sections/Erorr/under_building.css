@@ -1,0 +1,16 @@
+.flex img{
+    height: 80vh;
+}
+.flex {
+    position: relative;
+}
+.mt-4 {
+    width: 500px;
+    position:absolute;
+    right: 10px;
+    top:100px
+}
+
+/* under_building.css */
+
+

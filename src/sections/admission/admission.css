@@ -370,7 +370,10 @@ strong {
     display: flex;
     /* align-items: baseline; */
 }
-
+.gender-ratio{
+    margin-top: 20px;
+    display: flex;
+}
 /* .discount-buttons button{
  padding: 0 15px;   
 } */
