@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Student Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #fff; color: #333; }
+        h2, h3 { color: #0F6D66; border-bottom: 2px solid #0F6D66; padding-bottom: 5px; }
+        .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        .info { display: flex; justify-content: space-between; padding: 5px 0; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .table th { background: #0F6D66; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Details</h2>
+
+        <div class="card">
+            <h3>Personal Information</h3>
+            <p><strong>Name:</strong> <span id="name"></span></p>
+            <p><strong>Admission Number:</strong> <span id="admission_no"></span></p>
+            <p><strong>Contact:</strong> <span id="contact"></span></p>
+        </div>
+
+        <div class="card">
+            <h3>Course Information</h3>
+            <p><strong>Course:</strong> <span id="course"></span></p>
+            <p><strong>Duration:</strong> <span id="duration"></span> years</p>
+        </div>
+
+        <div class="card">
+            <h3>Payment Information</h3>
+            <p><strong>Total Paid:</strong> <span id="total_paid"></span></p>
+            <p><strong>Total Pending:</strong> <span id="total_pending"></span></p>
+        </div>
+
+        <button id="print-btn" onclick="window.print()">Print</button>
+    </div>
+
+    <script>
+        // Retrieve student data from localStorage
+        const student = JSON.parse(localStorage.getItem('selectedStudent'));
+
+        if (student) {
+            document.getElementById("name").textContent = student.name;
+            document.getElementById("admission_no").textContent = student.admission_no;
+            document.getElementById("contact").textContent = student.contact_number;
+            document.getElementById("course").textContent = student.s_course;
+            document.getElementById("duration").textContent = student.duration;
+            document.getElementById("total_paid").textContent = student.TotalPaid;
+            document.getElementById("total_pending").textContent = student.TotalPending;
+        }
+
+        // Auto print when the page loads
+        window.onload = () => {
+            setTimeout(() => {
+                window.print();
+                window.close();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './students.css';
+import { format } from 'date-fns';
+
+// import recipt from '../Recipts/studentdata.html'
 
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
@@ -18,16 +21,35 @@ const StudentsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [receiptUrl, setReceiptUrl] = useState("");
+  const [receipt, setReceiptUrl] = useState("");
   const user=JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
+
+  const handlePrint = (student) => {
+    // Store student data in localStorage
+    localStorage.setItem("selectedStudentdata", JSON.stringify(student));
+  
+    // Open the new print page
+    window.open("/recipts/studentdata.html", "_blank");
+  };
+  const ReceiptPrint = ( Receipt) => {
+    // Store student data in localStorage
+
+
+    localStorage.setItem("Receiptdata", JSON.stringify(Receipt));
+
+    // Open the new print page
+    window.open("/recipts/billreceipt.html", "_blank");
+};
   const handleAdmissionFeePayment = () => {
     setIsModalOpen(true);
     setIsSuccess(false);
     setReceiptUrl("");
     setResponseMessage("");
   };
+
+
 
   const submitPayment = async () => {
     setIsLoading(true);
@@ -37,7 +59,7 @@ const StudentsPage = () => {
       admission_number: selectedStudent.admission_no,
       course: selectedStudent.s_course,
       final_fee: selectedStudent.final_fees,
-      updated_by: "admin"
+      updated_by: user.name
     };
 
     try {
@@ -53,7 +75,8 @@ const StudentsPage = () => {
       if (data.status === "success") {
         setIsSuccess(true);
         setResponseMessage("Payment updated successfully!");
-        setReceiptUrl(`https://software.iqjita.com/receipt.php?admission_number=${selectedStudent.admission_number}`);
+        console.log("admission",data);
+        setReceiptUrl(data);
                     // Call transaction API after success
         await recordTransaction(1000, "credit", "Admission", selectedStudent.admission_no);
 
@@ -428,12 +451,15 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="modal-footer">
-                  <button className="action-btn print-btn" onClick={() => window.print()}>
+                <button className="action-btn print-btn" onClick={() => window.print()}>
+                    Edit Details
+                  </button>
+                  <button className="action-btn print-btn" onClick={() => handlePrint(selectedStudent)}>
                     Print Details
                   </button>
-                  <button className="action-btn close-btn" onClick={handleCloseModal}>
+                  {/* <button className="action-btn close-btn" onClick={handleCloseModal}>
                     Close
-                  </button>
+                  </button> */}
                 </div>
               </>
             )}
@@ -454,9 +480,16 @@ const StudentsPage = () => {
                     </>
                   ) : (
                     <div> 
-                        <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="receipt-btn">
-                            Download Receipt
-                        </a>
+                        <button className="receipt-btn" onClick={() => ReceiptPrint ({
+                           name:selectedStudent.name,
+                           course: selectedStudent.course,
+                           receipt_no: receipt.receipt_no,
+                           amount: 1000,
+                           timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
+                           user:user.name
+                        })}>
+                        Download Receipt
+                        </button>
                         <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>
                             Close
                         </button>
@@ -508,7 +541,7 @@ const StudentsPage = () => {
                 ))}
               </tbody>
             </table>
-            <button className="transpop-close-btn" onClick={() => setTranpop(false)}>Close</button>
+            {/* <button className="transpop-close-btn" onClick={() => setTranpop(false)}>Close</button> */}
           </div>
         </div>
       )}

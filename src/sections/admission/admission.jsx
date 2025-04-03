@@ -3,6 +3,8 @@ import "./admission.css"; // Import CSS file
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { format } from 'date-fns';
+
 import { Country, State, City } from "country-state-city";
 const AdmissionForm = ({ onBack }) => {
     const navigate = useNavigate();
@@ -19,13 +21,22 @@ const AdmissionForm = ({ onBack }) => {
         return parseInt(localStorage.getItem("admissionStep")) || 1;
     });
     const user = JSON.parse(localStorage.getItem('user'));
+    const ReceiptPrint = ( Receipt) => {
+        // Store student data in localStorage
+
+
+        localStorage.setItem("Receiptdata", JSON.stringify(Receipt));
+
+        // Open the new print page
+        window.open("/recipts/billreceipt.html", "_blank");
+    };
     const [studentData, setStudentData] = useState(() => {
         return JSON.parse(localStorage.getItem("studentData")) || {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
             documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "",
-             branch: user.branch_id, photo: null, photoPreview: null,gender:''
+            branch: user.branch_id, photo: null, photoPreview: null, gender: ''
         };
     });
 
@@ -126,7 +137,7 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null,gender:''
+            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null, gender: ''
         });
         setFeeData({
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
@@ -1087,7 +1098,15 @@ const AdmissionForm = ({ onBack }) => {
                         {/* <p><strong>Message:</strong> {receipt.message}</p> */}
                     </div>
 
-                    <button onClick={() => window.print()}>🖨 Print Receipt</button>
+                    <button onClick={() => ReceiptPrint({
+                        name: studentData.name,
+                        course: studentData.course,
+                        receipt_no: receipt.receipt_no,
+                        amount: 1000,
+                        timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
+                        user:user.name
+
+                    })}>🖨 Print Receipt</button>
                     <button onClick={resetAdmission}>Start New Admission</button>
 
                 </div>

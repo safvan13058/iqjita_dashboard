@@ -232,7 +232,7 @@
   color:black;
   border: none;
   padding: 8px 15px;
-  cursor: pointer;
+  cursor: pointer; 
   border-radius: 5px;
 }
 .fullscreen-btn:hover{
@@ -258,7 +258,6 @@
   max-height: 400px;
   overflow-y: auto;
 }
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .stat-cards {

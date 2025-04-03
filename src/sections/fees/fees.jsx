@@ -23,6 +23,7 @@ const FeeForm = ({ onBack, currentUser }) => {
   const [selectedInstallment, setSelectedInstallment] = useState(1); // Stores selected installment
   const [allStudents, setAllStudents] = useState([]); // Stores all students
   const [courseOptions, setCourses] = useState([]); // Stores all students
+
   // const courseOptions = [
   //   "Computer Science",
   //   "Business Administration",
@@ -32,6 +33,15 @@ const FeeForm = ({ onBack, currentUser }) => {
   // ]; // ✅ List of courses
   // Fetch students from API when selectedCourse changes
   const user = JSON.parse(localStorage.getItem('user'));
+  const ReceiptPrint = ( Receipt) => {
+    // Store student data in localStorage
+
+
+    localStorage.setItem("Receiptdata", JSON.stringify(Receipt));
+
+    // Open the new print page
+    window.open("/recipts/billreceipt.html", "_blank");
+};
   // const fetchCourseOptions = async () => {
   //        try {
   //            const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
@@ -536,12 +546,20 @@ const FeeForm = ({ onBack, currentUser }) => {
               {transactionId && <p><strong>Transaction ID:</strong> {transactionId}</p>}
               <p><strong>Total Paid:</strong>  {paymentStatus.totalPaid?.toLocaleString()}</p>
               <p><strong>Balance:</strong>  {paymentStatus.totalPending?.toLocaleString()}</p>
-              <p><strong>Processed By:</strong> {currentUser?.username || "admin"}</p>
+              <p><strong>Processed By:</strong> {user.name || "admin"}</p>
               <p><strong>Date:</strong> {format(new Date(), 'yyyy-MM-dd HH:mm')}</p>
             </div>
 
             <div className="receipt-actions">
-              <button onClick={printReceipt} className="print-btn">
+              <button onClick={()=>ReceiptPrint({
+                name: selectedStudent.name,
+                course: selectedStudent.course,
+                receipt_no: transactionId,
+                amount:parseFloat(amount),
+                timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
+                user:user.name
+
+              })} className="print-btn">
                 Print Receipt
               </button>
               <button onClick={resetForm} className="new-payment-btn">
