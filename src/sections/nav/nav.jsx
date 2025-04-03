@@ -4,7 +4,14 @@ import "../common/colour.css";
 import { useAuth } from "../login/auth";
 import { useNavigate } from "react-router-dom";
 import logo from '../images/logo.png'
-import profile from '../images/profile.png'
+import profiles from '../images/profile.png'
+import pic1 from '../images/profile_pic/pic1.png'
+import pic2 from '../images/profile_pic/pic2.png'
+import pic3 from '../images/profile_pic/pic3.png'
+import pic4 from '../images/profile_pic/pic7.png'
+import pic5 from '../images/profile_pic/pic5.png'
+import pic6 from '../images/profile_pic/pic6.png'
+
 const Navbar = () => {
   const [theme, setTheme] = useState("light-theme");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,8 +20,23 @@ const Navbar = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const [profile, setProfile] = useState( localStorage.getItem(`profile_${user.id}`)||profiles );
+  const [showPopup, setShowPopup] = useState(false);
   console.log("user==", user);
+  const defaultImages = [
+    pic1,
+    pic2,
+    profiles,
+    pic4,
+    pic5,
+    pic6
+  ];
 
+  const handleSelectImage = (img) => {
+    setProfile(img);
+    localStorage.setItem(`profile_${user.id}`, img);
+    // setShowPopup(false);
+  };
   // Load saved theme from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("selected-theme") || "light-theme";
@@ -144,7 +166,7 @@ const Navbar = () => {
                 />
                 <div className="profile-info">
                   <div className="profile-name">{user.name}</div>
-                  <div className="profile-email">{user.email}</div>
+                  <div className="profile-email">{user.role}</div>
                 </div>
               </div>
               <div className="dropdown-divider"></div>
@@ -307,74 +329,94 @@ const Navbar = () => {
             //   </div>
             // </div>
             <div className="account-popup-overlay">
-      <div className="account-popup">
-        <button className="close-btn" >×</button>
+              <div className="account-popup">
+                <button className="close-btn" onClick={() => setShowAccountPopup(false)} >×</button>
 
-        <div className="profile-header">
-          <img src={formData.profilePic || "/default-profile.png"} alt="Profile" className="profile-pics" />
-          <div>
-            <h2>{formData.name}</h2>
-            <p>{formData.email}</p>
-          </div>
-        </div>
+                <div className="profile-header">
+                  <div className="profile-container">
+                    <img src={profile || "/default-profile.png"} alt="Profile" className="profile-pics" />
+                    <button className="edit-icon" onClick={() => setShowPopup(true)}>
+                      ✏️ {/* You can replace this with an actual icon */}
+                    </button>
+                  </div>
+                  <div className="name-card">
+                  <h2>{user.name}</h2>
+                  <p>{user.role}</p>
+                  </div>
+                </div>
+              
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Name</label>
-            {editMode ? (
-              <input type="text" name="name" value={formData.name} onChange={handleChange} />
-            ) : (
-              <div className="form-value">{formData.name}</div>
-            )}
-          </div>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Name</label>
 
-          <div className="form-group">
-            <label>Email Address</label>
-            {editMode ? (
-              <input type="email" name="email" value={formData.email} onChange={handleChange} />
-            ) : (
-              <div className="form-value">{formData.email}</div>
-            )}
-          </div>
+                  <div className="form-value">{formData.name}</div>
 
-          <div className="form-group">
-            <label>Username</label>
-            {editMode ? (
-              <input type="text" name="username" value={formData.username} onChange={handleChange} />
-            ) : (
-              <div className="form-value">{formData.username}</div>
-            )}
-          </div>
+                </div>
 
-          {editMode && (
-            <div className="form-group profile-pic-upload">
-              <label>Profile Picture</label>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+                <div className="form-group">
+                  <label>Email Address</label>
+                  <div className="form-value">{formData.email}</div>
+                </div>
+
+                <div className="form-group">
+                  <label>Branch</label>
+                  <div className="form-value">{formData.username}</div>
+                </div>
+
+                {editMode && (
+                  <div className="form-group profile-pic-upload">
+                    <label>Profile Picture</label>
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
+                  </div>
+                )}
+
+                <div className="action-buttons">
+                  {editMode ? (
+                    <>
+                      <button type="button" className="cancel-btn" onClick={() => setEditMode(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" className="save-btn">
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" className="edit-btn" onClick={() => setEditMode(true)}>
+                      Edit Profile
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
+         </div>
           )}
-
-          <div className="action-buttons">
-            {editMode ? (
-              <>
-                <button type="button" className="cancel-btn" onClick={() => setEditMode(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="save-btn">
-                  Save
-                </button>
-              </>
-            ) : (
-              <button type="button" className="edit-btn" onClick={() => setEditMode(true)}>
-                Edit Profile
-              </button>
-            )}
+           {/* Popup Modal */}
+      {showPopup && (
+        <div className="profile-popup-overlay">
+          <div className="profile-popup">
+            <h3>Select a Profile Picture</h3>
+            <button className="profile-edit-close-btn" onClick={() => setShowPopup(false)}>×</button>
+            <div className="image-pre-pic">
+              <img src={profile} alt="profile" />
+            </div>
+            <div className="image-grid">
+              {defaultImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`Profile ${index + 1}`}
+                  className="default-image"
+                  onClick={() => handleSelectImage(img)}
+                />
+              ))}
+            </div>
+            
           </div>
-        </form>
-      </div>
-    </div>
-          )}
         </div>
-        {/* 
+      )}
+      </div>
+      {/* 
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -382,9 +424,9 @@ const Navbar = () => {
         >
           
         </button> */}
-      </div>
+    </div>
 
-    </nav>
+    </nav >
 
   );
 };

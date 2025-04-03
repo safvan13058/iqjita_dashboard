@@ -13,34 +13,118 @@ const StudentsPage = () => {
   const [viewLoading, setViewLoading] = useState(false);
   const [viewError, setViewError] = useState(null)
   const [transactions, setTransactions] = useState([]);
-  const [tranpop,setTranpop]=useState(false)
+  const [tranpop, setTranpop] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [receiptUrl, setReceiptUrl] = useState("");
+  const user=JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
+  const handleAdmissionFeePayment = () => {
+    setIsModalOpen(true);
+    setIsSuccess(false);
+    setReceiptUrl("");
+    setResponseMessage("");
+  };
 
-  // const fetchTransactions = async (id) => {
-  //   try {
-  //     const response = await fetch("https://software.iqjita.com/administration.php?action=listindividualtransaction", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ id: id }),
-  //     });
-      
-  //     console.log("logss",response)
-  //     const data = await response.json();
+  const submitPayment = async () => {
+    setIsLoading(true);
+    setResponseMessage("");
 
-  //     if (data.status === "success") {
-  //       setTransactions(data.student);
-  //       setTranpop(true);
-  //     } else {
-  //       alert("Failed to fetch transactions");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching transactions:", error);
-  //     alert("Error fetching transactions");
-  //   }
-  // };
+    const payload = {
+      admission_number: selectedStudent.admission_no,
+      course: selectedStudent.s_course,
+      final_fee: selectedStudent.final_fees,
+      updated_by: "admin"
+    };
+
+    try {
+      const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (data.status === "success") {
+        setIsSuccess(true);
+        setResponseMessage("Payment updated successfully!");
+        setReceiptUrl(`https://software.iqjita.com/receipt.php?admission_number=${selectedStudent.admission_number}`);
+                    // Call transaction API after success
+        await recordTransaction(1000, "credit", "Admission", selectedStudent.admission_no);
+
+      } else {
+        setResponseMessage("Failed to update payment.");
+      }
+    } catch (error) {
+      setResponseMessage("Error processing payment. Please try again.");
+    }
+
+    setIsLoading(false);
+  };
+  const recordTransaction = async (amount, type, category, remark) => {
+    const transactionPayload = {
+        amount,
+        type,
+        category,
+        remark,
+        updated_by: user.name
+    };
+
+    try {
+        const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(transactionPayload)
+        });
+
+        const transactionData = await transactionResponse.json();
+
+        if (transactionData.status === "success") {
+            console.log("Transaction recorded successfully:", transactionData);
+        } else {
+            console.error("Failed to record transaction.");
+        }
+    } catch (error) {
+        console.error("Error recording transaction:", error);
+    }
+};
+  const fetchTransactions = async (id) => {
+    console.log("id===", id)
+    try {
+      const response = await fetch("https://software.iqjita.com/administration.php?action=listindividualtransaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      });
+
+      // ✅ Log the raw response
+      const rawText = await response.text();
+      console.log("🔍 Raw API Response:", rawText);
+
+      // ✅ Try parsing the JSON
+      const data = JSON.parse(rawText.trim());
+
+      if (data.status === "success") {
+        setTransactions(data.transaction);
+        setTranpop(true);
+      } else {
+        alert("Failed to fetch transactions");
+      }
+    } catch (error) {
+      console.error("🚨 Error fetching transactions:", error);
+      alert("Error fetching transactions");
+    }
+  };
+
 
 
   const handlePayment = (student) => {
@@ -52,50 +136,50 @@ const StudentsPage = () => {
     setError(null);
 
     try {
-        const response = await fetch("https://software.iqjita.com/administration.php?action=liststudentbycourse", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ course })
-        });
+      const response = await fetch("https://software.iqjita.com/administration.php?action=liststudentbycourse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ course })
+      });
 
-        // ✅ Read the raw response as text
-        const text = await response.text();
-        console.log("🔍 Raw API Response:", text);
+      // ✅ Read the raw response as text
+      const text = await response.text();
+      console.log("🔍 Raw API Response:", text);
 
-        // ✅ Extract the second JSON object
-        const jsonObjects = text.trim().split("\n"); 
-        const lastJson = jsonObjects.pop(); // Take the second (last) JSON object
+      // ✅ Extract the second JSON object
+      const jsonObjects = text.trim().split("\n");
+      const lastJson = jsonObjects.pop(); // Take the second (last) JSON object
 
-        let result;
-        try {
-            result = JSON.parse(lastJson); // ✅ Parse the correct JSON
-        } catch (error) {
-            throw new Error("❌ Invalid JSON response from server:\n" + text);
-        }
+      let result;
+      try {
+        result = JSON.parse(lastJson); // ✅ Parse the correct JSON
+      } catch (error) {
+        throw new Error("❌ Invalid JSON response from server:\n" + text);
+      }
 
-        // ✅ Check if API returned success or error
-        if (result.status === "success") {
-            console.log("✅ Students Fetched Successfully:", result.students);
-            setStudents(result.students || []);
-        } else {
-            throw new Error(result.message || "❌ Failed to fetch students.");
-        }
+      // ✅ Check if API returned success or error
+      if (result.status === "success") {
+        console.log("✅ Students Fetched Successfully:", result.students);
+        setStudents(result.students || []);
+      } else {
+        throw new Error(result.message || "❌ Failed to fetch students.");
+      }
     } catch (err) {
-        setError(err.message);
-        console.error("🚨 Error fetching students:", err);
+      setError(err.message);
+      console.error("🚨 Error fetching students:", err);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
-const fetchCourseOptions = async () => {
-  console.log("working");
-  try {
+  const fetchCourseOptions = async () => {
+    console.log("working");
+    try {
       const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
 
       if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const text = await response.text(); // Read raw response
@@ -104,40 +188,40 @@ const fetchCourseOptions = async () => {
       // Try parsing JSON safely
       let data;
       try {
-          data = JSON.parse(text);
+        data = JSON.parse(text);
       } catch (jsonError) {
-          throw new Error("Failed to parse JSON: " + jsonError.message);
+        throw new Error("Failed to parse JSON: " + jsonError.message);
       }
 
       console.log("Parsed Data:", data);
 
       if (data.status === "success") {
-          const formattedCourses = data.courses.map(course => ({
-              course: course.course,
-          }));
+        const formattedCourses = data.courses.map(course => ({
+          course: course.course,
+        }));
 
-          console.log("✅ Transformed Course Options:", formattedCourses);
-          setCourses(formattedCourses); // Set the fetched courses in state
+        console.log("✅ Transformed Course Options:", formattedCourses);
+        setCourses(formattedCourses); // Set the fetched courses in state
       } else {
-          console.error("❌ Failed to fetch courses:", data);
+        console.error("❌ Failed to fetch courses:", data);
       }
-  } catch (error) {
+    } catch (error) {
       console.error("🚨 Error fetching courses:", error.message);
-  }
-};
+    }
+  };
 
-    useEffect(() => {
-        fetchCourseOptions();
-    }, []);
-const fetchStudentDetails = async (admissionNumber) => {
-  setViewLoading(true);
-  setViewError(null);
+  useEffect(() => {
+    fetchCourseOptions();
+  }, []);
+  const fetchStudentDetails = async (admissionNumber) => {
+    setViewLoading(true);
+    setViewError(null);
 
-  try {
+    try {
       const response = await fetch("https://software.iqjita.com/administration.php?action=liststudentbyadmn", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ admn: admissionNumber })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ admn: admissionNumber })
       });
 
       // ✅ Read raw response as text
@@ -150,33 +234,33 @@ const fetchStudentDetails = async (admissionNumber) => {
 
       let result;
       try {
-          result = JSON.parse(lastJson); // ✅ Parse the correct JSON
+        result = JSON.parse(lastJson); // ✅ Parse the correct JSON
       } catch (error) {
-          throw new Error("❌ Invalid JSON response from server:\n" + text);
+        throw new Error("❌ Invalid JSON response from server:\n" + text);
       }
 
       // ✅ Check if API returned success or error
       if (result.status === "success") {
-          console.log("✅ Student Details Fetched:", result.student);
-          setSelectedStudent(result.student[0] || {}); // ✅ Ensure we get the first student object
+        console.log("✅ Student Details Fetched:", result.student);
+        setSelectedStudent(result.student[0] || {}); // ✅ Ensure we get the first student object
       } else {
-          throw new Error(result.message || "❌ Failed to fetch student details.");
+        throw new Error(result.message || "❌ Failed to fetch student details.");
       }
-  } catch (err) {
+    } catch (err) {
       setViewError(err.message);
       console.error("🚨 Error fetching student details:", err);
-  } finally {
+    } finally {
       setViewLoading(false);
-  }
-};
-const handleViewStudent = (admissionNumber) => {
-  fetchStudentDetails(admissionNumber);
-};
+    }
+  };
+  const handleViewStudent = (admissionNumber) => {
+    fetchStudentDetails(admissionNumber);
+  };
 
-const handleCloseModal = () => {
-  setSelectedStudent(null);
-  setViewError(null);
-};
+  const handleCloseModal = () => {
+    setSelectedStudent(null);
+    setViewError(null);
+  };
 
 
   useEffect(() => {
@@ -187,7 +271,7 @@ const handleCloseModal = () => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const filteredStudents = students.filter(student => 
+  const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(searchTerm) ||
     student.admission_number.toString().includes(searchTerm) ||
     student.contact_number.includes(searchTerm) ||
@@ -197,18 +281,18 @@ const handleCloseModal = () => {
   return (
     <div className="students-container">
       <h1>Student Management</h1>
-      
+
       <div className="controls">
         <h3>Student of {selectedCourse}</h3>
         <div className="search-filter">
-          
-          
-          <select 
-            value={selectedCourse} 
+
+
+          <select
+            value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
             className="course-select"
           >
-            {console.log("courses",courses)}
+            {console.log("courses", courses)}
             {courses.map(course => (
               <option key={course.course} value={course.course}>{course.course}</option>
             ))}
@@ -253,10 +337,10 @@ const handleCloseModal = () => {
                   <td>Rs.{student.final_fee}</td>
                   <td>{student.batch_time}</td>
                   <td>
-                    <button className="action-btn view-btn"  onClick={() => handleViewStudent(student.admission_number)}>View</button>
-                    <button className="action-btn edit-btn">Edit</button>
-                    <button className="action-btn edit-btn" onClick={() => handlePayment(student)}>pay</button>
-                  
+                    <button className="action-btn view-btn" onClick={() => handleViewStudent(student.admission_number)}>View</button>
+                    {/* <button className="action-btn edit-btn">Edit</button> */}
+                    <button className="action-btn edit-btn" onClick={() => handlePayment(student)}>payment</button>
+
                   </td>
                 </tr>
               ))
@@ -270,86 +354,122 @@ const handleCloseModal = () => {
           </tbody>
         </table>
       </div>
-   
 
-    {selectedStudent && (
-      <div className="modal-overlay">
-        <div className="modal-content">
-          <button className="close-modal" onClick={handleCloseModal}>×</button>
-          
-          {viewLoading && <div className="loading">Loading student details...</div>}
-          {viewError && <div className="error">Error: {viewError}</div>}
-          
-          {!viewLoading && !viewError && (
-            <>
-              <h2>Student Details</h2>
-              <div className="student-details-grid">
-                <div className="detail-section section1">
-                  <div className='pr-container'>
-                  <h3>Personal Information</h3>
-                  <p><strong>Name:</strong> {selectedStudent.name}</p>
-                  <p><strong>Admission Number:</strong> {selectedStudent.admission_number}</p>
-                  <p><strong>Contact:</strong> {selectedStudent.contact_number}</p>
-                  <p><strong>Parent Contact:</strong> {selectedStudent.parent_contact}</p>
-                  <p><strong>Email:</strong> {selectedStudent.email}</p>
-                  <p><strong>Location:</strong> {selectedStudent.location}</p>
+
+      {selectedStudent && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-modal" onClick={handleCloseModal}>×</button>
+
+            {viewLoading && <div className="loading">Loading student details...</div>}
+            {viewError && <div className="error">Error: {viewError}</div>}
+
+            {!viewLoading && !viewError && (
+              <>
+                <h2>Student Details</h2>
+                <div className="student-details-grid">
+                  <div className="detail-section section1">
+                    <div className='pr-container'>
+                      <h3>Personal Information</h3>
+                      <p><strong>Name:</strong> {selectedStudent.name}</p>
+                      <p><strong>Admission Number:</strong> {selectedStudent.admission_no}</p>
+                      <p><strong>Contact:</strong> {selectedStudent.contact_number}</p>
+                      <p><strong>Parent Contact:</strong> {selectedStudent.parent_contact}</p>
+                      <p><strong>Email:</strong> {selectedStudent.email}</p>
+                      <p><strong>Location:</strong> {selectedStudent.location}</p>
+                    </div>
+                    <div className='pr-image'>
+                      <img src="" alt="" />
+                    </div>
                   </div>
-                  <div className='pr-image'>
-                    <img src="" alt="" />
+
+                  <div className="detail-section">
+                    <h3>Course Information</h3>
+                    <p><strong>Course:</strong> {selectedStudent.s_course}</p>
+                    <p><strong>Duration:</strong> {selectedStudent.duration} year(s)</p>
+                    <p><strong>Batch Time:</strong> {selectedStudent.batch_time}</p>
+                    <p><strong>Exact Fee:</strong>  {selectedStudent.exact_fee}</p>
+                    <p><strong>Discount:</strong> {selectedStudent.discount}</p>
+                    <p><strong>Final Fee:</strong> {selectedStudent.final_fees}</p>
+                  </div>
+
+                  <div className="detail-section">
+                    <h3>Payment Information</h3>
+                    <p><strong>Admission Fee:</strong> {selectedStudent.admission_fee}</p>
+                    <p><strong>Total Paid:</strong>  {selectedStudent.TotalPaid}</p>
+                    <p><strong>Total Pending:</strong>  {selectedStudent.TotalPending}</p>
+
+                    <h4>Installments</h4>
+                    <p><strong>Installment 1:</strong>  {selectedStudent.install1} (Balance:  {selectedStudent.bal1})</p>
+                    <p><strong>Installment 2:</strong>  {selectedStudent.install2} (Balance:  {selectedStudent.bal2})</p>
+                    <p><strong>Installment 3:</strong> {selectedStudent.install3} (Balance:  {selectedStudent.bal3})</p>
+                    <p><strong>Installment 4:</strong> {selectedStudent.install4} (Balance:  {selectedStudent.bal4})</p>
+                    <p><strong>Installment 5:</strong> {selectedStudent.install5} (Balance: {selectedStudent.bal5})</p>
+                    <div    className='ad-pop'>
+                      <button onClick={() => fetchTransactions(selectedStudent.admission_number)}>View transations</button>
+                      {selectedStudent.admission_fee === null && (
+                        <button className="pay-admission-fee-btn" onClick={handleAdmissionFeePayment}>
+                          Pay Admission Fee
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="detail-section">
+                    <h3>Additional Information</h3>
+                    <p><strong>Address:</strong> {selectedStudent.address || 'N/A'}</p>
+                    <p><strong>City:</strong> {selectedStudent.city || 'N/A'}</p>
+                    <p><strong>District:</strong> {selectedStudent.district || 'N/A'}</p>
+                    <p><strong>State:</strong> {selectedStudent.state || 'N/A'}</p>
+                    <p><strong>Country:</strong> {selectedStudent.country || 'N/A'}</p>
+                    <p><strong>Documents Submitted:</strong>{JSON.stringify(selectedStudent.documents_submitted) || 'N/A'}</p>
+                    <p><strong>Education Qualification:</strong> {selectedStudent.education_qualification || 'N/A'}</p>
                   </div>
                 </div>
 
-                <div className="detail-section">
-                  <h3>Course Information</h3>
-                  <p><strong>Course:</strong> {selectedStudent.course}</p>
-                  <p><strong>Duration:</strong> {selectedStudent.duration} year(s)</p>
-                  <p><strong>Batch Time:</strong> {selectedStudent.batch_time}</p>
-                  <p><strong>Exact Fee:</strong>  {selectedStudent.exact_fee}</p>
-                  <p><strong>Discount:</strong> {selectedStudent.discount}</p>
-                  <p><strong>Final Fee:</strong> {selectedStudent.final_fee}</p>
+                <div className="modal-footer">
+                  <button className="action-btn print-btn" onClick={() => window.print()}>
+                    Print Details
+                  </button>
+                  <button className="action-btn close-btn" onClick={handleCloseModal}>
+                    Close
+                  </button>
                 </div>
+              </>
+            )}
+            {/* Modal Popup */}
+            {isModalOpen && (
+              <div className="modal-overlay">
+                <div className="modal-container">
+                  <h3>Confirm Payment</h3>
+                  <p>Are you sure you want to update the admission fee payment?</p>
+                  {responseMessage && <p className={`modal-message ${isSuccess ? "success-message" : "error-message"}`}>{responseMessage}</p>}
 
-                <div className="detail-section">
-                  <h3>Payment Information</h3>
-                  <p><strong>Admission Fee:</strong> {selectedStudent.admission_fee}</p>
-                  <p><strong>Total Paid:</strong>  {selectedStudent.TotalPaid}</p>
-                  <p><strong>Total Pending:</strong>  {selectedStudent.TotalPending}</p>
-                  
-                  <h4>Installments</h4>
-                  <p><strong>Installment 1:</strong>  {selectedStudent.install1} (Balance:  {selectedStudent.bal1})</p>
-                  <p><strong>Installment 2:</strong>  {selectedStudent.install2} (Balance:  {selectedStudent.bal2})</p>
-                  <p><strong>Installment 3:</strong> {selectedStudent.install3} (Balance:  {selectedStudent.bal3})</p>
-                  <p><strong>Installment 4:</strong> {selectedStudent.install4} (Balance:  {selectedStudent.bal4})</p>
-                  <p><strong>Installment 5:</strong> {selectedStudent.install5} (Balance: {selectedStudent.bal5})</p>
-                  {/* <button onClick={fetchTransactions(selectedStudent.admission_number)}>View transations</button> */}
-                </div>
-
-                <div className="detail-section">
-                  <h3>Additional Information</h3>
-                  <p><strong>Address:</strong> {selectedStudent.address || 'N/A'}</p>
-                  <p><strong>City:</strong> {selectedStudent.city || 'N/A'}</p>
-                  <p><strong>District:</strong> {selectedStudent.district || 'N/A'}</p>
-                  <p><strong>State:</strong> {selectedStudent.state || 'N/A'}</p>
-                  <p><strong>Country:</strong> {selectedStudent.country || 'N/A'}</p>
-                  <p><strong>Documents Submitted:</strong> {selectedStudent.documents_submitted || 'N/A'}</p>
-                  <p><strong>Education Qualification:</strong> {selectedStudent.education_qualification || 'N/A'}</p>
+                  {!isSuccess ? (
+                    <>
+                      <button className="confirm-btn" onClick={submitPayment} disabled={isLoading}>
+                        {isLoading ? "Processing..." : "Confirm"}
+                      </button>
+                      <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                    </>
+                  ) : (
+                    <div> 
+                        <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="receipt-btn">
+                            Download Receipt
+                        </a>
+                        <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>
+                            Close
+                        </button>
+                    </div>
+                )}
+                
                 </div>
               </div>
-
-              <div className="modal-footer">
-                <button className="action-btn print-btn" onClick={() => window.print()}>
-                  Print Details
-                </button>
-                <button className="action-btn close-btn" onClick={handleCloseModal}>
-                  Close
-                </button>
-              </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    )}
-     {tranpop && (
+      )}
+      {tranpop && (
         <div className="transpop-overlay">
           <div className="transpop-content">
             <h2>Transactions</h2>

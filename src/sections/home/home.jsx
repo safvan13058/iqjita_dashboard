@@ -4,7 +4,7 @@ import "./home.css";
 import AdmissionForm from "../admission/admission";
 import FeeForm from "../fees/fees";
 import CourseForm from "../course/course";
-
+import { Maximize, Minimize } from "lucide-react"; 
 const Home = () => {
   const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState(null);
@@ -319,7 +319,7 @@ const Home = () => {
               {/* Buttons: Close & Full Screen Toggle */}
               <div className="popup-buttons">
                 <button className="fullscreen-btn" onClick={() => setIsFullScreen(!isFullScreen)}>
-                  {isFullScreen ? "Exit Full Screen" : "Full Screen"}
+                {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
                 </button>
                 <button className="close-modal" onClick={() => setShowPopup(false)}>×</button>
               </div>
@@ -393,7 +393,7 @@ const Home = () => {
               </table>
             </div>
 
-            <button className="close-btn" onClick={() => setShowPopup(false)}>Close</button>
+            {/* <button className="close-btn" onClick={() => setShowPopup(false)}>Close</button> */}
           </div>
         </div>
       )}
