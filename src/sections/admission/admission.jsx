@@ -258,7 +258,7 @@ const AdmissionForm = ({ onBack }) => {
         };
         console.log("correct", updatedStudentData)
         try {
-            const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
+            const response = await fetch("https://software.iqjita.com/admission.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedStudentData)
