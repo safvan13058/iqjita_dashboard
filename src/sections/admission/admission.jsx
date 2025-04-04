@@ -21,7 +21,7 @@ const AdmissionForm = ({ onBack }) => {
         return parseInt(localStorage.getItem("admissionStep")) || 1;
     });
     const user = JSON.parse(localStorage.getItem('user'));
-    const ReceiptPrint = ( Receipt) => {
+    const ReceiptPrint = (Receipt) => {
         // Store student data in localStorage
 
 
@@ -36,7 +36,7 @@ const AdmissionForm = ({ onBack }) => {
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
             documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "",
-            branch: user.branch_id, photo: null, photoPreview: null, gender: ''
+            branch: 1, photo: null, photoPreview: null, gender: ''
         };
     });
 
@@ -143,6 +143,7 @@ const AdmissionForm = ({ onBack }) => {
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
         });
         setReceipt(null);
+        setError(null);
     };
     // Handle Input Change
     const handleChange = (e) => {
@@ -256,12 +257,43 @@ const AdmissionForm = ({ onBack }) => {
                 : studentData.documents_submitted,  // If already a string, use as is
             updated_by: user.name // Change this value based on the user role
         };
+        const formData = new FormData();
+        formData.append("name", updatedStudentData.name);
+        formData.append("location", updatedStudentData.location);
+        formData.append("contact_number", updatedStudentData.contact_number);
+        formData.append("parent_contact", updatedStudentData.parent_contact);
+        formData.append("email", updatedStudentData.email);
+        formData.append("dob", updatedStudentData.dob);
+        formData.append("course", updatedStudentData.course);
+        formData.append("duration", updatedStudentData.duration);
+        formData.append("exact_fee", updatedStudentData.exact_fee);
+        formData.append("discount", updatedStudentData.discount);
+        formData.append("final_fee", updatedStudentData.final_fee);
+        formData.append("batch_time", updatedStudentData.batch_time);
+        formData.append("address", updatedStudentData.address);
+        formData.append("pin_code", updatedStudentData.pin_code);
+        formData.append("city", updatedStudentData.city);
+        formData.append("district", updatedStudentData.district);
+        formData.append("state", updatedStudentData.state);
+        formData.append("country", updatedStudentData.country);
+        formData.append("documents_submitted", updatedStudentData.documents_submitted);
+        formData.append("gender", updatedStudentData.gender);
+        formData.append("education_qualification", updatedStudentData.education_qualification);
+        formData.append("updated_by", updatedStudentData.updated_by);
+        formData.append("branch", updatedStudentData.branch);
+
+        // File input (make sure it's from an <input type="file" /> or similar)
+        if (updatedStudentData.photo instanceof File) {
+            formData.append("photo", updatedStudentData.photo);
+        }
+
+
+
         console.log("correct", updatedStudentData)
         try {
             const response = await fetch("https://software.iqjita.com/admission.php", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedStudentData)
+                body: formData,
             });
 
             const text = await response.text(); // Read raw response
@@ -289,11 +321,11 @@ const AdmissionForm = ({ onBack }) => {
                 });
                 setStep(3);
             } else {
-                setError(result.message || "❌ Failed to submit admission.");
+                setError(result.error || "❌ Failed to submit admission.");
             }
         } catch (error) {
             console.error("🚨 Error submitting admission:", error);
-            setError(error.message);
+            setError(error.error);
         } finally {
             setLoading(false);
         }
@@ -458,7 +490,7 @@ const AdmissionForm = ({ onBack }) => {
 
             if (response.ok && result.status === "success") {
                 console.log("✅ Parsed API Response:", result); // Debugging log
-                setReceipt(result);
+                // setReceipt(result);
                 setStep(4);
 
                 // Proceed with transaction API call
@@ -470,7 +502,7 @@ const AdmissionForm = ({ onBack }) => {
                         type: "credit",
                         category: "Admission",
                         remark: feeData.admission_number || "N/A",
-                        updated_by: "admin",
+                        updated_by: user.name,
                     }),
                 });
 
@@ -486,6 +518,14 @@ const AdmissionForm = ({ onBack }) => {
 
                 if (transactionResponse.ok && transactionResult.status === "success") {
                     console.log("✅ Transaction Successful:", transactionResult);
+                    // Merge bill_number into result and update receipt
+                    const updatedReceipt = {
+                        ...result,
+                        bill_number: transactionResult.bill_number
+                    };
+
+                    setReceipt(updatedReceipt);
+
                     alert(transactionResult.message);
                 } else {
                     console.error("❌ Transaction Failed:", transactionResult);
@@ -1093,7 +1133,7 @@ const AdmissionForm = ({ onBack }) => {
                     <div className="receipt-box">
                         <p><strong>Name:</strong> {studentData.name}</p>
                         <p><strong>Course:</strong> {studentData.course}</p>
-                        <p><strong>Receipt Number:</strong> {receipt.receipt_no || `R-${receipt.admission_number}`}</p>
+                        <p><strong>Receipt Number:</strong> {receipt.bill_number || `R-${receipt.admission_number}`}</p>
                         <p><strong>Admission Number:</strong> {receipt.admission_number}</p>
                         {/* <p><strong>Message:</strong> {receipt.message}</p> */}
                     </div>
@@ -1101,10 +1141,10 @@ const AdmissionForm = ({ onBack }) => {
                     <button onClick={() => ReceiptPrint({
                         name: studentData.name,
                         course: studentData.course,
-                        receipt_no: receipt.receipt_no,
+                        receipt_no: receipt.bill_number,
                         amount: 1000,
-                        timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
-                        user:user.name
+                        timpstamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
+                        user: user.name
 
                     })}>🖨 Print Receipt</button>
                     <button onClick={resetAdmission}>Start New Admission</button>

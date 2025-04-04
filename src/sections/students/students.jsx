@@ -71,14 +71,14 @@ const StudentsPage = () => {
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
+      let data = await response.json();
       if (data.status === "success") {
         setIsSuccess(true);
         setResponseMessage("Payment updated successfully!");
         console.log("admission",data);
-        setReceiptUrl(data);
+        
                     // Call transaction API after success
-        await recordTransaction(1000, "credit", "Admission", selectedStudent.admission_no);
+        await recordTransaction(1000, "credit", "Admission",data, selectedStudent.admission_no);
 
       } else {
         setResponseMessage("Failed to update payment.");
@@ -89,7 +89,7 @@ const StudentsPage = () => {
 
     setIsLoading(false);
   };
-  const recordTransaction = async (amount, type, category, remark) => {
+  const recordTransaction = async (amount, type,data, category, remark) => {
     const transactionPayload = {
         amount,
         type,
@@ -110,6 +110,12 @@ const StudentsPage = () => {
         const transactionData = await transactionResponse.json();
 
         if (transactionData.status === "success") {
+            const result={
+              ...data,
+              bill_number:transactionData.bill_number
+
+            }
+            setReceiptUrl(result);
             console.log("Transaction recorded successfully:", transactionData);
         } else {
             console.error("Failed to record transaction.");
@@ -483,7 +489,7 @@ const StudentsPage = () => {
                         <button className="receipt-btn" onClick={() => ReceiptPrint ({
                            name:selectedStudent.name,
                            course: selectedStudent.course,
-                           receipt_no: receipt.receipt_no,
+                           receipt_no: receipt.bill_number,
                            amount: 1000,
                            timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
                            user:user.name

@@ -248,13 +248,13 @@ const FeeForm = ({ onBack, currentUser }) => {
           newBalance: result.TotalPending
         };
 
-        setPaymentStatus({
-          message: result.message,
-          admissionNumber: result.admission_number,
-          totalPaid: result.TotalPaid,
-          totalPending: result.TotalPending,
-          receipt
-        });
+        // setPaymentStatus({
+        //   message: result.message,
+        //   admissionNumber: result.admission_number,
+        //   totalPaid: result.TotalPaid,
+        //   totalPending: result.TotalPending,
+        //   receipt
+        // });
 
         setReceiptData(receipt);
         setTransactionId("");
@@ -287,12 +287,23 @@ const FeeForm = ({ onBack, currentUser }) => {
         let transactionResult;
         try {
           transactionResult = JSON.parse(transactionLastJson);
+         
         } catch (error) {
           throw new Error("❌ Invalid JSON response from server:\n");
         }
 
         if (transactionResult.status === "success") {
           console.log("✅ Transaction Logged Successfully:", transactionResult);
+        
+          setPaymentStatus({
+            message: result.message,
+            admissionNumber: result.admission_number,
+            totalPaid: result.TotalPaid,
+            totalPending: result.TotalPending,
+            receipt,
+            bill_number:transactionResult.bill_number
+          });
+
         } else {
           throw new Error(transactionResult.error || "Failed to log transaction.");
         }
@@ -543,7 +554,7 @@ const FeeForm = ({ onBack, currentUser }) => {
               <p><strong>Admission No:</strong> {paymentStatus.admissionNumber}</p>
               <p><strong>Amount Paid:</strong>  {parseFloat(amount)}</p>
               <p><strong>Payment Method:</strong> {paymentMethod}</p>
-              {transactionId && <p><strong>Transaction ID:</strong> {transactionId}</p>}
+              {transactionId && <p><strong>Transaction ID:</strong> {paymentStatus.bill_number}</p>}
               <p><strong>Total Paid:</strong>  {paymentStatus.totalPaid?.toLocaleString()}</p>
               <p><strong>Balance:</strong>  {paymentStatus.totalPending?.toLocaleString()}</p>
               <p><strong>Processed By:</strong> {user.name || "admin"}</p>
@@ -554,7 +565,7 @@ const FeeForm = ({ onBack, currentUser }) => {
               <button onClick={()=>ReceiptPrint({
                 name: selectedStudent.name,
                 course: selectedStudent.course,
-                receipt_no: transactionId,
+                receipt_no: paymentStatus.bill_number,
                 amount:parseFloat(amount),
                 timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
                 user:user.name
