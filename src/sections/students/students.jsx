@@ -382,7 +382,7 @@ const StudentsPage = () => {
       {selectedStudent && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <button className="close-modal" onClick={handleCloseModal}>×</button>
+            <button className="close-modal-stu" onClick={handleCloseModal}>×</button>
 
             {viewLoading && <div className="loading">Loading student details...</div>}
             {viewError && <div className="error">Error: {viewError}</div>}

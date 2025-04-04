@@ -364,14 +364,14 @@ const Navbar = () => {
                   <div className="form-value">{formData.username}</div>
                 </div>
 
-                {editMode && (
+                {/* {editMode && (
                   <div className="form-group profile-pic-upload">
                     <label>Profile Picture</label>
                     <input type="file" accept="image/*" onChange={handleFileChange} />
                   </div>
-                )}
+                )} */}
 
-                <div className="action-buttons">
+                {/* <div className="action-buttons">
                   {editMode ? (
                     <>
                       <button type="button" className="cancel-btn" onClick={() => setEditMode(false)}>
@@ -386,7 +386,7 @@ const Navbar = () => {
                       Edit Profile
                     </button>
                   )}
-                </div>
+                </div> */}
               </form>
             </div>
          </div>

@@ -144,9 +144,9 @@
   color: var(--button-secondary-text);
 }
 
-.edit-btn:hover {
+/* .edit-btn:hover {
   background-color: var(--button-hover-secondary-bg);
-}
+} */
 
 
 .transpop-overlay {
@@ -350,7 +350,7 @@
   position: relative;
 }
 
-.close-modal {
+.close-modal-stu{
   position: absolute;
   top: 15px;
   right: 15px;
@@ -361,8 +361,9 @@
   color: var(--text-paragraph);
 }
 
-.close-modal:hover {
-  color: var(--text-heading);
+.close-modal-stu:hover {
+  /* color: white; */
+  background-color: white;
 }
 
 .student-details-grid {
