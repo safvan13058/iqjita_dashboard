@@ -22,18 +22,63 @@ const StudentsPage = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [receipt, setReceiptUrl] = useState("");
-  const user=JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
 
   const handlePrint = (student) => {
+    const fullStudentData = [{
+      status: student.status,
+      message: student.message,
+      student_id: student.admission_no,
+      photo: student.photo,
+      name: student.name,
+      dob: student.dob,
+      gender: student.gender,
+      email: student.email,
+      contact_number: student.contact_number,
+      parent_contact: student.parent_contact,
+      address: student.address,
+      location: student.location,
+      city: student.city,
+      district: student.district,
+      state: student.state,
+      country: student.country,
+      pin_code: student.pin_code,
+      education_qualification: student.education_qualification,
+      documents_submitted: student.documents_submitted,
+      course: student.course,
+      duration: student.duration,
+      exact_fee: student.exact_fee,
+      admission_fee: student.admission_fee,
+      discount: student.discount,
+      final_fee: student.final_fee,
+      batch_time: student.batch_time,
+      branch: student.branch,
+      updated_by: student.updated_by,
+      course_details: {
+        // id: course.id,
+        course: student.course,
+        duration: student.duration,
+        exact_fee: student.exact_fee,
+        admission_fee: student.admission_fee,
+        discount: student.discount,
+        install1: student.install1,
+        install2: student.install2,
+        install3: student.install3,
+        install4: student.install4,
+        install5: student.install5,
+
+
+      }
+    }];
     // Store student data in localStorage
-    localStorage.setItem("selectedStudentdata", JSON.stringify(student));
-  
+    localStorage.setItem("selectedStudentdata", JSON.stringify(fullStudentData));
+
     // Open the new print page
     window.open("/recipts/studentdata.html", "_blank");
   };
-  const ReceiptPrint = ( Receipt) => {
+  const ReceiptPrint = (Receipt) => {
     // Store student data in localStorage
 
 
@@ -41,7 +86,7 @@ const StudentsPage = () => {
 
     // Open the new print page
     window.open("/recipts/billreceipt.html", "_blank");
-};
+  };
   const handleAdmissionFeePayment = () => {
     setIsModalOpen(true);
     setIsSuccess(false);
@@ -75,10 +120,10 @@ const StudentsPage = () => {
       if (data.status === "success") {
         setIsSuccess(true);
         setResponseMessage("Payment updated successfully!");
-        console.log("admission",data);
-        
-                    // Call transaction API after success
-        await recordTransaction(1000, "credit", "Admission",data, selectedStudent.admission_no);
+        console.log("admission", data);
+
+        // Call transaction API after success
+        await recordTransaction(1000, "credit", "Admission", data, selectedStudent.admission_no);
 
       } else {
         setResponseMessage("Failed to update payment.");
@@ -89,41 +134,41 @@ const StudentsPage = () => {
 
     setIsLoading(false);
   };
-  const recordTransaction = async (amount, type,data, category, remark) => {
+  const recordTransaction = async (amount, type, data, category, remark) => {
     const transactionPayload = {
-        amount,
-        type,
-        category,
-        remark,
-        updated_by: user.name
+      amount,
+      type,
+      category,
+      remark,
+      updated_by: user.name
     };
 
     try {
-        const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(transactionPayload)
-        });
+      const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(transactionPayload)
+      });
 
-        const transactionData = await transactionResponse.json();
+      const transactionData = await transactionResponse.json();
 
-        if (transactionData.status === "success") {
-            const result={
-              ...data,
-              bill_number:transactionData.bill_number
+      if (transactionData.status === "success") {
+        const result = {
+          ...data,
+          bill_number: transactionData.bill_number
 
-            }
-            setReceiptUrl(result);
-            console.log("Transaction recorded successfully:", transactionData);
-        } else {
-            console.error("Failed to record transaction.");
         }
+        setReceiptUrl(result);
+        console.log("Transaction recorded successfully:", transactionData);
+      } else {
+        console.error("Failed to record transaction.");
+      }
     } catch (error) {
-        console.error("Error recording transaction:", error);
+      console.error("Error recording transaction:", error);
     }
-};
+  };
   const fetchTransactions = async (id) => {
     console.log("id===", id)
     try {
@@ -408,8 +453,9 @@ const StudentsPage = () => {
                       <p><strong>Location:</strong> {selectedStudent.location}</p>
                     </div>
                     <div className='pr-image'>
-                      <img src="" alt="" />
+                      <img src={`https://software.iqjita.com/${selectedStudent.photo}`} alt="Student Photo" />
                     </div>
+
                   </div>
 
                   <div className="detail-section">
@@ -434,7 +480,7 @@ const StudentsPage = () => {
                     <p><strong>Installment 3:</strong> {selectedStudent.install3} (Balance:  {selectedStudent.bal3})</p>
                     <p><strong>Installment 4:</strong> {selectedStudent.install4} (Balance:  {selectedStudent.bal4})</p>
                     <p><strong>Installment 5:</strong> {selectedStudent.install5} (Balance: {selectedStudent.bal5})</p>
-                    <div    className='ad-pop'>
+                    <div className='ad-pop'>
                       <button onClick={() => fetchTransactions(selectedStudent.admission_number)}>View transations</button>
                       {selectedStudent.admission_fee === null && (
                         <button className="pay-admission-fee-btn" onClick={handleAdmissionFeePayment}>
@@ -457,7 +503,7 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="modal-footer">
-                <button className="action-btn print-btn" onClick={() => window.print()}>
+                  <button className="action-btn print-btn" onClick={() => window.print()}>
                     Edit Details
                   </button>
                   <button className="action-btn print-btn" onClick={() => handlePrint(selectedStudent)}>
@@ -485,23 +531,23 @@ const StudentsPage = () => {
                       <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>Cancel</button>
                     </>
                   ) : (
-                    <div> 
-                        <button className="receipt-btn" onClick={() => ReceiptPrint ({
-                           name:selectedStudent.name,
-                           course: selectedStudent.course,
-                           receipt_no: receipt.bill_number,
-                           amount: 1000,
-                           timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
-                           user:user.name
-                        })}>
+                    <div>
+                      <button className="receipt-btn" onClick={() => ReceiptPrint({
+                        name: selectedStudent.name,
+                        course: selectedStudent.course,
+                        receipt_no: receipt.bill_number,
+                        amount: 1000,
+                        timpstamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
+                        user: user.name
+                      })}>
                         Download Receipt
-                        </button>
-                        <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>
-                            Close
-                        </button>
+                      </button>
+                      <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>
+                        Close
+                      </button>
                     </div>
-                )}
-                
+                  )}
+
                 </div>
               </div>
             )}

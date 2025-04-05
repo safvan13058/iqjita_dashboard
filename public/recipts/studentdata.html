@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admission Form</title>
     <style>
         :root {
-            --primary-color: #0F6D66; /* Teal */
-            --secondary-color: #9B5A2A; /* Brown */
-            --text-primary: #0F6D66; /* Main text in teal */
-            --text-secondary: #9B5A2A; /* Brown for highlights */
-            --text-heading: #0D4A46; /* Darker teal for headings */
-            --text-paragraph: #333333; /* Dark gray for readability */
-            --text-light: #FFFFFF; /* White for dark backgrounds */
-            --border-color: #0F6D66; /* Teal for borders */
+            --primary-color: #0F6D66;
+            /* Teal */
+            --secondary-color: #9B5A2A;
+            /* Brown */
+            --text-primary: #0F6D66;
+            /* Main text in teal */
+            --text-secondary: #9B5A2A;
+            /* Brown for highlights */
+            --text-heading: #0D4A46;
+            /* Darker teal for headings */
+            --text-paragraph: #333333;
+            /* Dark gray for readability */
+            --text-light: #FFFFFF;
+            /* White for dark backgrounds */
+            --border-color: #0F6D66;
+            /* Teal for borders */
             --background-light: #f4f4f4;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: Arial, sans-serif;
             background-color: var(--background-light);
             padding: 20px;
             color: var(--text-paragraph);
         }
+
         .main {
             width: 210mm;
             min-height: 297mm;
@@ -37,59 +48,82 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-color);
         }
+
         .head {
             display: flex;
             padding: 10px;
             align-items: center;
         }
+
         .logo {
             width: 20%;
         }
+
         .logo img {
             width: 100%;
         }
+
         .company-name {
             width: 80%;
             text-align: center;
             padding: 10px;
             color: var(--text-heading);
         }
+
         .company-name h1 {
             color: var(--primary-color);
         }
+
         .company-name h3 {
             color: var(--text-heading);
         }
-        .company-name h5, p {
+
+        .company-name h5,
+        p {
             color: var(--text-paragraph);
         }
+
         hr {
             border: 1px solid var(--border-color);
             margin: 10px 0;
         }
+
         .container {
             padding: 10px;
         }
+
         .personal-details {
             display: flex;
             justify-content: space-between;
         }
-        .personal-details-1, .personal-details-2,.fee-details {
+
+        .personal-details-1,
+        .personal-details-2,
+        .fee-details {
             width: 60%;
         }
-        .fee-details div p,h6{
+
+        .fee-details div p,
+        h6 {
             font-size: x-small;
         }
-        .personal-details-1 div, .personal-details-2 div, .office-details div,.fee-details div{
+
+        .personal-details-1 div,
+        .personal-details-2 div,
+        .office-details div,
+        .fee-details div {
             display: flex;
             justify-content: space-between;
             padding: 5px 0;
             border-bottom: 1px dashed var(--border-color);
         }
-        .personal-details-1 h5, .personal-details-2 h5 {
+
+        .personal-details-1 h5,
+        .personal-details-2 h5 {
             color: var(--text-heading);
             font-weight: bold;
         }
+
         .photo {
             width: 30%;
             display: flex;
@@ -97,39 +131,47 @@
             align-items: center;
             padding: 10px;
         }
+
         .photo img {
             width: 120px;
             height: 150px;
             border: 1px solid var(--border-color);
         }
+
         .office {
             margin-top: 20px;
             /* padding: 10px; */
         }
+
         .office h3 {
             color: var(--primary-color);
             margin-bottom: 5px;
         }
+
         .office-details h5 {
             color: var(--text-heading);
             font-weight: bold;
         }
+
         .decleration {
             margin-top: 20px;
             padding: 10px;
             text-align: center;
         }
+
         .decleration h5 {
             color: var(--primary-color);
             font-size: 18px;
             margin-bottom: 10px;
         }
+
         .decleration div {
             display: flex;
             justify-content: space-between;
             margin-top: 40px;
             padding: 0 20px;
         }
+
         .decleration div p {
             font-weight: bold;
             color: var(--text-heading);
@@ -137,63 +179,78 @@
             padding-top: 5px;
             width: 45%;
         }
+
         .office-details {
             width: 60%;
         }
-        .signature{
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
-    }
-    .signature div{
-        width: 50%;
-        text-align: left;
-    }
-    .ad-head{
-        text-align: center;
-        
-        font-weight: 900;
-    }
+
+        .signature {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .signature div {
+            width: 50%;
+            text-align: left;
+        }
+
+        .ad-head {
+            text-align: center;
+
+            font-weight: 900;
+        }
+
         @media print {
-    body {
-        padding: 0;
-        background-color: white;
-    }
-    .main {
-        box-shadow: none;
-        border: none;
-        margin: 0;
-        /* padding: 10mm; */
-        width: 100%;
-        min-height: auto;
-    }
-    
-    .head, .container, .office, .fee-structure, .decleration {
-        page-break-inside: avoid;
-    }
-    .photo img {
-        width: 100px;
-        height: 130px;
-    }
-    @page {
-        size: A4;
-        /* margin: 10mm; */
-    }
-    @media print {
-    button {
-        display: none;
-    }
-}
-.container2 {
-    margin-top: 30px;
-    page-break-before: always; /* Forces the section to start on a new page */
-}
+            body {
+                padding: 0;
+                background-color: white;
+            }
+
+            .main {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                /* padding: 10mm; */
+                width: 100%;
+                min-height: auto;
+            }
+
+            .head,
+            .container,
+            .office,
+            .fee-structure,
+            .decleration {
+                page-break-inside: avoid;
+            }
+
+            .photo img {
+                width: 100px;
+                height: 130px;
+            }
+
+            @page {
+                size: A4;
+                /* margin: 10mm; */
+            }
+
+            @media print {
+                button {
+                    display: none;
+                }
+            }
+
+            .container2 {
+                margin-top: 30px;
+                page-break-before: always;
+                /* Forces the section to start on a new page */
+            }
 
 
-}
-
+        }
     </style>
 </head>
+
 <body>
     <div class="main">
         <div class="head">
@@ -206,48 +263,100 @@
                 <p>Email ID: iqjita@gmail.com</p>
                 <p>Web: www.iqjita.com</p>
             </div>
-           
+
         </div>
         <h3 class="ad-head">APPLICATION FOR ADMISSION</h3>
         <hr>
         <div class="container">
             <div class="personal-details">
                 <div class="personal-details-1">
-                    <div><h5>NAME OF CANDIDATE:</h5> <p>MOHAMED SAFVAN VP</p></div>
-                    <div><h5>COURSE:</h5> <p>Course Name</p></div>
-                    <div><h5>CONTACT NUMBER:</h5> <p>+91 XXXXXXXXXX</p></div>
-                    <div><h5>EMAIL ID:</h5> <p>email@example.com</p></div>
-                    <div><h5>DATE OF BIRTH:</h5> <p>DD/MM/YYYY</p></div>
-                    <div><h5>GENDER:</h5> <p>Male/Female</p></div>
+                    <div>
+                        <h5>NAME OF CANDIDATE:</h5>
+                        <p id="name">MOHAMED SAFVAN VP</p>
+                    </div>
+                    <div>
+                        <h5>COURSE:</h5>
+                        <p id="course">Course Name</p>
+                    </div>
+                    <div>
+                        <h5>CONTACT NUMBER:</h5>
+                        <p id="contact1">+91 XXXXXXXXXX</p>
+                    </div>
+                    <div>
+                        <h5>EMAIL ID:</h5>
+                        <p id="email">email@example.com</p>
+                    </div>
+                    <div>
+                        <h5>DATE OF BIRTH:</h5>
+                        <p id="dob">DD/MM/YYYY</p>
+                    </div>
+                    <div>
+                        <h5>GENDER:</h5>
+                        <p id="gender">Male/Female</p>
+                    </div>
                 </div>
                 <div class="photo">
                     <img src="" alt="Candidate Photo">
                 </div>
             </div>
             <div class="personal-details-2">
-                <div><h5>QUALIFICATION:</h5> <p>Degree</p></div>
-                <div><h5>POSTAL ADDRESS:</h5> <p>Address</p></div>
-                <div><h5>NAME OF PARENT/GUARDIAN:</h5> <p>Guardian Name</p></div>
-                <div><h5>CONTACT NUMBER OF PARENT/GUARDIAN:</h5> <p>+91 XXXXXXXXXX</p></div>
+                <div>
+                    <h5>QUALIFICATION:</h5>
+                    <p id="quali">Degree</p>
+                </div>
+                <div>
+                    <h5>POSTAL ADDRESS:</h5>
+                    <p id="address">Address</p>
+                </div>
+                <!-- <div>
+                    <h5>NAME OF PARENT/GUARDIAN:</h5>
+                    <p id="name-parent">Guardian Name</p>
+                </div> -->
+                <div>
+                    <h5>CONTACT NUMBER OF PARENT/GUARDIAN:</h5>
+                    <p id="contact-parent">+91 XXXXXXXXXX</p>
+                </div>
             </div>
             <div class="office">
                 <h3>FOR OFFICE USE ONLY</h3>
                 <hr>
                 <div class="office-details">
-                    <div><h5>STUDENT ID:</h5> <p>123456</p></div>
-                    <div><h5>COURSE:</h5> <p>Course</p></div>
-                    <div><h5>REFERRED BY:</h5> <p>Reference</p></div>
-                    <div><h5>BATCH:</h5> <p>Batch</p></div>
-                    <div><h5>BATCH TIME:</h5> <p>Time</p></div>
-                    <div><h5>DATE OF JOINING:</h5> <p>DD/MM/YYYY</p></div>
+                    <div>
+                        <h5>STUDENT ID:</h5>
+                        <p id="student-id">123456</p>
+                    </div>
+                    <div>
+                        <h5>COURSE:</h5>
+                        <p id="course1">Course</p>
+                    </div>
+                    <div>
+                        <h5>REFERRED BY:</h5>
+                        <p id="reference">Reference</p>
+                    </div>
+                    <div>
+                        <h5>BATCH:</h5>
+                        <p id="batch">Batch</p>
+                    </div>
+                    <div>
+                        <h5>BATCH TIME:</h5>
+                        <p id="batch-time">Time</p>
+                    </div>
+                    <div>
+                        <h5>DATE OF JOINING:</h5>
+                        <p id="dateofjoin">DD/MM/YYYY</p>
+                    </div>
                 </div>
 
             </div>
-            
+
             <div class="decleration">
                 <h5>DECLARATION</h5>
-                <p>I hereby declare that I will obey all the rules and regulations of the institute and will be fully responsible for any violations.</p>
-                <div><p>Student Signature</p> <p>Authorized Signature</p></div>
+                <p>I hereby declare that I will obey all the rules and regulations of the institute and will be fully
+                    responsible for any violations.</p>
+                <div>
+                    <p>Student Signature</p>
+                    <p>Authorized Signature</p>
+                </div>
             </div>
         </div>
         <div class="container2">
@@ -256,21 +365,26 @@
             <div class="terms">
                 <ul>
                     <li>I hereby affirm that all information is complete and accurate.</li>
-                    <li>I understand that I shall not be considered for admission until all credentials are submitted.</li>
+                    <li>I understand that I shall not be considered for admission until all credentials are submitted.
+                    </li>
                     <li>I agree to inform IQJITA of any change in my plans to attend the course specified.</li>
                     <li>I agree to obey all the rules and regulations of the institute.</li>
-                    <li>I accept any disciplinary actions from the institute's authorities for violations of institute rules.</li>
-                    <li>I agree that compensation will be charged for any losses/damages caused to institute property or staff.</li>
+                    <li>I accept any disciplinary actions from the institute's authorities for violations of institute
+                        rules.</li>
+                    <li>I agree that compensation will be charged for any losses/damages caused to institute property or
+                        staff.</li>
                     <li>I have no objection to using my photograph for AI publication.</li>
                     <li>Certificates will only be returned if the course is completed without dues.</li>
                     <li>No dues is mandatory for final exam, internship, and placement support.</li>
                     <li>70% attendance is compulsory, else condonation will be applied.</li>
-                    <li>Internship locations depend on vacancies, and students must attend as suggested by the institute.</li>
-                    <li>Students must have personal laptops for all courses (except Digital Marketing & Graphic Designing).</li>
+                    <li>Internship locations depend on vacancies, and students must attend as suggested by the
+                        institute.</li>
+                    <li>Students must have personal laptops for all courses (except Digital Marketing & Graphic
+                        Designing).</li>
                     <li>For successful course completion, 75% attendance is compulsory.</li>
                 </ul>
             </div>
-    
+
             <h3>Fee Collection Policy</h3>
             <hr>
             <div class="fee-policy">
@@ -285,9 +399,13 @@
             </div>
             <div class="signature">
 
-                <div><h4>Student`s Name:</h4></div>
-                <div><h4>Student`s signature:</h4></div>
-                
+                <div>
+                    <h4>Student`s Name: <span id="name1"></span></h4>
+                </div>
+                <div>
+                    <h4>Student`s signature:</h4>
+                </div>
+
 
             </div>
             <hr>
@@ -295,24 +413,107 @@
                 <h3>FEE-STRUCTURE</h3>
                 <hr>
                 <div class="fee-details">
-                    
-                    <div><h6>COURSE:</h6> <p>123456</p></div>
-                    <div><h6>ADMISSION FEE:</h6> <p>Course</p></div>
-                    <div><h6>INSTALLMENT 1:</h6> <p>Reference</p></div>
-                    <div><h6>INSTALLMENT 2:</h6> <p>Batch</p></div>
-                    <div><h6>INSTALLMENT 3:</h6> <p>Time</p></div>
-                    <div><h6>INSTALLMENT 4:</h6> <p>DD/MM/YYYY</p></div>
-                    <div><h6>INSTALLMENT 5:</h6> <p>DD/MM/YYYY</p></div>
-                    <div><h6>TOTAL FEE:</h6> <p>DD/MM/YYYY</p></div>
+
+                    <div>
+                        <h6>COURSE:</h6>
+                        <p id="course2">123456</p>
+                    </div>
+                    <div>
+                        <h6>ADMISSION FEE:</h6>
+                        <p id="admissionfee">Course</p>
+                    </div>
+                    <div>
+                        <h6>INSTALLMENT 1:</h6>
+                        <p id="install1">Reference</p>
+                    </div>
+                    <div>
+                        <h6>INSTALLMENT 2:</h6>
+                        <p id="install2">Batch</p>
+                    </div>
+                    <div>
+                        <h6>INSTALLMENT 3:</h6>
+                        <p id="install3">Time</p>
+                    </div>
+                    <div>
+                        <h6>INSTALLMENT 4:</h6>
+                        <p id="install4">DD/MM/YYYY</p>
+                    </div>
+                    <div>
+                        <h6>INSTALLMENT 5:</h6>
+                        <p id="install5">DD/MM/YYYY</p>
+                    </div>
+                    <div>
+                        <h6>TOTAL FEE:</h6>
+                        <p id="totalfee">DD/MM/YYYY</p>
+                    </div>
                 </div>
-               
+
             </div>
 
         </div>
     </div>
-    <button onclick="window.print()" style="margin: 10px; padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <button onclick="window.print()"
+        style="margin: 10px; padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
         Print Form
     </button>
-    
+    <script>
+        // Retrieve student data from localStorage
+        const Receipt = JSON.parse(localStorage.getItem('selectedStudentdata'));
+
+        if (Receipt && Receipt.length > 0) {
+            const data = Receipt[0];
+
+            document.getElementById("name").textContent = data.name;
+            document.getElementById("course").textContent = data.course;
+            document.getElementById("contact1").textContent = data.contact_number;
+            document.getElementById("email").textContent = data.email;
+            document.getElementById("dob").textContent = data.dob;
+            document.getElementById("gender").textContent = data.gender;
+
+            if (data.photo) {
+                document.querySelector(".photo img").src =  `https://software.iqjita.com/${data.photo}`;
+            }
+
+            document.getElementById("quali").textContent = data.education_qualification;
+            document.getElementById("address").textContent = `${data.address}, ${data.location}, ${data.city}, ${data.district}, ${data.state} - ${data.pin_code}, ${data.country}`;
+            // document.getElementById("name-parent").textContent = data.updated_by;
+            document.getElementById("contact-parent").textContent = data.parent_contact;
+
+            document.getElementById("student-id").textContent = data.student_id;
+            document.getElementById("course1").textContent = data.course;
+            document.getElementById("reference").textContent = "none";
+            document.getElementById("batch").textContent = "none";
+            document.getElementById("batch-time").textContent = data.batch_time;
+            document.getElementById("dateofjoin").textContent = new Date().toLocaleDateString(); // or use a field if available
+
+            document.getElementById("name1").textContent = data.name;
+
+            document.getElementById("course2").textContent = data.course;
+            document.getElementById("admissionfee").textContent = data.admission_fee;
+
+            // Sample Installments — customize based on your logic
+            // const totalFee = parseFloat(data.final_fee);
+            // const installment = (totalFee / 5).toFixed(2);
+
+            document.getElementById("install1").textContent = data.course_details.install1;
+            document.getElementById("install2").textContent = data.course_details.install2;
+            document.getElementById("install3").textContent = data.course_details.install3;
+            document.getElementById("install4").textContent = data.course_details.install4;
+            document.getElementById("install5").textContent = data.course_details.install5;
+
+            document.getElementById("totalfee").textContent =data.course_details.exact_fee;
+        }
+
+        // Auto print when the page loads
+        window.onload = () => {
+            setTimeout(() => {
+                window.print();
+                window.close();
+            }, 500);
+        };
+    </script>
+
+
 </body>
+
 </html>

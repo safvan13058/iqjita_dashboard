@@ -17,18 +17,76 @@ const AdmissionForm = ({ onBack }) => {
     const [selectedCountry, setSelectedCountry] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const [selectedCity, setSelectedCity] = useState("");
+    const [studentsalldata, setstudentsall] = useState("");
     const [step, setStep] = useState(() => {
         return parseInt(localStorage.getItem("admissionStep")) || 1;
     });
     const user = JSON.parse(localStorage.getItem('user'));
     const ReceiptPrint = (Receipt) => {
         // Store student data in localStorage
-
-
         localStorage.setItem("Receiptdata", JSON.stringify(Receipt));
 
         // Open the new print page
         window.open("/recipts/billreceipt.html", "_blank");
+    };
+    const handlePrint = (student) => {
+        // Store student data in localStorage
+        console.log("admission form", student)
+        const students = student.student;
+        const course = student.course_details;
+
+        const fullStudentData = [{
+            status: student.status,
+            message: student.message,
+            student_id: student.student_id,
+            photo: student.photo,
+            name: students.name,
+            dob: students.dob,
+            gender: students.gender,
+            email: students.email,
+            contact_number: students.contact_number,
+            parent_contact: students.parent_contact,
+            address: students.address,
+            location: students.location,
+            city: students.city,
+            district: students.district,
+            state: students.state,
+            country: students.country,
+            pin_code: students.pin_code,
+            education_qualification: students.education_qualification,
+            documents_submitted: students.documents_submitted,
+            course: students.course,
+            duration: students.duration,
+            exact_fee: students.exact_fee,
+            admission_fee: course.admission_fee,
+            discount: students.discount,
+            final_fee: students.final_fee,
+            batch_time: students.batch_time,
+            branch: students.branch,
+            updated_by: students.updated_by,
+            course_details: {
+                id: course.id,
+                course: course.course,
+                duration: course.duration,
+                exact_fee: course.exact_fee,
+                admission_fee: course.admission_fee,
+                discount: course.discount,
+                install1: course.install1,
+                install2: course.install2,
+                install3: course.install3,
+                install4: course.install4,
+                install5: course.install5,
+
+
+            }
+        }];
+
+        localStorage.setItem("selectedStudentdata", JSON.stringify(fullStudentData));
+
+        // setstudentsall
+        // Open the new print page
+        window.open("/recipts/studentdata.html", "_blank");
+
     };
     const [studentData, setStudentData] = useState(() => {
         return JSON.parse(localStorage.getItem("studentData")) || {
@@ -319,6 +377,7 @@ const AdmissionForm = ({ onBack }) => {
                     course: studentData.course,
                     contact_number: studentData.contact_number
                 });
+                setstudentsall(result)
                 setStep(3);
             } else {
                 setError(result.error || "❌ Failed to submit admission.");
@@ -330,142 +389,7 @@ const AdmissionForm = ({ onBack }) => {
             setLoading(false);
         }
     };
-    // const handleSubmitStudent = async (e) => {
-    //     // e.preventDefault();
-    //     setLoading(true);
-    //     setError(null);
 
-    //     // ✅ Create FormData
-    //     const formData = new FormData();
-
-    //     // Append all fields except 'photoPreview'
-    //     Object.keys(studentData).forEach((key) => {
-    //         if (key !== "photoPreview") {
-    //             formData.append(key, studentData[key]);
-    //         }
-    //     });
-
-    //     // Append photo only if it's a valid file
-    //     if (studentData.photo instanceof File) {
-    //         formData.append("photo", studentData.photo);
-    //     }
-
-    //     // ✅ Debug FormData before sending
-    //     for (let pair of formData.entries()) {
-    //         console.log(`${pair[0]}:`, pair[1]);  // Logs each key-value pair
-    //     }
-
-    //     try {
-    //         const response = await fetch("https://software.iqjita.com/administration.php?action=admission", {
-    //             method: "POST",
-    //             body: formData, // ✅ No need to set headers
-    //         });
-
-    //         const text = await response.text();
-    //         console.log("🔍 Raw API Response:", text);
-
-    //         let result;
-    //         try {
-    //             result = JSON.parse(text.trim());
-    //         } catch (error) {
-    //             throw new Error("❌ Invalid JSON response from server.");
-    //         }
-
-    //         if (result.status === "success") {
-    //             console.log("✅ Parsed API Response:", result);
-    //             setStep(3);
-    //         } else {
-    //             setError(result.message || "❌ Failed to submit admission.");
-    //         }
-    //     } catch (error) {
-    //         console.error("🚨 Error submitting admission:", error);
-    //         setError(error.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-
-
-
-
-
-    // Step 2: Submit Admission Fee
-    // const handleSubmitFee = async (e) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setError(null);
-
-    //     try {
-    //         const response = await fetch("https://software.iqjita.com/administration.php?action=admission_fee", {
-    //             method: "POST",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify(feeData),
-    //         });
-
-    //         const text = await response.text(); // Read raw response
-    //         console.log("🔍 Raw API Response:", text); // Debugging log
-
-    //         // Extract only the valid JSON part
-    //         const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find the second "{"
-    //         const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON
-    //         let result;
-
-    //         try {
-    //             result = JSON.parse(response);
-    //         } catch (error) {
-    //             throw new Error("❌ Invalid JSON response from server:\n" + text);
-    //         }
-
-    //         if (response.ok && result.status === "success") {
-    //             console.log("✅ Parsed API Response:", result); // Debugging log
-    //             setReceipt(result);
-    //             setStep(4);
-
-    //             // Proceed with transaction API call
-    //             const transactionResponse = await fetch("https://software.iqjita.com/administration.php?action=transaction", {
-    //                 method: "POST",
-    //                 headers: { "Content-Type": "application/json" },
-    //                 body: JSON.stringify({
-    //                     amount: 1000,
-    //                     type: "credit",
-    //                     category: "Admission",
-    //                     remark: feeData.admission_number || "N/A", // Use admission_number if available
-    //                     updated_by: "admin",
-    //                 }),
-    //             });
-
-    //             const transactionText = await transactionResponse.text();
-    //             console.log("🔍 Transaction API Response:", transactionText); // Debugging log
-
-    //             // Extract valid JSON from transaction API response
-    //             const transJsonStartIndex = transactionText.indexOf("{", transactionText.indexOf("{") + 1);
-    //             const cleanTransJson = transactionText.slice(transJsonStartIndex);
-
-    //             let transactionResult;
-    //             try {
-    //                 transactionResult = JSON.parse(cleanTransJson);
-    //             } catch (error) {
-    //                 throw new Error("❌ Invalid JSON response from transaction API:\n" + transactionText);
-    //             }
-
-    //             if (transactionResponse.ok && transactionResult.status === "success") {
-    //                 console.log("✅ Transaction Successful:", transactionResult);
-    //                 alert(transactionResult.message);
-    //             } else {
-    //                 console.error("❌ Transaction Failed:", transactionResult);
-    //                 alert(transactionResult.message || "Transaction failed.");
-    //             }
-    //         } else {
-    //             setError(result.message || "❌ Failed to submit fee details.");
-    //         }
-    //     } catch (error) {
-    //         console.error("🚨 Error submitting fee details:", error);
-    //         setError(error.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
     const handleSubmitFee = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -936,7 +860,10 @@ const AdmissionForm = ({ onBack }) => {
                                 </div>
                                 <div className="adm-btn-grp">
 
-                                    <button onClick={() => setShowPopup(true)}>Calculate</button>
+                                    <button type="button" onClick={() => setShowPopup(true)}>
+                                        Calculate
+                                    </button>
+
                                     <button type="button" onClick={() => setStudentData((prev) => ({ ...prev, discount: '', final_fee: prev.exact_fee }))}>
                                         Clear
                                     </button>
@@ -1057,8 +984,20 @@ const AdmissionForm = ({ onBack }) => {
                         {/* Left Side: Personal Details */}
                         <div className="preview-column">
                             <h4>Personal Details</h4>
+                            <div>
+                                {studentData.photoPreview ? (
+                                    <img src={studentData.photoPreview} alt="Uploaded Preview" style={{ width: '100px', height: '120px' }} />
+                                ) : (
+                                    <p>No image uploaded</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <p style={{ fontSize:'8px' }}>Filename: {studentData.photo?.name || studentData.photo?.filename || 'N/A'}</p>
+                            </div>
                             <p><strong>Full Name:</strong> {studentData.name}</p>
                             <p><strong>Date of Birth:</strong> {studentData.dob}</p>
+                            <p><strong>Gender:</strong> {studentData.gender}</p>
                             <p><strong>Contact Number:</strong> {studentData.contact_number}</p>
                             <p><strong>Email:</strong> {studentData.email}</p>
                             <p><strong>Address:</strong> {studentData.address}, {studentData.city}, {studentData.state} - {studentData.pin_code}, {studentData.country}</p>
@@ -1116,6 +1055,9 @@ const AdmissionForm = ({ onBack }) => {
                         />
                         <div className="btn-grp">
                             <button type="button" onClick={() => setStep(2)}>Back</button>
+                            <button type="button" onClick={() => handlePrint(studentsalldata)} disabled={loading}>
+                                {loading ? "Processing..." : "Admission form"}
+                            </button>
                             <button type="submit" disabled={loading}>
                                 {loading ? "Processing..." : "Next: Generate Receipt"}
                             </button>
