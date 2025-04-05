@@ -350,18 +350,18 @@ const Navbar = () => {
                 <div className="form-group">
                   <label>Name</label>
 
-                  <div className="form-value">{formData.name}</div>
+                  <div className="form-value">{user.name}</div>
 
                 </div>
 
                 <div className="form-group">
                   <label>Email Address</label>
-                  <div className="form-value">{formData.email}</div>
+                  <div className="form-value">{user.email}</div>
                 </div>
 
                 <div className="form-group">
                   <label>Branch</label>
-                  <div className="form-value">{formData.username}</div>
+                  <div className="form-value">{user.branch.name},{user.branch.address}</div>
                 </div>
 
                 {/* {editMode && (

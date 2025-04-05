@@ -262,3 +262,63 @@
       max-width: 100%;
     }
   }
+  /* Tablets and smaller (up to 750px) */
+@media screen and (max-width: 750px) {
+  .course-form-controls {
+    flex-direction: column;
+    align-items: stretch;
+    padding:0;
+  }
+
+  .add-course-container {
+    flex-direction: column;
+  }
+  
+  .edit-modal-grid {
+    grid-template-columns: 1fr;
+  }
+  .edit-modal {
+    width: 90%;
+    height:80vh;
+    overflow-y: scroll;
+  }
+  .course-table {
+    min-width: 750px; /* Keeps table scrollable */
+  }
+}
+
+/* Phones and smaller (up to 450px) */
+@media screen and (max-width: 450px) {
+  .edit-modal {
+    width: 95%;
+    padding: 15px;
+   
+  }
+  .course-form-controls{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .add-course-modal-content{
+    height: 80vh;
+  }
+  .course-search-input{
+    width: fit-content;
+  }
+  .add-course-button {
+    width: fit-content;
+    align-self: flex-end;
+  }
+  .course-form-container{
+    padding:0;
+  }
+
+  .edit-modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .course-table {
+    min-width: 600px;
+  }
+}

@@ -76,7 +76,7 @@
   
     /* Box Shadows */
     --box-shadow-light: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    --box-shadow-dark: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    --box-shadow-dark: 0px 4px 6px rgba(0, 0, 0, 0.5);
   
     /* Forms & Inputs */
     --input-border: #DDDDDD;

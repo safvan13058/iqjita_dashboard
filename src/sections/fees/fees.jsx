@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import './fees.css';
 import { format, isTuesday } from 'date-fns';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 const FeeForm = ({ onBack, currentUser }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(location.state?.student || null);
@@ -33,7 +34,7 @@ const FeeForm = ({ onBack, currentUser }) => {
   // ]; // ✅ List of courses
   // Fetch students from API when selectedCourse changes
   const user = JSON.parse(localStorage.getItem('user'));
-  const ReceiptPrint = ( Receipt) => {
+  const ReceiptPrint = (Receipt) => {
     // Store student data in localStorage
 
     console.log("receiptlog", Receipt)
@@ -41,7 +42,7 @@ const FeeForm = ({ onBack, currentUser }) => {
 
     // Open the new print page
     window.open("/recipts/billreceipt.html", "_blank");
-};
+  };
   // const fetchCourseOptions = async () => {
   //        try {
   //            const response = await fetch("https://software.iqjita.com/administration.php?action=getcoursedetails");
@@ -152,7 +153,7 @@ const FeeForm = ({ onBack, currentUser }) => {
             setAllStudents(formattedStudents); // Store all students, filtering happens in UI
           }
         } else {
-          setAllStudents(null); 
+          setAllStudents(null);
           console.error("Failed to fetch student data");
         }
 
@@ -287,21 +288,21 @@ const FeeForm = ({ onBack, currentUser }) => {
         let transactionResult;
         try {
           transactionResult = JSON.parse(transactionLastJson);
-         
+
         } catch (error) {
           throw new Error("❌ Invalid JSON response from server:\n");
         }
 
         if (transactionResult.status === "success") {
           console.log("✅ Transaction Logged Successfully:", transactionResult);
-        
+
           setPaymentStatus({
             message: result.message,
             admissionNumber: result.admission_number,
             totalPaid: result.TotalPaid,
             totalPending: result.TotalPending,
             receipt,
-            bill_number:transactionResult.bill_number
+            bill_number: transactionResult.bill_number
           });
 
         } else {
@@ -356,7 +357,7 @@ const FeeForm = ({ onBack, currentUser }) => {
                 {searchQuery && (
                   <div className="dropdown-container">
                     <ul className="fee-form-dropdown">
-                      {(filteredStudents || []) 
+                      {(filteredStudents || [])
                         .filter(student =>
                           student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           student.admission_number.includes(searchQuery)
@@ -422,34 +423,35 @@ const FeeForm = ({ onBack, currentUser }) => {
 
             </div>
           </div>
+          <div className="student-listall">
+            <div className="student-list-header">
+              <span>Admission No.</span>
+              <span>Student Name</span>
+              <span>Course</span>
+              <span>Paid</span>
+              <span>Pending</span>
+              <span>Actions</span>
+            </div>
 
-          <div className="student-list-header">
-            <span>Admission No.</span>
-            <span>Student Name</span>
-            <span>Course</span>
-            <span>Paid</span>
-            <span>Pending</span>
-            <span>Actions</span>
-          </div>
-
-          <div className="student-list">
-            {(filteredStudents || []).map((student) => (
-              <div
-                key={student.admission_number}
-                className={`student-list-item ${selectedStudent?.admission_number === student.admission_number ? "active" : ""}`}
-              >
-                <span>{student.admission_number}</span>
-                <span>{student.name}</span>
-                <span>{student.course}</span>
-                <span>{student.total_paid?.toLocaleString()}</span>
-                <span>{student.total_pending?.toLocaleString()}</span>
-                <span>
-                  <button className="select-student-btn" onClick={() => handleSelectStudent(student)}>
-                    Select
-                  </button>
-                </span>
-              </div>
-            ))}
+            <div className="student-list">
+              {(filteredStudents || []).map((student) => (
+                <div
+                  key={student.admission_number}
+                  className={`student-list-item ${selectedStudent?.admission_number === student.admission_number ? "active" : ""}`}
+                >
+                  <span>{student.admission_number}</span>
+                  <span>{student.name}</span>
+                  <span>{student.course}</span>
+                  <span>{student.total_paid?.toLocaleString()}</span>
+                  <span>{student.total_pending?.toLocaleString()}</span>
+                  <span>
+                    <button className="select-student-btn" onClick={() => handleSelectStudent(student)}>
+                      Select
+                    </button>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
@@ -562,14 +564,14 @@ const FeeForm = ({ onBack, currentUser }) => {
             </div>
 
             <div className="receipt-actions">
-              <button onClick={()=>ReceiptPrint({
+              <button onClick={() => ReceiptPrint({
                 name: selectedStudent.name,
                 course: selectedStudent.course,
                 receipt_no: paymentStatus.bill_number,
-                amount:parseFloat(amount),
-                timestamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
-                user:user.name,
-                category:"COURSE FEE"
+                amount: parseFloat(amount),
+                timestamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
+                user: user.name,
+                category: "COURSE FEE"
 
               })} className="print-btn">
                 Print Receipt
@@ -577,7 +579,7 @@ const FeeForm = ({ onBack, currentUser }) => {
               <button onClick={resetForm} className="new-payment-btn">
                 New Payment
               </button>
-              <button onClick={onBack} className="back-btn">
+              <button onClick={() => navigate('/')} className="back-btn">
                 Back to Dashboard
               </button>
             </div>

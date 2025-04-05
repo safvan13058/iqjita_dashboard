@@ -82,6 +82,9 @@ input, select,PhoneInput {
     background: var(--input-background);
     color: var(--input-text);
 }
+.gender-ratio label{
+    margin-left: -10px;
+}
 
 /* Submit Button */
 button {

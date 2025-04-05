@@ -20,7 +20,7 @@ function ProtectedLayout() {
     <>
       <Navbar />
       <Sidebar />
-      <div style={{ marginLeft: "250px", padding: "20px", paddingTop: "80px" }}>
+      <div className="main-content" style={{ marginLeft: "250px", padding: "20px", paddingTop: "80px" }}>
         <Outlet />
       </div>
     </>

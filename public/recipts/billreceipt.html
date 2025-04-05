@@ -28,6 +28,12 @@
             page-break-inside: avoid;
         }
     }
+    @media print {
+  * {
+    -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+    print-color-adjust: exact !important;         /* Firefox */
+  }
+}
 
     .page {
         width: 210mm;
@@ -115,106 +121,6 @@
 </style>
 
 <body>
-    <!-- <div class="page">
-        <h1>PAYMENT RECEIPT</h1>
-        <div class="receipt-header">
-          <div class="logo">
-            <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
-          </div>
-          <div class="details">
-            <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>
-            SMART TRADE CITY, KOTTAKKAL</p>
-            <p>PH: +91 6235774801</p>
-            <p>Email: iqjita@gmail.com</p>
-            <p>Web: www.iqjita.com</p>
-          </div>
-        </div>
-        <div class="details">
-          <h4>Date: <span>23/123/23</span></h4>
-          <h4>INVOICE: <span>23/123/23</span></h4>
-        </div>
-    
-        <table>
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Discount</th>
-              <th>TotalAmount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ADMISSION FEE</td>
-              <td>RS 1000</td>
-              <td>RS 1000</td>
-              <td>RS 1000</td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3">Total</td>
-              <td>RS 1000</td>
-            </tr>
-          </tbody>
-        </table>
-    
-        <div class="summary">
-          <p><strong>Amount in figure:</strong> RS 1000</p>
-          <p><strong>Amount paid:</strong> RS 1000</p>
-          <p><strong>Remaining amount due:</strong> RS 1000</p>
-          <p><strong>Attended by:</strong> 10/13/2021</p>
-        </div>
-      </div> -->
-
-    <!-- Repeat the same block again for bottom half -->
-    <!-- <div class="page">
-        <h1>PAYMENT RECEIPT</h1>
-        <div class="receipt-header">
-          <div class="logo">
-            <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
-          </div>
-          <div class="details">
-            <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>
-            SMART TRADE CITY, KOTTAKKAL</p>
-            <p>PH: +91 6235774801</p>
-            <p>Email: iqjita@gmail.com</p>
-            <p>Web: www.iqjita.com</p>
-          </div>
-        </div>
-        <div class="details">
-          <h4>Date: <span>23/123/23</span></h4>
-          <h4>INVOICE: <span>23/123/23</span></h4>
-        </div>
-    
-        <table>
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Discount</th>
-              <th>TotalAmount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ADMISSION FEE</td>
-              <td>5</td>
-              <td>USD 20</td>
-              <td>USD 100</td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3">Total</td>
-              <td>USD 100</td>
-            </tr>
-          </tbody>
-        </table>
-    
-        <div class="summary">
-          <p><strong>Amount in figure:</strong> USD 250</p>
-          <p><strong>Amount paid:</strong> USD 100</p>
-          <p><strong>Remaining amount due:</strong> USD 150</p>
-          <p><strong>Attended by:</strong> 10/13/2021</p>
-        </div>
-      </div> -->
     <!-- REPEATED BLOCK FOR TWO COPIES -->
     <div class="page">
         <h1>PAYMENT RECEIPT</h1>
@@ -250,7 +156,7 @@
                 <tr>
                     <td id="catagory1">ADMISSION FEE</td>
                     <td id="amount1"></td>
-                    <td>RS 0</td>
+                    <td>Rs 0</td>
                     <td id="amount1b"></td>
                 </tr>
                 <tr class="total-row">
@@ -261,8 +167,8 @@
         </table>
 
         <div class="summary">
-            <p><strong>Amount in figure:</strong> RS <span id="amount1d"></span></p>
-            <p><strong>Amount paid:</strong> RS <span id="amount1e"></span></p>
+            <p><strong>Amount in figure:</strong>  <span id="amount1d"></span></p>
+            <p><strong>Amount paid:</strong> Rs <span id="amount1e"></span></p>
             <!-- <p><strong>Remaining amount due:</strong> RS 0</p> -->
             <p><strong>Attended by:</strong> <span id="user1"></span></p>
         </div>
@@ -304,7 +210,7 @@
                 <tr>
                     <td id="catagory2">ADMISSION FEE</td>
                     <td id="amount2"></td>
-                    <td>RS 0</td>
+                    <td>Rs 0</td>
                     <td id="amount2b"></td>
                 </tr>
                 <tr class="total-row">
@@ -315,8 +221,8 @@
         </table>
 
         <div class="summary">
-            <p><strong>Amount in figure:</strong> RS <span id="amount2d"></span></p>
-            <p><strong>Amount paid:</strong> RS <span id="amount2e"></span></p>
+            <p><strong>Amount in figure:</strong> <span id="amount2d"></span></p>
+            <p><strong>Amount paid:</strong> Rs <span id="amount2e"></span></p>
             <!-- <p><strong>Remaining amount due:</strong> RS 0</p> -->
             <p><strong>Attended by:</strong> <span id="user2"></span></p>
         </div>
@@ -325,6 +231,28 @@
     </div>
 
     <script>
+        function numberToWords(num) {
+        const a = [
+            "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+            "Seventeen", "Eighteen", "Nineteen"
+        ];
+        const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+        const numToWords = (n) => {
+            if ((n = n.toString()).length > 9) return 'Overflow';
+            let nStr = ('000000000' + n).substr(-9).match(/.{1,2}/g);
+            let str = '';
+            str += (nStr[0] != 0) ? (a[Number(nStr[0])] || b[nStr[0][0]] + ' ' + a[nStr[0][1]]) + ' Crore ' : '';
+            str += (nStr[1] != 0) ? (a[Number(nStr[1])] || b[nStr[1][0]] + ' ' + a[nStr[1][1]]) + ' Lakh ' : '';
+            str += (nStr[2] != 0) ? (a[Number(nStr[2])] || b[nStr[2][0]] + ' ' + a[nStr[2][1]]) + ' Thousand ' : '';
+            str += (nStr[3] != 0) ? (a[Number(nStr[3])] || b[nStr[3][0]] + ' ' + a[nStr[3][1]]) + ' Hundred ' : '';
+            str += (nStr[4] != 0) ? ((str != '') ? 'and ' : '') +
+                (a[Number(nStr[4])] || b[nStr[4][0]] + ' ' + a[nStr[4][1]]) + ' ' : '';
+            return str.trim();
+        };
+        return numToWords(Math.floor(num)) + " Rupees Only";
+    }
         // Retrieve student data from localStorage
         const receipt = JSON.parse(localStorage.getItem('Receiptdata'));
         console.log("reciptdata",receipt)
@@ -334,10 +262,10 @@
             document.getElementById("date1").textContent = receipt.timestamp;
             document.getElementById("name1").textContent = receipt.name;
             document.getElementById("course1").textContent = receipt.course;
-            document.getElementById("amount1").textContent = "RS " + receipt.amount;
-            document.getElementById("amount1b").textContent = "RS " + receipt.amount;
-            document.getElementById("amount1c").textContent = "RS " + receipt.amount;
-            document.getElementById("amount1d").textContent = receipt.amount;
+            document.getElementById("amount1").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount1b").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount1c").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount1d").textContent = numberToWords(receipt.amount);
             document.getElementById("amount1e").textContent = receipt.amount;
             document.getElementById("user1").textContent = receipt.user;
             document.getElementById("catagory1").textContent = receipt.category;
@@ -347,10 +275,10 @@
             document.getElementById("date2").textContent = receipt.timestamp;
             document.getElementById("name2").textContent = receipt.name;
             document.getElementById("course2").textContent = receipt.course;
-            document.getElementById("amount2").textContent = "RS " + receipt.amount;
-            document.getElementById("amount2b").textContent = "RS " + receipt.amount;
-            document.getElementById("amount2c").textContent = "RS " + receipt.amount;
-            document.getElementById("amount2d").textContent = receipt.amount;
+            document.getElementById("amount2").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount2b").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount2c").textContent = "Rs " + receipt.amount;
+            document.getElementById("amount2d").textContent = numberToWords(receipt.amount);
             document.getElementById("amount2e").textContent = receipt.amount;
             document.getElementById("user2").textContent = receipt.user;
             document.getElementById("catagory2").textContent = receipt.category;
@@ -358,12 +286,12 @@
         }
 
         // Auto print when the page loads
-        // window.onload = () => {
-        //     setTimeout(() => {
-        //         window.print();
-        //         window.close();
-        //     }, 500);
-        // };
+        window.onload = () => {
+            setTimeout(() => {
+                window.print();
+                window.close();
+            }, 500);
+        };
     </script>
 </body>
 

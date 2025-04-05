@@ -503,7 +503,7 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="modal-footer">
-                  <button className="action-btn print-btn" onClick={() => window.print()}>
+                  <button className="action-btn edit-btn" >
                     Edit Details
                   </button>
                   <button className="action-btn print-btn" onClick={() => handlePrint(selectedStudent)}>

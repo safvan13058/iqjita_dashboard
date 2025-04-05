@@ -1,16 +1,57 @@
-.flex img{
+.flex img {
     height: 80vh;
-}
-.flex {
+  }
+  
+  .flex {
     position: relative;
-}
-.mt-4 {
+  }
+  
+  .mt-4 {
     width: 500px;
-    position:absolute;
+    position: absolute;
     right: 10px;
-    top:100px
-}
-
-/* under_building.css */
-
-
+    top: 100px;
+  }
+  
+  /* 📱 Media Query for screens <= 750px */
+  @media (max-width: 750px) {
+    .flex img {
+      height: auto;
+      width: 100%;
+    }
+  
+    .mt-4 {
+      position: static;
+      width: 90%;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  
+    .flex {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+  
+  /* 📱 Media Query for screens <= 450px */
+  @media (max-width: 450px) {
+    .mt-4 h1 {
+      font-size: 1.5rem;
+    }
+  
+    .mt-4 p {
+      font-size: 0.9rem;
+    }
+  
+    .mt-4 {
+      width: 100%;
+      padding: 0 1rem;
+    }
+  
+    .flex img {
+      width: 100%;
+      height: auto;
+    }
+  }
+  

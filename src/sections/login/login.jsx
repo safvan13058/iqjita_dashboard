@@ -93,7 +93,7 @@ function Login() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group password">
             <label>Password</label>
             <input
               type="password"
@@ -103,6 +103,7 @@ function Login() {
               required
             />
           </div>
+          <div className="forget">Forget password?</div>
 
           <button  className="login-btn"type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}

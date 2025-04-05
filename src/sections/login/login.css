@@ -101,7 +101,20 @@ button:disabled {
     background-color: #95a5a6;
     cursor: not-allowed;
 }
-
+.forget{
+    width: 100%;
+    text-align: end;
+    transition: 1s ease-in-out;
+}
+.forget:hover{
+    color: blue;
+}
+.password{
+    margin-bottom: 0;
+}
+.form-group input {
+    padding-right: 0;
+}
 .login-error {
     color: var(--secondary-color);
     background-color: rgba(155, 90, 42, 0.1);

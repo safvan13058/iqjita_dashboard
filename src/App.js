@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./sections/login/auth";
 
 import "./App.css";
+import "./mediascreen/mediascreen.css";
 import Sidebar from "./sections/sidebar/sidebar";
 import "../src/sections/common/colour.css";
 import Navbar from "./sections/nav/nav";
