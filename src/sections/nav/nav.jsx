@@ -3,7 +3,7 @@ import "./nav.css";
 import "../common/colour.css";
 import { useAuth } from "../login/auth";
 import { useNavigate } from "react-router-dom";
-import logo from '../images/logo.png'
+import logo from '../images/logo2.png'
 import profiles from '../images/profile.png'
 import pic1 from '../images/profile_pic/pic1.png'
 import pic2 from '../images/profile_pic/pic2.png'
