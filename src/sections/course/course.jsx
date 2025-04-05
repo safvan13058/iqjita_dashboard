@@ -232,7 +232,7 @@ const CourseForm = () => {
             className="course-search-input"
           />
         </div>
-        {user.role === 'admin' ? (
+        {user.role !== 'student' ? (
           <>
            <button
           onClick={() => setShowAddForm(true)}

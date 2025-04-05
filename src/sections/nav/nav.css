@@ -20,7 +20,7 @@
 .navbar-logo img{
   border-radius: 8px;
   padding: 5px;
-  background-color: #FFFFFF;
+  /* background-color: #FFFFFF; */
   width: 100px;
 }
 .navbar-left, .navbar-right {

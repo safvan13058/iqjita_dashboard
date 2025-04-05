@@ -36,7 +36,7 @@ const FeeForm = ({ onBack, currentUser }) => {
   const ReceiptPrint = ( Receipt) => {
     // Store student data in localStorage
 
-
+    console.log("receiptlog", Receipt)
     localStorage.setItem("Receiptdata", JSON.stringify(Receipt));
 
     // Open the new print page
@@ -567,8 +567,9 @@ const FeeForm = ({ onBack, currentUser }) => {
                 course: selectedStudent.course,
                 receipt_no: paymentStatus.bill_number,
                 amount:parseFloat(amount),
-                timpstamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
-                user:user.name
+                timestamp:format(new Date(), 'yyyy-MM-dd HH:mm'),
+                user:user.name,
+                category:"COURSE FEE"
 
               })} className="print-btn">
                 Print Receipt

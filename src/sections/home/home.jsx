@@ -4,12 +4,13 @@ import "./home.css";
 import AdmissionForm from "../admission/admission";
 import FeeForm from "../fees/fees";
 import CourseForm from "../course/course";
-import { Maximize, Minimize } from "lucide-react"; 
+import { Maximize, Minimize } from "lucide-react";
 const Home = () => {
   const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [transactions, setTransactions] = useState([]);
+  const [transactions1, setTransactions1] = useState([]);
   // const [showPopup, setShowPopup] = useState(false);
   const [filter, setFilter] = useState("all"); // 'all', 'credit', 'debit'
   const [date, setDate] = useState("");
@@ -17,7 +18,7 @@ const Home = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isFullScreen, setIsFullScreen] = useState(false);
-
+  const [transactionError, setTransactionError] = useState("");
   // const transactions = [
   //   { id: 1, student: "John Doe", amount: 5000, date: "2023-05-15", status: "Completed", method: "Bank Transfer" },
   //   { id: 2, student: "Jane Smith", amount: 7500, date: "2023-05-14", status: "Pending", method: "MPESA" },
@@ -28,6 +29,9 @@ const Home = () => {
   useEffect(() => {
     fetchTransactions();
   }, [filter, date, month, startDate, endDate]);
+  useEffect(() => {
+    fetchTransactionsall();
+  }, []);
 
   const fetchTransactions = async () => {
     let url = "https://software.iqjita.com/administration.php?action=gettransactiondetails";
@@ -38,6 +42,7 @@ const Home = () => {
     if (startDate && endDate) url = `https://software.iqjita.com/administration.php?action=gettransactiondetails&start_date=${startDate}&end_date=${endDate}`;
 
     try {
+      console.log("urlsss..", url)
       const response = await fetch(url);
       const text = await response.text();
       console.log("🔍 Raw API Response Transactions:", text); // Debugging log
@@ -55,14 +60,46 @@ const Home = () => {
 
       if (data.status === "success") {
         setTransactions(data.transactions);
+        setTransactionError(""); // ✅ Clear any previous error
       } else {
-        console.error("Failed to fetch transactions");
+        setTransactions([]); // Clear transactions
+        setTransactionError(data.message || "No transactions found"); // ✅ Set error message
       }
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
   };
+  const fetchTransactionsall = async () => {
+    let url = "https://software.iqjita.com/administration.php?action=gettransactiondetails";
 
+    try {
+
+      const response = await fetch(url);
+      const text = await response.text();
+      console.log("🔍 Raw API Response Transactions:", text); // Debugging log
+
+      // ✅ Split response if multiple JSON objects exist
+      const jsonObjects = text.trim().split("\n");
+      const lastJson = jsonObjects.pop(); // Take the second (last) JSON object
+
+      let data;
+      try {
+        data = JSON.parse(lastJson); // ✅ Parse the correct JSON
+      } catch (error) {
+        throw new Error("❌ Invalid JSON response from server:\n");
+      }
+
+      if (data.status === "success") {
+        setTransactions1(data.transactions);
+        setTransactionError(""); // ✅ Clear any previous error
+      } else {
+        setTransactions1([]); // Clear transactions
+        setTransactionError(data.message || "No transactions found"); // ✅ Set error message
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+  };
   // return (
   //   <div className="dashboard-containers">
   //     {activeForm === "admission" && <AdmissionForm onBack={() => setActiveForm(null)} />}
@@ -208,8 +245,8 @@ const Home = () => {
                 </tr>
               </thead>
               <tbody>
-                {(transactions || []).length > 0 ? (
-                  transactions.slice(0, 5).map((transaction) => ( // Slice the first 5 transactions
+                {(transactions1 || []).length > 0 ? (
+                  transactions1.slice(0, 5).map((transaction) => ( // Slice the first 5 transactions
                     <tr key={transaction.transaction_id}>
                       <td>{transaction.transaction_id}</td>
                       <td>{transaction.remark}</td>
@@ -319,7 +356,7 @@ const Home = () => {
               {/* Buttons: Close & Full Screen Toggle */}
               <div className="popup-buttons">
                 <button className="fullscreen-btn" onClick={() => setIsFullScreen(!isFullScreen)}>
-                {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                  {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
                 </button>
                 <button className="close-modal" onClick={() => setShowPopup(false)}>×</button>
               </div>
@@ -373,23 +410,33 @@ const Home = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.transaction_id}>
-                      <td>{transaction.transaction_id}</td>
-                      <td>{parseFloat(transaction.amount).toLocaleString()}</td>
-                      <td>
-                        <span className={`status-badge ${transaction.type.toLowerCase()}`}>
-                          {transaction.type}
-                        </span>
+                  {(transactions || []).length > 0 ? (
+                    transactions.map((transaction) => (
+                      <tr key={transaction.transaction_id}>
+                        <td>{transaction.transaction_id}</td>
+                        <td>{parseFloat(transaction.amount).toLocaleString()}</td>
+                        <td>
+                          <span className={`status-badge ${transaction.type.toLowerCase()}`}>
+                            {transaction.type}
+                          </span>
+                        </td>
+                        <td>{transaction.bill_number}</td>
+                        <td>{parseFloat(transaction.current_balance).toLocaleString()}</td>
+                        <td>{transaction.remark}</td>
+                        <td>{transaction.updated_by}</td>
+                        <td>{transaction.created_at}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: "center", color: "red" }}>
+                        {transactionError || "No transactions available"}
                       </td>
-                      <td>{transaction.bill_number}</td>
-                      <td>{parseFloat(transaction.current_balance).toLocaleString()}</td>
-                      <td>{transaction.remark}</td>
-                      <td>{transaction.updated_by}</td>
-                      <td>{transaction.created_at}</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
+
+
               </table>
             </div>
 

@@ -1086,7 +1086,8 @@ const AdmissionForm = ({ onBack }) => {
                         receipt_no: receipt.bill_number,
                         amount: 1000,
                         timpstamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
-                        user: user.name
+                        user: user.name,
+                        category:"ADMISSION FEE"
 
                     })}>🖨 Print Receipt</button>
                     <button onClick={resetAdmission}>Start New Admission</button>

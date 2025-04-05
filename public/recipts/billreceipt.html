@@ -1,231 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill Receipt</title>
 </head>
 <style>
-    /* body{
-    
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    *{
+    * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
     }
-    .main{
-        
-        background-color: aqua;
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #333;
         padding: 20px;
-        width: 50%;
-        height: 300px;
     }
-    .logo img{
-        width: 180px;
+
+    @media print {
+        body {
+            margin: 0;
+        }
+
+        .page {
+            page-break-inside: avoid;
+        }
     }
-    .head{
+
+    .page {
+        width: 210mm;
+        height: 148.5mm;
+        border-bottom: 1px dashed #ccc;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .info,
+    .summary {
+        margin-top: 10px;
+    }
+
+    .info strong {
+        color: #007B9E;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th {
+        background-color: #0F6D66;
+        color: white;
+        padding: 6px;
+        text-align: left;
+    }
+
+    td {
+        padding: 6px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .total-row td {
+        font-weight: bold;
+    }
+
+    .logo {
+        width: 100px;
+        margin-bottom: 10px;
+    }
+
+    .logo img {
+        width: 100%;
+    }
+
+    .receipt-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 10px;
     }
-    .head-address div{
-        display: flex;
-        gap: 20px;
 
+    .details h4 {
+        margin: 4px 0;
     }
-    .middle-1{
-        margin-top: 50px;
-        display: flex;
-        justify-content:space-around;
-        gap: 220px;
-    }
-    .middle-2{
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    .last{
-        margin-top: 20px;
-        display: flex;
-        justify-content: space-between;
-    } */
-    @page {
-            size: A4 landscape;
-            margin: 10mm;
-        }
-        @media print {
-    body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
+    .seal {
+  margin-top: 40px;
+  text-align: right;
+  font-style: italic;
+  font-size: 14px;
+  color: #555;
+  padding-right: 20px;
+  position: relative;
 }
 
-    body {
-            display: flex;
-            justify-content: center;
-            /* align-items: center; */
-            height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .main {
-            /* background-color: aqua; */
-            padding: 20px;
-            width: 100%;
-            height: fit-content;
-            border: 2px solid #000;
-            border-radius: 14px;
-            position: relative;
-        }
-        .logo img {
-            width: 180px;
-        }
-        .head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .head-address div {
-            display: flex;
-            gap: 20px;
-        }
-        .middle-1 {
-            margin-top: 50px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .middle-2 {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            position: relative;
-        }
-        .middle-2 div {
-            position: relative;
-           
-        }
-        .middle-2 div span {
-            font-size: 16px;
-            font-weight: bold;
-           
-        }
-        .dots {
-            display: inline-block;
-            width: 100%;
-            border-bottom: 1px dotted black;
-            position: relative;
-        }
-        .text-above {
-            position: absolute;
-            top: -5px;
-            left: 10px;
-            background-color: aqua;
-            padding: 0 5px;
-            font-weight: bold;
-        }
-        .last {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            /* font-weight: bold; */
-        }
-
-        .span-name{
-            position:absolute;
-            left: 150px;
-            top:-5px;
-        }
-        .span-amount{
-            position:absolute;
-            left: 150px;
-            top:-5px;
-        }
-        .span-course{
-            position:absolute;
-            left: 150px;
-            top:-5px;
-        }
-        
-        .price .rs{
-            color: white;
-            background-color: #000;
-            padding: 10px 10px;
-            margin-right: 5px;
-
-        }
-        .price .amt{
-            color: #000;
-            padding: 9px 30px;
-            border: 1.5px solid black;
-        }
-        .sign{
-            font-size: 10px;
-        }
-        .Receipt-name{
-            color: white;
-            background-color: #000;
-            padding: 5px;
-            font-weight: bold;
-            letter-spacing: 4px;
-        }
+.seal::before {
+  content: "";
+  display: block;
+  width: 180px;
+  height: 1px;
+  background-color: #aaa;
+  position: absolute;
+  right: 20px;
+  top: -10px;
+}
 </style>
+
 <body>
-    <div class="main">
-        <div class="head">
-            <div class="logo"><img src="https://software.iqjita.com/uploads/logo/logo.png" alt=""></div>
-            <div class="head-address">
-                <div><p>Smart trade city Kottakkal</p> <p>+91 9961529467</p></div>
-                <div><p>info@iqjita.com</p><p>www.iqjita.com</p></div>
+    <!-- <div class="page">
+        <h1>PAYMENT RECEIPT</h1>
+        <div class="receipt-header">
+          <div class="logo">
+            <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+          </div>
+          <div class="details">
+            <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>
+            SMART TRADE CITY, KOTTAKKAL</p>
+            <p>PH: +91 6235774801</p>
+            <p>Email: iqjita@gmail.com</p>
+            <p>Web: www.iqjita.com</p>
+          </div>
+        </div>
+        <div class="details">
+          <h4>Date: <span>23/123/23</span></h4>
+          <h4>INVOICE: <span>23/123/23</span></h4>
+        </div>
+    
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Discount</th>
+              <th>TotalAmount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ADMISSION FEE</td>
+              <td>RS 1000</td>
+              <td>RS 1000</td>
+              <td>RS 1000</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3">Total</td>
+              <td>RS 1000</td>
+            </tr>
+          </tbody>
+        </table>
+    
+        <div class="summary">
+          <p><strong>Amount in figure:</strong> RS 1000</p>
+          <p><strong>Amount paid:</strong> RS 1000</p>
+          <p><strong>Remaining amount due:</strong> RS 1000</p>
+          <p><strong>Attended by:</strong> 10/13/2021</p>
+        </div>
+      </div> -->
+
+    <!-- Repeat the same block again for bottom half -->
+    <!-- <div class="page">
+        <h1>PAYMENT RECEIPT</h1>
+        <div class="receipt-header">
+          <div class="logo">
+            <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+          </div>
+          <div class="details">
+            <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>
+            SMART TRADE CITY, KOTTAKKAL</p>
+            <p>PH: +91 6235774801</p>
+            <p>Email: iqjita@gmail.com</p>
+            <p>Web: www.iqjita.com</p>
+          </div>
+        </div>
+        <div class="details">
+          <h4>Date: <span>23/123/23</span></h4>
+          <h4>INVOICE: <span>23/123/23</span></h4>
+        </div>
+    
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Discount</th>
+              <th>TotalAmount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ADMISSION FEE</td>
+              <td>5</td>
+              <td>USD 20</td>
+              <td>USD 100</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3">Total</td>
+              <td>USD 100</td>
+            </tr>
+          </tbody>
+        </table>
+    
+        <div class="summary">
+          <p><strong>Amount in figure:</strong> USD 250</p>
+          <p><strong>Amount paid:</strong> USD 100</p>
+          <p><strong>Remaining amount due:</strong> USD 150</p>
+          <p><strong>Attended by:</strong> 10/13/2021</p>
+        </div>
+      </div> -->
+    <!-- REPEATED BLOCK FOR TWO COPIES -->
+    <div class="page">
+        <h1>PAYMENT RECEIPT</h1>
+        <div class="receipt-header">
+            <div class="logo">
+                <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+            </div>
+            <div class="details">
+                <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>SMART TRADE CITY, KOTTAKKAL</p>
+                <p>PH: +91 6235774801</p>
+                <p>Email: iqjita@gmail.com</p>
+                <p>Web: www.iqjita.com</p>
             </div>
         </div>
-        <div class="middle-1">
-            <div><p>No: <span id="receiptno"></span></p></div>
-            <div class="Receipt-name">RECEIPT</div>
-            <div>Date: <span id="date"></span></div>
-        </div>
-        <div class="middle-2">
-            <div>Received from........................................................................................................................................................................................... <span class="span-name" id="name">Loading...</span></div>
-            <div>sum of rupees...........................................................................................................................................................................................<span class="span-amount" id="amount">Loading...</span></div>
-            <div>towards.........................................................................................................in Full/Part settlement by cash/UPI<span class="span-course " id="course">Loading...</span></div>
+
+        <div class="details">
+            <h4>Date: <span id="date1"></span></h4>
+            <h4>INVOICE: <span id="receiptno1"></span></h4>
+            <h4>Name: <span id="name1"></span></h4>
+            <h4>Course: <span id="course1"></span></h4>
         </div>
 
-        <div class="last">
-            <div class="price"><span class="rs">₹</span><span class="amt" id="amount-int">1000/-</span></div>
-            <div class="sign"><div>Authorized Sign</div>  <div id="user">Loading</div></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
+                    <th>TotalAmount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="catagory1">ADMISSION FEE</td>
+                    <td id="amount1"></td>
+                    <td>RS 0</td>
+                    <td id="amount1b"></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3">Total</td>
+                    <td id="amount1c"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p><strong>Amount in figure:</strong> RS <span id="amount1d"></span></p>
+            <p><strong>Amount paid:</strong> RS <span id="amount1e"></span></p>
+            <!-- <p><strong>Remaining amount due:</strong> RS 0</p> -->
+            <p><strong>Attended by:</strong> <span id="user1"></span></p>
         </div>
+        <div class="seal"> <p>Sign & seal</p></div>
     </div>
+
+    <!-- SECOND COPY (BOTTOM HALF) -->
+    <div class="page">
+        <h1>PAYMENT RECEIPT</h1>
+        <div class="receipt-header">
+            <div class="logo">
+                <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+            </div>
+            <div class="details">
+                <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>SMART TRADE CITY, KOTTAKKAL</p>
+                <p>PH: +91 6235774801</p>
+                <p>Email: iqjita@gmail.com</p>
+                <p>Web: www.iqjita.com</p>
+            </div>
+        </div>
+
+        <div class="details">
+            <h4>Date: <span id="date2"></span></h4>
+            <h4>INVOICE: <span id="receiptno2"></span></h4>
+            <h4>Name: <span id="name2"></span></h4>
+            <h4>Course: <span id="course2"></span></h4>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
+                    <th>TotalAmount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="catagory2">ADMISSION FEE</td>
+                    <td id="amount2"></td>
+                    <td>RS 0</td>
+                    <td id="amount2b"></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3">Total</td>
+                    <td id="amount2c"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p><strong>Amount in figure:</strong> RS <span id="amount2d"></span></p>
+            <p><strong>Amount paid:</strong> RS <span id="amount2e"></span></p>
+            <!-- <p><strong>Remaining amount due:</strong> RS 0</p> -->
+            <p><strong>Attended by:</strong> <span id="user2"></span></p>
+        </div>
+
+        <div class="seal"> <p>Sign & seal</p></div>
+    </div>
+
     <script>
         // Retrieve student data from localStorage
-        const Receipt = JSON.parse(localStorage.getItem('Receiptdata'));
+        const receipt = JSON.parse(localStorage.getItem('Receiptdata'));
+        console.log("reciptdata",receipt)
+        if (receipt) {
+            // Top Copy
+            document.getElementById("receiptno1").textContent = receipt.receipt_no;
+            document.getElementById("date1").textContent = receipt.timestamp;
+            document.getElementById("name1").textContent = receipt.name;
+            document.getElementById("course1").textContent = receipt.course;
+            document.getElementById("amount1").textContent = "RS " + receipt.amount;
+            document.getElementById("amount1b").textContent = "RS " + receipt.amount;
+            document.getElementById("amount1c").textContent = "RS " + receipt.amount;
+            document.getElementById("amount1d").textContent = receipt.amount;
+            document.getElementById("amount1e").textContent = receipt.amount;
+            document.getElementById("user1").textContent = receipt.user;
+            document.getElementById("catagory1").textContent = receipt.category;
 
-        if (Receipt) {
-            document.getElementById("receiptno").textContent = Receipt.receipt_no;
-            document.getElementById("date").textContent = Receipt.timpstamp;
-            document.getElementById("name").textContent = Receipt.name;
-            document.getElementById("amount").textContent = Receipt.amount;
-            document.getElementById("course").textContent = Receipt.course;
-            document.getElementById("amount-int").textContent = Receipt.amount;
-            document.getElementById("user").textContent = Receipt.user;
+            // Bottom Copy
+            document.getElementById("receiptno2").textContent = receipt.receipt_no;
+            document.getElementById("date2").textContent = receipt.timestamp;
+            document.getElementById("name2").textContent = receipt.name;
+            document.getElementById("course2").textContent = receipt.course;
+            document.getElementById("amount2").textContent = "RS " + receipt.amount;
+            document.getElementById("amount2b").textContent = "RS " + receipt.amount;
+            document.getElementById("amount2c").textContent = "RS " + receipt.amount;
+            document.getElementById("amount2d").textContent = receipt.amount;
+            document.getElementById("amount2e").textContent = receipt.amount;
+            document.getElementById("user2").textContent = receipt.user;
+            document.getElementById("catagory2").textContent = receipt.category;
+
         }
 
         // Auto print when the page loads
-        window.onload = () => {
-            setTimeout(() => {
-                window.print();
-                window.close();
-            }, 500);
-        };
+        // window.onload = () => {
+        //     setTimeout(() => {
+        //         window.print();
+        //         window.close();
+        //     }, 500);
+        // };
     </script>
 </body>
-</html>
 
+</html>
