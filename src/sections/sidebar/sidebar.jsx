@@ -5,6 +5,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import { MdOutlinePersonOutline,MdAccountBalanceWallet  } from "react-icons/md";
 import { BsGraphUpArrow } from "react-icons/bs";
+import { FaGraduationCap } from "react-icons/fa";
 import logo from '../images/logo.png'
 const Sidebar = () => {
   const location = useLocation();
@@ -16,7 +17,7 @@ const Sidebar = () => {
     { path: "/faculty", label: "Faculty", icon: <MdOutlinePersonOutline /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
-    { path: "/alumni", label: "Alumni", icon: <MdAccountBalanceWallet /> },
+    { path: "/alumni", label: "Alumni", icon: <FaGraduationCap /> },
   ];
 
   return (
