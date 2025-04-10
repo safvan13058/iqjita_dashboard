@@ -94,7 +94,7 @@ const AdmissionForm = ({ onBack }) => {
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
             documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "",
-            branch: 1, photo: null, photoPreview: null, gender: ''
+            branch: 1, photo: null, photoPreview: null, gender: '',referredby:'',referredbycategory:''
         };
     });
 
@@ -129,10 +129,10 @@ const AdmissionForm = ({ onBack }) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-
             const text = await response.text(); // Read raw response
             console.log("Raw Response:", text); // Debugging: check raw response
-
+            
+            
             // Trim extra characters and safely parse JSON
             const jsonStartIndex = text.indexOf("{"); // Find first "{"
             const cleanJson = jsonStartIndex !== -1 ? text.slice(jsonStartIndex).trim() : text;
@@ -195,7 +195,7 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null, gender: ''
+            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null, gender: '',referredby:'',referredbycategory:''
         });
         setFeeData({
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
@@ -269,7 +269,7 @@ const AdmissionForm = ({ onBack }) => {
     };
     const isStudentDataComplete = () => {
         return Object.entries(studentData).every(([key, value]) => {
-            if (["discount", "documents_submitted", "photo", "photoPreview"].includes(key)) {
+            if (["discount", "documents_submitted", "photo", "photoPreview","referredby","referredbycategory"].includes(key)) {
                 return true; // ✅ Explicitly allow null for these fields
             }
 
@@ -339,6 +339,8 @@ const AdmissionForm = ({ onBack }) => {
         formData.append("education_qualification", updatedStudentData.education_qualification);
         formData.append("updated_by", updatedStudentData.updated_by);
         formData.append("branch", updatedStudentData.branch);
+        formData.append("referredby", updatedStudentData.referredby);
+        formData.append("referredbycategory", updatedStudentData.referredbycategory);
 
         // File input (make sure it's from an <input type="file" /> or similar)
         if (updatedStudentData.photo instanceof File) {
@@ -911,6 +913,22 @@ const AdmissionForm = ({ onBack }) => {
                                 <option value="Undergraduate">Undergraduate</option>
                                 <option value="Postgraduate">Postgraduate</option>
                             </select>
+                            <label>Referred by</label>
+                            <input
+                                type="text"
+                                name="referredby"
+                                value={studentData.referredby || ""}
+                                // readOnly
+                            />
+                              <label>Ref category</label>
+                            <select name="" value={studentData.referredbycategory} onChange={handleChange} required>
+                                <option value="">Ref category</option>
+                                <option value="Students">Students</option>
+                                <option value="Staff">Staff</option>
+                                <option value="Other">Other</option>
+                            </select>
+
+
                         </div>
                     </div>
                     <div className="btn-grp">

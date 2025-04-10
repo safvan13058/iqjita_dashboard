@@ -22,9 +22,66 @@ const StudentsPage = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [receipt, setReceiptUrl] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [installmentStarted, setInstallmentStarted] = useState({});
+  const [startingDate, setStartingDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
+  });
+  const [periodDays, setPeriodDays] = useState(30);
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
+  // useEffect(() => {
+  //     fetchStatus();
+  // }, [selectedStudent]);
+  const fetchStatus = async (admission_no) => {
+    console.log("working status")
+    // const newStatus = {};
+    // for (const student of selectedStudent) {
+      try {
+        const res = await fetch("https://software.iqjita.com/pendingfee.php?mode=check_started", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ admission_id:admission_no }),
+        });
+        const data = await res.json();
+        console.log(data)
+        setInstallmentStarted(data.started);
+        // newStatus[student.admission_number] = data.started;
+      } catch (err) {
+        console.error("Error checking installments:", err);
+      }
+    }
+    
+  const handleStartBatch = async () => {
+    try {
+      const response = await fetch(`https://software.iqjita.com/pendingfee.php?mode=set_installments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          admission_id: selectedStudent.admission_no, // assuming 'id' is admission_number
+          starting_date: startingDate,
+          period_days: parseInt(periodDays)
+        })
+      });
 
+
+      const result = await response.json();
+      console.log(`Installments set successfull${result}`)
+      if (result.status === 'success') {
+        alert('Installments set successfully');
+        setShowModal(false);
+      } else {
+        alert(result.message || 'Something went wrong');
+      }
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  };
 
   const handlePrint = (student) => {
     const fullStudentData = [{
@@ -316,7 +373,9 @@ const StudentsPage = () => {
       // ✅ Check if API returned success or error
       if (result.status === "success") {
         console.log("✅ Student Details Fetched:", result.student);
+        // fetchStatus()
         setSelectedStudent(result.student[0] || {}); // ✅ Ensure we get the first student object
+        
       } else {
         throw new Error(result.message || "❌ Failed to fetch student details.");
       }
@@ -329,6 +388,7 @@ const StudentsPage = () => {
   };
   const handleViewStudent = (admissionNumber) => {
     fetchStudentDetails(admissionNumber);
+    fetchStatus(admissionNumber);
   };
 
   const handleCloseModal = () => {
@@ -503,6 +563,14 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="modal-footer">
+                  {!installmentStarted && (
+                    <button
+                      className="action-btn edit-btn"
+                      onClick={() => setShowModal(true)}
+                     >
+                      Start Batch
+                    </button>
+                  )}
                   <button className="action-btn edit-btn" >
                     Edit Details
                   </button>
@@ -514,6 +582,34 @@ const StudentsPage = () => {
                   </button> */}
                 </div>
               </>
+            )}
+            {/* Start Batch Modal */}
+            {showModal && (
+              <div className="batch-modal-overlay">
+                <div className="batch-modal-content">
+                  <h3>Start Batch</h3>
+                  <label>
+                    Starting Date:
+                    <input
+                      type="date"
+                      value={startingDate}
+                      onChange={(e) => setStartingDate(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Period (days between installments):
+                    <input
+                      type="number"
+                      value={periodDays}
+                      onChange={(e) => setPeriodDays(e.target.value)}
+                    />
+                  </label>
+                  <div className="modal-actions">
+                    <button onClick={handleStartBatch}>OK</button>
+                    <button onClick={() => setShowModal(false)}>Cancel</button>
+                  </div>
+                </div>
+              </div>
             )}
             {/* Modal Popup */}
             {isModalOpen && (
@@ -539,7 +635,7 @@ const StudentsPage = () => {
                         amount: 1000,
                         timpstamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
                         user: user.name,
-                        category:"ADMISSION FEE"
+                        category: "ADMISSION FEE"
                       })}>
                         Download Receipt
                       </button>

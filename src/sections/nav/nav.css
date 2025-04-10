@@ -15,6 +15,37 @@
   box-sizing: border-box;
 }
 
+.network-status {
+  position: absolute;
+  /* top: 50%; */
+  top: -50px;
+  left: 50%;
+  /* transform: translate(-50%, -50%); */
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: .5;
+  color: white;
+  transition: all 1s ease-in-out;
+  letter-spacing: 2px;
+}
+
+.network-status.offline {
+  background-color: red; /* red */
+}
+
+.network-status.online {
+  background-color: rgb(43, 219, 43); /* green */
+}
+/* Show the banner */
+.network-status.slide-in {
+  top: 0px;
+  opacity: 1;
+}
 /* Prevent content from hiding behind navbar */
 
 .navbar-logo img{

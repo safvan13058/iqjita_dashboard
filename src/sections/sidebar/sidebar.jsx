@@ -14,6 +14,7 @@ const Sidebar = () => {
   const navItems = [
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
     { path: "/students", label: "Students", icon: <PiStudentFill /> },
+    { path: "/pending", label: "Pending Fee", icon: <PiStudentFill /> },
     { path: "/faculty", label: "Faculty", icon: <MdOutlinePersonOutline /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },

@@ -222,9 +222,12 @@ const Home = () => {
               <p>Manage courses</p>
             </div>
           </div>
-
+          
           <div className="transaction-table-container">
             <h2>Recent Transactions</h2>
+            <button className="view-all-btn" onClick={() => setShowPopup(true)}>
+              View All Transactions
+            </button>
 
             {/* Filter Dropdown */}
             {/* <select className="filter-dropdown" value={filter} onChange={(e) => setFilter(e.target.value)}>

@@ -22,6 +22,9 @@ const Navbar = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [profile, setProfile] = useState( localStorage.getItem(`profile_${user.id}`)||profiles );
   const [showPopup, setShowPopup] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [showOnlineBanner, setShowOnlineBanner] = useState(false);
+
   console.log("user==", user);
   const defaultImages = [
     pic1,
@@ -31,6 +34,26 @@ const Navbar = () => {
     pic5,
     pic6
   ];
+  useEffect(() => {
+  const handleOnline = () => {
+    setIsOnline(true);
+    setShowOnlineBanner(true);
+    setTimeout(() => setShowOnlineBanner(false), 2000); // show online banner for 2 seconds
+  };
+
+  const handleOffline = () => {
+    setIsOnline(false);
+    setShowOnlineBanner(false); // hide online banner immediately
+  };
+
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
+
+  return () => {
+    window.removeEventListener('online', handleOnline);
+    window.removeEventListener('offline', handleOffline);
+  };
+}, []);
 
   const handleSelectImage = (img) => {
     setProfile(img);
@@ -129,7 +152,16 @@ const Navbar = () => {
   };
 
   return (
+  
     <nav className="navbar">
+    {(!isOnline || showOnlineBanner) && (
+  <div className={`network-status ${isOnline ? 'online' : 'offline'}  ${
+      isOnline ? 'slide-in' : 'slide-in'
+    }`}>
+    {isOnline ? 'Online' : 'offline'}
+  </div>
+)}
+
       {/* Left side - Logo and main links */}
       <div className="navbar-left">
         <div className="navbar-logo"><img src={logo} alt="" /></div>
