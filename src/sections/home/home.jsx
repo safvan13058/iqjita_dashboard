@@ -100,106 +100,6 @@ const Home = () => {
       console.error("Error fetching transactions:", error);
     }
   };
-  // return (
-  //   <div className="dashboard-containers">
-  //     {activeForm === "admission" && <AdmissionForm onBack={() => setActiveForm(null)} />}
-  //     {activeForm === "fee" && <FeeForm onBack={() => setActiveForm(null)} />}
-  //     {activeForm === "course" && <CourseForm onBack={() => setActiveForm(null)} />}
-
-  //     {!activeForm && (
-  //       <>
-  //         <div className="stat-cards">
-  //           <div className="stat-card" onClick={() => navigate("/admission")}>
-  //             <h2>ADMISSION</h2>
-  //             <p>Manage student admissions</p>
-  //           </div>
-
-  //           <div className="stat-card" onClick={() => navigate("/fee-payment")}>
-  //             <h2>Fee Payment</h2>
-  //             <p>Process fee payments</p>
-  //           </div>
-
-  //           <div className="stat-card" onClick={() => navigate("/course")}>
-  //             <h2>Course</h2>
-  //             <p>Manage courses</p>
-  //           </div>
-  //         </div>
-
-  //         <div className="transaction-table-container">
-  //           <h2>Recent Transactions</h2>
-  //           <table className="transaction-table">
-  //             <thead>
-  //               <tr>
-  //                 <th>ID</th>
-  //                 <th>Student</th>
-  //                 <th>Amount</th>
-  //                 <th>Date</th>
-  //                 <th>Status</th>
-  //                 <th>Method</th>
-  //               </tr>
-  //             </thead>
-  //             <tbody>
-  //               {transactions.map((transaction) => (
-  //                 <tr key={transaction.id}>
-  //                   <td>{transaction.id}</td>
-  //                   <td>{transaction.student}</td>
-  //                   <td>{transaction.amount.toLocaleString()}</td>
-  //                   <td>{transaction.date}</td>
-  //                   <td>
-  //                     <span className={`status-badge ${transaction.status.toLowerCase()}`}>
-  //                       {transaction.status}
-  //                     </span>
-  //                   </td>
-  //                   <td>{transaction.method}</td>
-  //                 </tr>
-  //               ))}
-  //             </tbody>
-  //           </table>
-  //           <button className="view-all-btn" onClick={() => setShowPopup(true)}>
-  //             View All Transactions 
-  //           </button>
-  //         </div>
-  //       </>
-  //     )}
-
-  //     {showPopup && (
-  //       <div className="popup-overlay">
-  //         <div className="popup-content">
-  //           <h2>All Transactions</h2>
-  //           <table className="transaction-table">
-  //             <thead>
-  //               <tr>
-  //                 <th>ID</th>
-  //                 <th>Student</th>
-  //                 <th>Amount</th>
-  //                 <th>Date</th>
-  //                 <th>Status</th>
-  //                 <th>Method</th>
-  //               </tr>
-  //             </thead>
-  //             <tbody>
-  //               {transactions.map((transaction) => (
-  //                 <tr key={transaction.id}>
-  //                   <td>{transaction.id}</td>
-  //                   <td>{transaction.student}</td>
-  //                   <td>{transaction.amount.toLocaleString()}</td>
-  //                   <td>{transaction.date}</td>
-  //                   <td>
-  //                     <span className={`status-badge ${transaction.status.toLowerCase()}`}>
-  //                       {transaction.status}
-  //                     </span>
-  //                   </td>
-  //                   <td>{transaction.method}</td>
-  //                 </tr>
-  //               ))}
-  //             </tbody>
-  //           </table>
-  //           <button className="close-btn" onClick={() => setShowPopup(false)}>Close</button>
-  //         </div>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
   return (
     <div className="dashboard-containers">
       {activeForm === "admission" && <AdmissionForm onBack={() => setActiveForm(null)} />}
@@ -224,10 +124,13 @@ const Home = () => {
           </div>
           
           <div className="transaction-table-container">
+            <div className="transaction-head">
             <h2>Recent Transactions</h2>
             <button className="view-all-btn" onClick={() => setShowPopup(true)}>
               View All Transactions
             </button>
+          </div>
+          <hr />
 
             {/* Filter Dropdown */}
             {/* <select className="filter-dropdown" value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -272,9 +175,9 @@ const Home = () => {
               </tbody>
             </table>
 
-            <button className="view-all-btn" onClick={() => setShowPopup(true)}>
+            {/* <button className="view-all-btn" onClick={() => setShowPopup(true)}>
               View All Transactions
-            </button>
+            </button> */}
           </div>
         </>
       )}

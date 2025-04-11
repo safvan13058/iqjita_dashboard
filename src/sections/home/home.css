@@ -46,13 +46,19 @@
   border-radius: 10px;
   box-shadow: var(--box-shadow-light);
 }
-
+.transaction-head{
+  display: flex;
+  justify-content: space-between;
+}
+.transaction-head .view-all-btn{
+  height: fit-content;
+}
 .transaction-table-container h2 {
-  margin-top: 0;
+  margin: 0;
   color: var(--text-heading);
   font-size: 1.3rem;
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--background-light);
+  /* padding-bottom: 15px; */
+  /* border-bottom: 1px solid var(--background-light); */
 }
 
 .transaction-table {

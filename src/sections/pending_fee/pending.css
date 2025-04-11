@@ -1,9 +1,9 @@
 .pending-students-container {
     /* max-width: 600px; */
-    width: 90%;
-    margin: 40px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
+    /* width: 90%; */
+    /* margin: 40px auto; */
+    /* padding: 20px; */
+    /* border: 1px solid #ddd; */
     border-radius: 12px;
     background-color: #fff;
     font-family: Arial, sans-serif;
@@ -22,15 +22,31 @@
     display: inline;
 
   }
-  .topbanner input{
+  .topbanner div{
+    display: flex;
+    gap: 10px;
+  }
+  .topbanner button svg{
+    margin-right: 0 !important;
+  }
+  .topbanner input,button{
     margin: 0;
     width: auto;
   }
+  .student-list .table-container{
+   width: 100%;
+   
+  }
+.student-table{
+  overflow-x: scroll;
+  width: 1200px;
+}
+  
   .form-row1 {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin: 20px 0;
+    /* margin: 20px 0; */
     
   }
   
@@ -58,6 +74,10 @@
   
   .student-list {
     margin-top: 20px;
+  }
+  .student-table thead th {
+    background-color: var(--background-dark); /* deep green-blue shade */
+    color: #ffff;              /* white text (can also be #ffffff) */
   }
   
   .student-list h3 {

@@ -49,6 +49,9 @@
     .sidebar-nav{
         margin-top: 50px!important;
     }
+    .topbanner span{
+      display: none;
+    }
 
     @media (max-width:450px){
         .main-content{

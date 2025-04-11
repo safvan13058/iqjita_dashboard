@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Lottie from "lottie-react";
 import animation1 from '../images/gif/email.json';
+import { FaEdit, FaSms, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+
 import './pending.css'
 const Pending = () => {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState('');
+  const [allstudent, Students] = useState('');
+
   const [selected, setSelected] = useState([]);
-  const [template, setTemplate] = useState("Hi {name}, your due amount is Rs {amount}. Please pay soon.");
+  const [template, setTemplate] = useState("Hi {name}, your due amount is Rs {due_amount}. Please pay soon.");
   const [tempTemplate, setTempTemplate] = useState(template);
-  const [period, setPeriod] = useState(30);
+  const [period, setPeriod] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sendingType, setSendingType] = useState(null);
@@ -18,7 +22,7 @@ const Pending = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [savedTemplates, setSavedTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+
 
 
   useEffect(() => {
@@ -44,13 +48,16 @@ const Pending = () => {
     setSelectedTemplate(name);
     setShowModal(false);
   };
-
+  useEffect(() => {
+    fetchPendingStudents();
+  }, []);
 
   const fetchPendingStudents = async () => {
     if (!period) {
       alert("Please enter a period in days.");
       return;
     }
+    setStudents([]);
 
     setLoading(true);
     try {
@@ -59,18 +66,22 @@ const Pending = () => {
       console.log("students", data)
       if (data.status === "success") {
 
-        setStudents(data.data);
+        setStudents(data.data || []);
+        Students(data.data)
       } else {
+        setStudents([]);
         alert("Failed to fetch data");
       }
     } catch (error) {
+      setStudents([]); 
       alert("Error fetching students");
     }
     setLoading(false);
   };
 
   const toggleSelectAll = () => {
-    setSelected(selected.length === students.length ? [] : students.map((s) => s.admission_number));
+    setSelected(selected.length === students.length ? [] : [...students]);
+
   };
 
   const toggleSelectOne = (id) => {
@@ -79,17 +90,22 @@ const Pending = () => {
     );
   };
   const toggleSelectStudent = (id) => {
-    setSelected((prev) =>
-      prev.includes(id)
-        ? prev.filter((sid) => sid !== id)
-        : [...prev, id]
-    );
-  };
+    setSelected((prev) => {
+      const isSelected = prev.some((s) => s.admission_number === id);
+      if (isSelected) {
+        return prev.filter((s) => s.admission_number !== id);
+      } else {
+        const student = students.find((s) => s.admission_number === id);
+        return student ? [...prev, student] : prev;
+      }
+    });
 
+  };
 
   const sendMessages = (type) => {
     setSendingType(type);
     setSendingStatus("sending");
+    console.log("students", selected)
 
     let url = "";
     if (type === "email") url = "https://software.iqjita.com/email_sender.php";
@@ -100,7 +116,7 @@ const Pending = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         template,
-        students, // selected students if filtering
+        students: selected, // selected students if filtering
       }),
     })
       .then((res) => res.json())
@@ -114,25 +130,37 @@ const Pending = () => {
       });
   };
 
-
+  console.log("students", students);
   return (
     <div className="pending-students-container">
       <h2>Pending Students Due</h2>
       <div className="topbanner" >
-        <label>
+        {/* <label>
           <input
             type="checkbox"
-            checked={selected.length === students.length}
+            checked={selected.length > 0 && selected.length === students.length}
+
             onChange={toggleSelectAll}
           />
           Select All
-        </label>
+        </label> */}
+        <div>
+          <button onClick={() => setShowModal(true)}>
+            <FaEdit style={{ marginRight: '8px' }} /> <span>Msg-Template</span>
+          </button>
 
-        <button onClick={() => setShowModal(true)}>Edit Message Template</button>
+          <button onClick={() => sendMessages("sms")}>
+            <FaSms style={{ marginRight: '8px' }} /> <span> SMS</span>
+          </button>
 
-        <button onClick={() => sendMessages("sms")}>Send SMS</button>
-        <button onClick={() => sendMessages("email")}>Send Email</button>
-        <button onClick={() => sendMessages("whatsapp")}>Send WhatsApp</button>
+          <button onClick={() => sendMessages("email")}>
+            <FaEnvelope style={{ marginRight: '8px' }} /> <span> Email </span>
+          </button>
+
+          <button onClick={() => sendMessages("whatsapp")}>
+            <FaWhatsapp style={{ marginRight: '8px' }} />  <span>WhatsApp </span>
+          </button>
+        </div>
         <div className="form-row1">
           <input
             type="number"
@@ -315,86 +343,86 @@ const Pending = () => {
 
       {loading && <p>Loading...</p>}
 
-      {students.length > 0 ? (
-        <div className="student-list">
-          <h3>Students with Due Installments</h3>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+
+      <div className="student-list">
+        <h3>Students with Due Installments</h3>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search by name..."
+          // value={searchQuery}
+          // onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
 
-          <div className="table-container">
-            <table className="student-table">
-              <thead>
+        <div className="table-container">
+          <table className="student-table">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={selected.length === students.length}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>Due Date</th>
+                <th>Due Amount</th>
+                <th>Installment</th>
+                <th>Paid</th>
+                <th>Pending</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.length > 0 ? (
+                
+                (console.log("students", students), students.map((student) => (
+                  <tr key={student.admission_number} className={selected.some((s) => s.admission_number === student.admission_number) ? "selected" : ""}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selected.some((s) => s.admission_number === student.admission_number)}
+                        onChange={() => toggleSelectStudent(student.admission_number)}
+                      />
+                    </td>
+                    <td>{student.name}</td>
+                    <td>{student.course}</td>
+                    <td>{student.batch_time}</td>
+                    <td>{student.due_date}</td>
+                    <td>{student.due_amount}</td>
+                    <td>{student.installment_number}</td>
+                    <td>{student.paid_amount}</td>
+                    <td>{student.pending_amount}</td>
+                    <td>
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={() => {
+                          setCurrentStudent(student);
+                          setIsPopupOpen(true);
+                        }}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                )))
+              ) : (
                 <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      checked={selected.length === students.length}
-                      onChange={toggleSelectAll}
-                    />
-                  </th>
-                  <th>Name</th>
-                  <th>Course</th>
-                  <th>Batch</th>
-                  <th>Due Date</th>
-                  <th>Due Amount</th>
-                  <th>Installment</th>
-                  <th>Paid</th>
-                  <th>Pending</th>
-                  <th>Action</th>
+                  <td colSpan="10" style={{ textAlign: "center", padding: "20px" }}>
+                    No students with due installments found.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {students
-                  .filter((student) =>
-                    student.name.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map((student) => (
-                    <tr key={student.admission_number} className={selected.includes(student.admission_number) ? "selected" : ""}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selected.includes(student.admission_number)}
-                          onChange={() => toggleSelectStudent(student.admission_number)}
-                        />
-                      </td>
-                      <td>{student.name}</td>
-                      <td>{student.course}</td>
-                      <td>{student.batch_time}</td>
-                      <td>{student.due_date}</td>
-                      <td>{student.due_amount}</td>
-                      <td>{student.installment_number}</td>
-                      <td>{student.paid_amount}</td>
-                      <td>{student.pending_amount}</td>
-                      <td>
-                        <button
-                          className="action-btn edit-btn"
-                          onClick={() => {
-                            setCurrentStudent(student);
-                            setIsPopupOpen(true);
-                          }}
-                        >
-                          View
-                        </button>
+              )}
 
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
-      ) : (
-        <div className="no-students">
-          <h3>No students with due installments found.</h3>
-        </div>
-      )}
+      </div>
       {isPopupOpen && currentStudent && (
         <div className="due-modal-overlay">
           <div className="due-modal-content">

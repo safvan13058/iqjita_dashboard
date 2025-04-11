@@ -3,9 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import "./sidebar.css";
 import { IoHomeOutline } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
+import { MdPending } from 'react-icons/md';
 import { MdOutlinePersonOutline,MdAccountBalanceWallet  } from "react-icons/md";
 import { BsGraphUpArrow } from "react-icons/bs";
-import { FaGraduationCap } from "react-icons/fa";
+import { FaGraduationCap,FaHourglassHalf } from "react-icons/fa";
 import logo from '../images/logo.png'
 const Sidebar = () => {
   const location = useLocation();
@@ -14,7 +15,7 @@ const Sidebar = () => {
   const navItems = [
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
     { path: "/students", label: "Students", icon: <PiStudentFill /> },
-    { path: "/pending", label: "Pending Fee", icon: <PiStudentFill /> },
+    { path: "/pending", label: "Pending Fee", icon: <FaHourglassHalf style={{ fontSize: '18px' }} /> },
     { path: "/faculty", label: "Faculty", icon: <MdOutlinePersonOutline /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
