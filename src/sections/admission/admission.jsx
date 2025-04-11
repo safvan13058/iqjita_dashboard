@@ -917,6 +917,7 @@ const AdmissionForm = ({ onBack }) => {
                             <input
                                 type="text"
                                 name="referredby"
+                                onChange={handleChange}
                                 value={studentData.referredby || ""}
                                 // readOnly
                             />

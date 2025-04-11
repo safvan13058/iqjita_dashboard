@@ -73,6 +73,8 @@ const StudentsPage = () => {
       const result = await response.json();
       console.log(`Installments set successfull${result}`)
       if (result.status === 'success') {
+        console.log("Installments: " + JSON.stringify(result, null, 2));
+
         alert('Installments set successfully');
         setShowModal(false);
       } else {
