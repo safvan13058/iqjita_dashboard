@@ -49,7 +49,7 @@ function App() {
             <Route path="/faculty" element={<UnderConstruction />} />
             <Route path="/sales" element={<UnderConstruction />} />
             {/* <Route path="/accounts" element={<Account />} /> */}
-           <Route path="/unauthenty" element={<UnauthorizedPage />} />
+           <Route path="/are_you_fool" element={<UnauthorizedPage />} />
             <Route path="/admission" element={<AdmissionForm />} />
             <Route path="/fee-payment" element={<FeeForm />} />
             <Route path="/course" element={<CourseForm />} />

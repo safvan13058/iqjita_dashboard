@@ -16,7 +16,7 @@ function ProtectedLayout({allowedRoles}) {
   }
   
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthenty"  replace />;
+    return <Navigate to="/are_you_fool"  replace />;
   }
   return (
     <>
