@@ -22,7 +22,7 @@ const Pending = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [savedTemplates, setSavedTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem('user'));
 
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const Pending = () => {
         alert("Failed to fetch data");
       }
     } catch (error) {
-      setStudents([]); 
+      setStudents([]);
       alert("Error fetching students");
     }
     setLoading(false);
@@ -380,7 +380,7 @@ const Pending = () => {
             </thead>
             <tbody>
               {students.length > 0 ? (
-                
+
                 (console.log("students", students), students.map((student) => (
                   <tr key={student.admission_number} className={selected.some((s) => s.admission_number === student.admission_number) ? "selected" : ""}>
                     <td>
@@ -399,16 +399,23 @@ const Pending = () => {
                     <td>{student.paid_amount}</td>
                     <td>{student.pending_amount}</td>
                     <td>
-                      <button
-                        className="action-btn edit-btn"
-                        onClick={() => {
-                          setCurrentStudent(student);
-                          setIsPopupOpen(true);
-                        }}
-                      >
-                        View
-                      </button>
+                      {user.role === 'admin' || user.role === 'superadmin' ? (
+                        <button
+                          className="action-btn edit-btn"
+                          onClick={() => {
+                            setCurrentStudent(student);
+                            setIsPopupOpen(true);
+                          }}
+                        >
+                          View
+                        </button>
+                      ) : (
+                        <button className="action-btn edit-btn" disabled>
+                          Restricted
+                        </button>
+                      )}
                     </td>
+
                   </tr>
                 )))
               ) : (

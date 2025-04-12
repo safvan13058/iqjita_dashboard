@@ -29,6 +29,19 @@ const StudentsPage = () => {
     return today.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
   });
   const [periodDays, setPeriodDays] = useState(30);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    address: "",
+    pin_code: "",
+    city: "",
+    district: "",
+    state: "",
+    country: "",
+    documents_submitted: "",
+    education_qualification: "",
+    batch_time: "",
+  });
+
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
   // useEffect(() => {
@@ -38,23 +51,23 @@ const StudentsPage = () => {
     console.log("working status")
     // const newStatus = {};
     // for (const student of selectedStudent) {
-      try {
-        const res = await fetch("https://software.iqjita.com/pendingfee.php?mode=check_started", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ admission_id:admission_no }),
-        });
-        const data = await res.json();
-        console.log(data)
-        setInstallmentStarted(data.started);
-        // newStatus[student.admission_number] = data.started;
-      } catch (err) {
-        console.error("Error checking installments:", err);
-      }
+    try {
+      const res = await fetch("https://software.iqjita.com/pendingfee.php?mode=check_started", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ admission_id: admission_no }),
+      });
+      const data = await res.json();
+      console.log(data)
+      setInstallmentStarted(data.started);
+      // newStatus[student.admission_number] = data.started;
+    } catch (err) {
+      console.error("Error checking installments:", err);
     }
-    
+  }
+
   const handleStartBatch = async () => {
     try {
       const response = await fetch(`https://software.iqjita.com/pendingfee.php?mode=set_installments`, {
@@ -84,6 +97,57 @@ const StudentsPage = () => {
       alert('Error: ' + err.message);
     }
   };
+  const handleEditClick = () => {
+    if (selectedStudent) {
+      setEditForm({
+        address: selectedStudent.address || "",
+        pin_code: selectedStudent.pin_code || "",
+        city: selectedStudent.city || "",
+        district: selectedStudent.district || "",
+        state: selectedStudent.state || "",
+        country: selectedStudent.country || "",
+        documents_submitted: selectedStudent.documents_submitted || "",
+        education_qualification: selectedStudent.education_qualification || "",
+        batch_time: selectedStudent.batch_time || "",
+      });
+      setShowEditModal(true);
+    }
+  };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm({ ...editForm, [name]: value });
+  };
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(
+        `https://software.iqjita.com/administration.php?action=updatestudentdetails&admission_number=${selectedStudent.admission_number}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editForm),
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.status === "success") {
+        console.log("editdata", result)
+        // alert("Student updated successfully!");
+        setShowEditModal(false);
+        // Optionally: refresh data here
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (err) {
+      alert("Network error.");
+      console.error(err);
+    }
+  };
+
+
 
   const handlePrint = (student) => {
     const fullStudentData = [{
@@ -377,7 +441,7 @@ const StudentsPage = () => {
         console.log("✅ Student Details Fetched:", result.student);
         // fetchStatus()
         setSelectedStudent(result.student[0] || {}); // ✅ Ensure we get the first student object
-        
+
       } else {
         throw new Error(result.message || "❌ Failed to fetch student details.");
       }
@@ -569,13 +633,17 @@ const StudentsPage = () => {
                     <button
                       className="action-btn edit-btn"
                       onClick={() => setShowModal(true)}
-                     >
+                    >
                       Start Batch
                     </button>
                   )}
-                  <button className="action-btn edit-btn" >
-                    Edit Details
-                  </button>
+                  {(user.role === 'admin' || user.role === 'superadmin') && (
+                    <button className="action-btn edit-btn" onClick={handleEditClick}>
+                      Edit Details
+                    </button>
+                  )}
+
+
                   <button className="action-btn print-btn" onClick={() => handlePrint(selectedStudent)}>
                     Print Details
                   </button>
@@ -585,6 +653,67 @@ const StudentsPage = () => {
                 </div>
               </>
             )}
+            {showEditModal && ( user.role === 'admin' || user.role === 'superadmin') && (
+              <div className="stude-modal-overlay">
+                <div className="stude-modal-content">
+                  <h2>Edit Student Details</h2>
+                  <form onSubmit={handleUpdateSubmit}>
+                    <label>
+                      Address:
+                      <input name="address" value={editForm.address} onChange={handleInputChange} placeholder="Address" />
+                    </label>
+
+                    <label>
+                      PIN Code:
+                      <input name="pin_code" value={editForm.pin_code} onChange={handleInputChange} placeholder="PIN Code" />
+                    </label>
+
+                    <label>
+                      City:
+                      <input name="city" value={editForm.city} onChange={handleInputChange} placeholder="City" />
+                    </label>
+
+                    <label>
+                      District:
+                      <input name="district" value={editForm.district} onChange={handleInputChange} placeholder="District" />
+                    </label>
+
+                    <label>
+                      State:
+                      <input name="state" value={editForm.state} onChange={handleInputChange} placeholder="State" />
+                    </label>
+
+                    <label>
+                      Country:
+                      <input name="country" value={editForm.country} onChange={handleInputChange} placeholder="Country" />
+                    </label>
+
+                    <label>
+                      Documents Submitted:
+                      <input name="documents_submitted" value={editForm.documents_submitted} onChange={handleInputChange} placeholder="Documents Submitted" />
+                    </label>
+
+                    <label>
+                      Education Qualification:
+                      <input name="education_qualification" value={editForm.education_qualification} onChange={handleInputChange} placeholder="Education Qualification" />
+                    </label>
+
+                    <label>
+                      Batch Time:
+                      <input name="batch_time" value={editForm.batch_time} onChange={handleInputChange} placeholder="Batch Time" />
+                    </label>
+
+                    <div className="modal-footer">
+                      <button type="submit" className="action-btn save-btn">Save</button>
+                    </div>
+                  </form>
+                  <button type="button" className="action-btn cancel-btn" onClick={() => setShowEditModal(false)}>X</button>
+
+                </div>
+              </div>
+            )}
+
+
             {/* Start Batch Modal */}
             {showModal && (
               <div className="batch-modal-overlay">

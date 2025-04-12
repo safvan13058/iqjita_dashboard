@@ -232,27 +232,21 @@ const CourseForm = () => {
             className="course-search-input"
           />
         </div>
-        {user.role !== 'student' ? (
-          <>
-           <button
-          onClick={() => setShowAddForm(true)}
-          className="add-course-button"
-        >
-          {/* <PlusCircle size={18} className="add-course-icon" /> */}
-          Add Course
-        </button>
-          </>
+        {(user.role === 'admin' || user.role === 'superadmin') ? (
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="add-course-button"
+          >
+            Add Course
+          </button>
         ) : (
-          <><button
-          // onClick={() => setShowAddForm(true)}
-          className="add-course-button"
-        >
-          {/* <PlusCircle size={18} className="add-course-icon" /> */}
-          Don`t use
-        </button></>
+          <button className="add-course-button" disabled>
+            Don’t Use
+          </button>
         )}
 
-        
+
+
       </div>
 
       {loading ? (
@@ -290,7 +284,7 @@ const CourseForm = () => {
                   <td className="course-table-cell">₹{parseFloat(course.install4).toFixed(2)}</td>
                   <td className="course-table-cell">₹{parseFloat(course.install5).toFixed(2)}</td>
                   <td className="course-table-cell-btn">
-                    {user.role === 'admin' ? (
+                    {(user.role === 'admin' || user.role === 'superadmin') ? (
                       <>
                         <button onClick={() => handleEditCourse(course)}>Edit</button>
                         <button onClick={() => handleDeleteCourse(course.id)}>Delete</button>
@@ -300,8 +294,8 @@ const CourseForm = () => {
                         <button disabled>Not Allowed</button>
                       </>
                     )}
-
                   </td>
+
 
                 </tr>
               ))}

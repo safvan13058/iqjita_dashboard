@@ -1,5 +1,5 @@
 // import React from "react";
-import {  HashRouter  as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./sections/login/auth";
 import React, { useState, useEffect } from "react";
 
@@ -40,21 +40,26 @@ function App() {
           {/* Public route */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauth" element={<UnauthorizedPage />} />
-          
+
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/pending" element={<Pending />} />
-            <Route path="/faculty" element={<UnderConstruction/>} />
-            <Route path="/sales" element={<UnderConstruction/>} />
-            <Route path="/accounts" element={<Account/>} />
+            <Route path="/faculty" element={<UnderConstruction />} />
+            <Route path="/sales" element={<UnderConstruction />} />
+            {/* <Route path="/accounts" element={<Account />} /> */}
+           <Route path="/unauthenty" element={<UnauthorizedPage />} />
             <Route path="/admission" element={<AdmissionForm />} />
             <Route path="/fee-payment" element={<FeeForm />} />
             <Route path="/course" element={<CourseForm />} />
-            <Route path="/alumni" element={<UnderConstruction/>} />
+            <Route path="/alumni" element={<UnderConstruction />} />
           </Route>
-          
+
+          <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
+            <Route path="/accounts" element={<Account />} />
+          </Route>
+
           {/* Redirect all other paths to login if not authenticated */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

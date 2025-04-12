@@ -4,7 +4,7 @@ import { useAuth } from "./auth";
 import Navbar from "../nav/nav";
 import Sidebar from "../sidebar/sidebar";
 
-function ProtectedLayout() {
+function ProtectedLayout({allowedRoles}) {
   const { isAuthenticated } = useAuth();
   const user = JSON.parse(localStorage.getItem('user') );
   if (!isAuthenticated) {
@@ -15,7 +15,9 @@ function ProtectedLayout() {
     return <Navigate to="/unauth" replace />;
   }
   
-
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthenty"  replace />;
+  }
   return (
     <>
       <Navbar />
