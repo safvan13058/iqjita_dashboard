@@ -18,6 +18,7 @@ import './account.css';
 const Account = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const [height, setHeight] = useState(window.innerWidth < 480 ? 200 : 300);
+    const [isOpen, setIsOpen] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState("all"); // 'all', 'credit', 'debit'
@@ -26,6 +27,7 @@ const Account = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [transactionError, setTransactionError] = useState("");
+    const [closingAmount, setClosingAmount] = useState('');
     const [graphData, setgraphTransactions] = useState([]);
     const [period, setPeriod] = useState('day');
     const [income, setIncome] = useState(0);
@@ -33,10 +35,26 @@ const Account = () => {
     const [formData, setFormData] = useState({
         amount: '',
         type: 'debit',
+        payment_method:'',
         category: '',
         remark: ''
     });
-   
+    const totalCredits = {
+        cash: 2500.00,
+        bank: 7200.50,
+        upi: 1300.75,
+      };
+      const totalAmount = totalCredits.cash + totalCredits.bank + totalCredits.upi;
+      const handleSubmitclosing = () => {
+        if (!closingAmount || isNaN(closingAmount)) {
+          alert("Please enter a valid closing amount.");
+          return;
+        }
+    
+        setIsOpen(false);
+        alert(`Bank closing of ₹${closingAmount} submitted!`);
+        // TODO: Add API call to save closing data
+      };
     //   useEffect(() => {
     //     // Fetch initial transactions
     //     fetch("https://software.iqjita.com/administration.php?action=transaction")
@@ -77,6 +95,7 @@ const Account = () => {
                     type: formData.type,
                     category: formData.category,
                     remark: formData.remark,
+                    payment_method:formData.payment_method,
                     updated_by: user.name || 'admin',
                 }),
             });
@@ -351,12 +370,28 @@ const Account = () => {
         </LineChart>
       </ResponsiveContainer> */}
             </div>
+            <div className='buttoncard'>
+            <div className="stat-cards">
+            <div className="stat-card" onClick={() => setShowModal(true)}>
+              <h2>Transations</h2>
+              <p>Manage student admissions</p>
+            </div>
+            <div className="stat-card" onClick={() => setIsOpen(true)} >
+              <h2>Bank Closing</h2>
+              <p>Process fee payments</p>
+            </div>
+            <div className="stat-card" >
+              <h2>Report</h2>
+              <p>Manage courses</p>
+            </div>
+          </div>
+          </div>
 
 
 
             <div className="table-header">
                 <h3>Recent Transactions</h3>
-                <button onClick={() => setShowModal(true)}>+ Add Expense</button>
+                {/* <button onClick={() => setShowModal(true)}>+ Add Expense</button> */}
             </div>
 
             {/* <div className="Transactions-head">
@@ -459,12 +494,59 @@ const Account = () => {
                             <option value="credit">Credit</option>
                         </select>
                         <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleInputChange} />
+                        <select name="type" value={formData.payment_method} onChange={handleInputChange}>
+                            <option value="cash">CASH</option>
+                            <option value="upi">UPI</option>
+                            <option value="bank">BANK</option>
+                        </select>
                         <input type="text" name="remark" placeholder="Remark" value={formData.remark} onChange={handleInputChange} />
                         <button onClick={handleSubmit}>Submit</button>
                         <button onClick={() => setShowModal(false)}>Cancel</button>
                     </div>
                 </div>
             )}
+             {isOpen && (
+        <div className="bank_modal-overlay">
+          <div className="bank_modal">
+            <h3>Today's Credit Summary</h3>
+            <div className="credit-summary">
+              <p><strong>Total:</strong> ₹{totalAmount.toFixed(2)}</p>
+              <p>Cash: ₹{totalCredits.cash.toFixed(2)}</p>
+              <p>Bank: ₹{totalCredits.bank.toFixed(2)}</p>
+              <p>UPI: ₹{totalCredits.upi.toFixed(2)}</p>
+            </div>
+            <div className="input-group">
+            <label htmlFor="balance-amount">Balance:</label>
+              <input
+                type="number"
+                id="closing-amount"
+                value={closingAmount}
+                // onChange={(e) => setClosingAmount(e.target.value)}
+                // placeholder="e.g. 11000.00"
+                readOnly
+              />
+              <label htmlFor="closing-amount">Enter Closing Amount:</label>
+              <input
+                type="number"
+                id="closing-amount"
+                value={closingAmount}
+                onChange={(e) => setClosingAmount(e.target.value)}
+                placeholder="e.g. 11000.00"
+              />
+            </div>
+
+
+            <div className="modal-buttons">
+              <button onClick={() => setIsOpen(false)} className="cancel-btn">
+                Cancel
+              </button>
+              <button onClick={handleSubmit} className="confirm-btn">
+                Submit Closing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
         </div>
     );
 };

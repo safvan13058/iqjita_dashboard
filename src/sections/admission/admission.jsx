@@ -100,7 +100,7 @@ const AdmissionForm = ({ onBack }) => {
 
     const [feeData, setFeeData] = useState(() => {
         return JSON.parse(localStorage.getItem("feeData")) || {
-            admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
+            admission_number: "", course: "", final_fee: "", name: "", contact_number: "",payment_method:""
         };
     });
 
@@ -427,6 +427,7 @@ const AdmissionForm = ({ onBack }) => {
                         amount: 1000,
                         type: "credit",
                         category: "Admission",
+                        payment_method:feeData.payment_method,
                         remark: feeData.admission_number || "N/A",
                         updated_by: user.name,
                     }),
@@ -1072,6 +1073,12 @@ const AdmissionForm = ({ onBack }) => {
                             // onChange={(e) => setFeeData({ ...feeData, exact_fee: e.target.value })}
                             required
                         />
+                        <label>Payment Method</label>
+                        <select name="type" value={feeData.payment_method}>
+                            <option value="cash">CASH</option>
+                            <option value="upi">UPI</option>
+                            <option value="bank">BANK</option>
+                        </select>
                         <div className="btn-grp">
                             <button type="button" onClick={() => setStep(2)}>Back</button>
                             <button type="button" onClick={() => handlePrint(studentsalldata)} disabled={loading}>

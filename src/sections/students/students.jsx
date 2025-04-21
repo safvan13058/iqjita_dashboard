@@ -22,6 +22,7 @@ const StudentsPage = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [receipt, setReceiptUrl] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [showModal, setShowModal] = useState(false);
   const [installmentStarted, setInstallmentStarted] = useState({});
   const [startingDate, setStartingDate] = useState(() => {
@@ -227,7 +228,8 @@ const StudentsPage = () => {
       admission_number: selectedStudent.admission_no,
       course: selectedStudent.s_course,
       final_fee: selectedStudent.final_fees,
-      updated_by: user.name
+      updated_by: user.name,
+      payment_method: paymentMethod
     };
 
     try {
@@ -257,11 +259,12 @@ const StudentsPage = () => {
 
     setIsLoading(false);
   };
-  const recordTransaction = async (amount, type, data, category, remark) => {
+  const recordTransaction = async (amount, type, data, payment_method, category, remark) => {
     const transactionPayload = {
       amount,
       type,
       category,
+      payment_method,
       remark,
       updated_by: user.name
     };
@@ -653,7 +656,7 @@ const StudentsPage = () => {
                 </div>
               </>
             )}
-            {showEditModal && ( user.role === 'admin' || user.role === 'superadmin') && (
+            {showEditModal && (user.role === 'admin' || user.role === 'superadmin') && (
               <div className="stude-modal-overlay">
                 <div className="stude-modal-content">
                   <h2>Edit Student Details</h2>
@@ -752,6 +755,18 @@ const StudentsPage = () => {
 
                   {!isSuccess ? (
                     <>
+                      <label className="fee-form-label">Payment Method</label>
+                      <select
+                        className="fee-form-input"
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                      >
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cash">Cash</option>
+                        {/* <option value="CHEQUE">Cheque</option> */}
+                        <option value="upi">UPI</option>
+                        {/* <option value="OTHER">Other</option> */}
+                      </select>
                       <button className="confirm-btn" onClick={submitPayment} disabled={isLoading}>
                         {isLoading ? "Processing..." : "Confirm"}
                       </button>

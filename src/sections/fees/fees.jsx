@@ -9,7 +9,7 @@ const FeeForm = ({ onBack, currentUser }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(location.state?.student || null);
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [transactionId, setTransactionId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
@@ -272,6 +272,7 @@ const FeeForm = ({ onBack, currentUser }) => {
               amount: parseFloat(amount),
               type: "credit",
               category: "Fee",
+              payment_method:paymentMethod,
               remark: selectedStudent.admission_number.toString(), // Admission number as remark
               updated_by: user?.name || "admin"
             }),
@@ -489,15 +490,15 @@ const FeeForm = ({ onBack, currentUser }) => {
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
-                <option value="BANK">Bank Transfer</option>
-                <option value="CASH">Cash</option>
-                <option value="CHEQUE">Cheque</option>
-                <option value="ONLINE">Online</option>
-                <option value="OTHER">Other</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="cash">Cash</option>
+                {/* <option value="CHEQUE">Cheque</option> */}
+                <option value="upi">UPI</option>
+                {/* <option value="OTHER">Other</option> */}
               </select>
             </div>
 
-            {paymentMethod !== "CASH" && (
+            {/* {paymentMethod !== "CASH" && (
               <div className="fee-form-field">
                 <label className="fee-form-label">
                   {paymentMethod === "MPESA" ? "MPESA Code" : "Transaction ID"}
@@ -511,7 +512,7 @@ const FeeForm = ({ onBack, currentUser }) => {
                   required={paymentMethod !== "CASH"}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           {error && <div className="fee-form-error error">{error}</div>}
