@@ -19,6 +19,8 @@ const Account = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const [height, setHeight] = useState(window.innerWidth < 480 ? 200 : 300);
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenhistory, setIsOpenhistory] = useState(false);
+    const [history, setHistory] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState("all"); // 'all', 'credit', 'debit'
@@ -28,33 +30,51 @@ const Account = () => {
     const [endDate, setEndDate] = useState("");
     const [transactionError, setTransactionError] = useState("");
     const [closingAmount, setClosingAmount] = useState('');
+    const [closingAmountbalance, setClosingbalanceAmount] = useState('');
     const [graphData, setgraphTransactions] = useState([]);
     const [period, setPeriod] = useState('day');
     const [income, setIncome] = useState(0);
     const [change, setChange] = useState(0);
+    const [closingremark, setClosingremark] = useState("");
+    const [isClosePopupOpen, setIsClosePopupOpen] = useState(false);
+    const [selectedPeriod, setSelectedPeriod] = useState('');
+    // const [closingAmount, setClosingAmount] = useState(0);
+
+
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [totalCredits, setTotalCredits] = useState({
+        cash: 0,
+        bank: 0,
+        upi: 0,
+        total: 0,
+        closed: 0,
+        balance: 0
+    });
+    //   const [totalAmount, setTotalAmount] = useState(0);
+
     const [formData, setFormData] = useState({
         amount: '',
         type: 'debit',
-        payment_method:'',
+        payment_method: '',
         category: '',
         remark: ''
     });
-    const totalCredits = {
-        cash: 2500.00,
-        bank: 7200.50,
-        upi: 1300.75,
-      };
-      const totalAmount = totalCredits.cash + totalCredits.bank + totalCredits.upi;
-      const handleSubmitclosing = () => {
-        if (!closingAmount || isNaN(closingAmount)) {
-          alert("Please enter a valid closing amount.");
-          return;
-        }
-    
-        setIsOpen(false);
-        alert(`Bank closing of ₹${closingAmount} submitted!`);
-        // TODO: Add API call to save closing data
-      };
+    // const totalCredits = {
+    //     cash: 2500.00,
+    //     bank: 7200.50,
+    //     upi: 1300.75,
+    //   };
+    //   const totalAmount = totalCredits.cash + totalCredits.bank + totalCredits.upi;
+    //   const handleSubmitclosing = () => {
+    //     if (!closingAmount || isNaN(closingAmount)) {
+    //       alert("Please enter a valid closing amount.");
+    //       return;
+    //     }
+
+    //     setIsOpen(false);
+    //     alert(`Bank closing of ₹${closingAmount} submitted!`);
+    //     // TODO: Add API call to save closing data
+    //   };
     //   useEffect(() => {
     //     // Fetch initial transactions
     //     fetch("https://software.iqjita.com/administration.php?action=transaction")
@@ -84,6 +104,86 @@ const Account = () => {
     const handleInputChange = (e) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
+    const handleCloseBalance = (date, amount, credited_by = user.name) => {
+        const remark = prompt("Add remark for closing:");
+        if (!remark) return;
+
+        fetch("https://software.iqjita.com/accounts.php?action=update_bank_closing", {
+            method: "POST",
+            body: JSON.stringify({
+                target_date: date,
+                closing_amount: amount,
+                remark,
+                credited_by,
+            }),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                alert(res.message);
+                if (res.status === "success") {
+                    // refresh
+                    //   setHistory((prev) =>
+                    //     prev.map((row) =>
+                    //       row.period === date
+                    //         ? { ...row, closed_amount: row.closed_amount + amount, balance: 0 }
+                    //         : row
+                    //     )
+                    //   );
+                    fetchHistory()
+                }
+            });
+    };
+    const [groupBy, setGroupBy] = useState('day'); // Default to 'day'
+
+    // Fetch history when the component mounts or groupBy changes
+    useEffect(() => {
+        fetchHistory(groupBy);
+    }, [groupBy]);
+
+    // Toggle between 'day' and 'month'
+    const handleGroupToggle = (group) => {
+        setGroupBy(group);
+    };
+    const fetchHistory = (groupBy = 'day') => {
+        fetch(`https://software.iqjita.com/accounts.php?action=get_bank_closing_history&group_by=${groupBy}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.status === 'success') {
+                    setHistory(data.data);
+                }
+            });
+    };
+
+    const handleSubmitclosing = () => {
+        fetch("https://software.iqjita.com/accounts.php?action=submit_closing", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                closing_amount: parseFloat(closingAmount),
+                credited_by: user.name, // dynamic if you use login
+                remark: closingremark
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                alert(data.message);
+                setIsOpen(false);
+            });
+    };
+    useEffect(() => {
+        if (isOpen) {
+            fetch("https://software.iqjita.com/accounts.php?action=get_today_summary")
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        setTotalCredits(data.data);
+                        setTotalAmount(data.data.total);
+                        setClosingAmount(data.data.balance); // default fill with balance
+                    }
+                });
+        }
+    }, [isOpen]); // only runs when isOpen changes
 
     const handleSubmit = async () => {
         try {
@@ -95,7 +195,7 @@ const Account = () => {
                     type: formData.type,
                     category: formData.category,
                     remark: formData.remark,
-                    payment_method:formData.payment_method,
+                    payment_method: formData.payment_method,
                     updated_by: user.name || 'admin',
                 }),
             });
@@ -289,73 +389,73 @@ const Account = () => {
                         </div>
                     </div>
                     <div className='graph1'>
-                    <ResponsiveContainer width="100%" height={window.innerWidth < 480 ? 200 : 300}>
-                        <AreaChart data={graphData}>
-                            <defs>
-                                <linearGradient id="colorCredit" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#5b8efc" stopOpacity={0.5} />
-                                    <stop offset="100%" stopColor="#5b8efc" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorDebit" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#f06292" stopOpacity={0.5} />
-                                    <stop offset="100%" stopColor="#f06292" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <XAxis
-                                dataKey="name"
-                                tick={{ fontSize: 11, fill: "#999" }}
-                                tickMargin={8}
-                            />
-                            <YAxis
-                             tickFormatter={(value) => {
-                                return value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value;
-                              }}
-                                tick={{ fontSize: 11, fill: "#999" }}
-                                tickMargin={8}
-                            />
-                            <Tooltip
-                            // formatter={(value) => {
-                            //     return value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value;
-                            //   }}
-                                contentStyle={{
-                                    color:"white",
-                                    backgroundColor: "#1e1e2f",
-                                    border: "none",
-                                    borderRadius:14,
-                                    fontSize: "12px",
-                                }}
-                            />
-                            <Legend
-                                iconType="circle"
-                                wrapperStyle={{
-                                    color: "#ccc",
-                                    fontSize: "12px",
-                                }}
-                            />
+                        <ResponsiveContainer width="100%" height={window.innerWidth < 480 ? 200 : 300}>
+                            <AreaChart data={graphData}>
+                                <defs>
+                                    <linearGradient id="colorCredit" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#5b8efc" stopOpacity={0.5} />
+                                        <stop offset="100%" stopColor="#5b8efc" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorDebit" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#f06292" stopOpacity={0.5} />
+                                        <stop offset="100%" stopColor="#f06292" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis
+                                    dataKey="name"
+                                    tick={{ fontSize: 11, fill: "#999" }}
+                                    tickMargin={8}
+                                />
+                                <YAxis
+                                    tickFormatter={(value) => {
+                                        return value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value;
+                                    }}
+                                    tick={{ fontSize: 11, fill: "#999" }}
+                                    tickMargin={8}
+                                />
+                                <Tooltip
+                                    // formatter={(value) => {
+                                    //     return value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value;
+                                    //   }}
+                                    contentStyle={{
+                                        color: "white",
+                                        backgroundColor: "#1e1e2f",
+                                        border: "none",
+                                        borderRadius: 14,
+                                        fontSize: "12px",
+                                    }}
+                                />
+                                <Legend
+                                    iconType="circle"
+                                    wrapperStyle={{
+                                        color: "#ccc",
+                                        fontSize: "12px",
+                                    }}
+                                />
 
-                            
-                            <Area
-                                type="monotone"
-                                dataKey="credit"
-                                stroke="#5b8efc"
-                                fillOpacity={1}
-                                fill="url(#colorCredit)"
-                                strokeWidth={2.5}
-                                animationDuration={1000}
-                                dot={{ r: 3 }}
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="debit"
-                                stroke="#f06292"
-                                fillOpacity={1}
-                                fill="url(#colorDebit)"
-                                strokeWidth={2.5}
-                                animationDuration={1000}
-                                dot={{ r: 3 }}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
+
+                                <Area
+                                    type="monotone"
+                                    dataKey="credit"
+                                    stroke="#5b8efc"
+                                    fillOpacity={1}
+                                    fill="url(#colorCredit)"
+                                    strokeWidth={2.5}
+                                    animationDuration={1000}
+                                    dot={{ r: 3 }}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="debit"
+                                    stroke="#f06292"
+                                    fillOpacity={1}
+                                    fill="url(#colorDebit)"
+                                    strokeWidth={2.5}
+                                    animationDuration={1000}
+                                    dot={{ r: 3 }}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
@@ -371,21 +471,22 @@ const Account = () => {
       </ResponsiveContainer> */}
             </div>
             <div className='buttoncard'>
-            <div className="stat-cards">
-            <div className="stat-card" onClick={() => setShowModal(true)}>
-              <h2>Transations</h2>
-              <p>Manage student admissions</p>
+                <div className="stat-cards">
+                    <div className="stat-card" onClick={() => setShowModal(true)}>
+                        <h2>Transations</h2>
+                        <p>Manage transactions</p>
+                    </div>
+                    <div className="stat-card" onClick={() => setIsOpen(true)} >
+                        <h2>Bank Closing</h2>
+                         <p>Handle daily collections and close accounts</p>
+                    </div>
+                    <div className="stat-card" onClick={() => setIsOpenhistory(true)}>
+                        <h2>Report</h2>
+                        <p>Generate and review reports</p>
+                    </div>
+
+                </div>
             </div>
-            <div className="stat-card" onClick={() => setIsOpen(true)} >
-              <h2>Bank Closing</h2>
-              <p>Process fee payments</p>
-            </div>
-            <div className="stat-card" >
-              <h2>Report</h2>
-              <p>Manage courses</p>
-            </div>
-          </div>
-          </div>
 
 
 
@@ -505,48 +606,167 @@ const Account = () => {
                     </div>
                 </div>
             )}
-             {isOpen && (
-        <div className="bank_modal-overlay">
-          <div className="bank_modal">
-            <h3>Today's Credit Summary</h3>
-            <div className="credit-summary">
-              <p><strong>Total:</strong> ₹{totalAmount.toFixed(2)}</p>
-              <p>Cash: ₹{totalCredits.cash.toFixed(2)}</p>
-              <p>Bank: ₹{totalCredits.bank.toFixed(2)}</p>
-              <p>UPI: ₹{totalCredits.upi.toFixed(2)}</p>
-            </div>
-            <div className="input-group">
-            <label htmlFor="balance-amount">Balance:</label>
-              <input
-                type="number"
-                id="closing-amount"
-                value={closingAmount}
-                // onChange={(e) => setClosingAmount(e.target.value)}
-                // placeholder="e.g. 11000.00"
-                readOnly
-              />
-              <label htmlFor="closing-amount">Enter Closing Amount:</label>
-              <input
-                type="number"
-                id="closing-amount"
-                value={closingAmount}
-                onChange={(e) => setClosingAmount(e.target.value)}
-                placeholder="e.g. 11000.00"
-              />
-            </div>
+            {isOpen && (
+                <div className="bank_modal-overlay">
+                    <div className="bank_modal">
+                        <h3>Today's Credit Summary</h3>
+                        <div className="credit-summary">
+                            <p><strong>Total:</strong> ₹{totalAmount.toFixed(2)}</p>
+                            <p><strong>Cash:</strong> ₹{totalCredits.cash.toFixed(2)}</p>
+                            <p><strong>Bank:</strong> ₹{totalCredits.bank.toFixed(2)}</p>
+                            <p><strong>UPI:</strong> ₹{totalCredits.upi.toFixed(2)}</p>
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="balance-amount">Balance:</label>
+                            <input
+                                type="number"
+                                id="closing-amount"
+                                value={totalCredits.balance}
+                                // onChange={(e) => setClosingAmount(e.target.value)}
+                                // placeholder="e.g. 11000.00"
+                                readOnly
+                            />
+                            <label htmlFor="closing-amount">Enter Closing Amount:</label>
+                            <input
+                                type="number"
+                                id="closing-amount"
+                                value={closingAmount}
+                                onChange={(e) => setClosingAmount(e.target.value)}
+                                placeholder="e.g. 11000.00"
+                            />
+                        </div>
+                        <label htmlFor="closing-remark">Enter Remark:</label>
+                        <input
+                            type="text"
+                            id="closing-remark"
+                            value={closingremark}
+                            onChange={(e) => setClosingremark(e.target.value)}
+                            placeholder="e.g. bank closing "
+                        />
+                        <div className="modal-buttons">
+                            <button onClick={() => setIsOpen(false)} className="cancel-btn">
+                                Cancel
+                            </button>
+                            <button onClick={handleSubmitclosing} className="confirm-btn">
+                                Submit Closing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isOpenhistory && (
+                <div className="reportmodal-overlay">
+                    <div className="reportmodal-content">
+                    <button className="r-close-btn" onClick={() => setIsOpenhistory(false)}>X</button>
+
+                        <h2>Bank Closing History</h2>
+
+                        {/* Grouping toggle */}
+                        <div className='r-btns'>
+                            <button onClick={() => handleGroupToggle('day')}>Day</button>
+                            <button onClick={() => handleGroupToggle('month')}>Month</button>
+                        </div>
+                        <div className="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Cash</th>
+                                    <th>UPI</th>
+                                    <th>Bank</th>
+                                    <th>Total</th>
+                                    <th>Closed</th>
+                                    <th>Balance</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {history.map((item) => (
+                                    <tr key={item.period}>
+                                        <td>{item.period}</td>
+                                        <td>₹{item.cash.toFixed(2)}</td>
+                                        <td>₹{item.upi.toFixed(2)}</td>
+                                        <td>₹{item.bank.toFixed(2)}</td>
+                                        <td>₹{item.total_credit.toFixed(2)}</td>
+                                        <td>₹{item.closed_amount.toFixed(2)}</td>
+                                        <td>₹{item.balance.toFixed(2)}</td>
+                                        <td>
+                                            {/* Show the Close Balance button only for "day" grouping */}
+                                            {groupBy === 'day' && item.balance > 0 ? (
+                                                <button
+                                                onClick={() => {
+                                                  setSelectedPeriod(item.period);
+                                                  setClosingAmount(item.balance);
+                                                  setIsClosePopupOpen(true);
+                                                }}
+                                              >
+                                                Close Balance
+                                              </button>
+                                              
+                                            ) : (
+                                                '-'
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            )}
+            {isClosePopupOpen && (
+                <div className="modal-overlay">
+                    <div className="reportmodal-content">
+                        <h3>Add Closing Balance</h3>
+                        <p><strong>Date:</strong> {selectedPeriod}</p>
+
+                        <label>
+                            Balance Amount:
+                            <input
+                                type="number"
+                                value={closingAmount}
+                                // onChange={(e) => setClosingAmount(parseFloat(e.target.value) || 0)}
+                                step="0.01"
+                                min="0"
+                                readyonly
+                            />
+                        </label>
+                        <label>
+                            Closing Amount:
+                            <input
+                                type="number"
+                                value={closingAmountbalance}
+
+                                onChange={(e) => setClosingbalanceAmount(parseFloat(e.target.value) || 0)}
+                                // step="0.01"
+                                // min="0"
+                            />
+                        </label>
+
+                        <div style={{ marginTop: "15px" }}>
+                            <button
+                                onClick={() => {
+                                    handleCloseBalance(selectedPeriod, closingAmountbalance);
+                                    setIsClosePopupOpen(false);
+                                }}
+                            >
+                                Submit
+                            </button>
+                            <button
+                                onClick={() => setIsClosePopupOpen(false)}
+                                style={{ backgroundColor: '#ccc', marginLeft: '10px' }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
 
-            <div className="modal-buttons">
-              <button onClick={() => setIsOpen(false)} className="cancel-btn">
-                Cancel
-              </button>
-              <button onClick={handleSubmit} className="confirm-btn">
-                Submit Closing
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
         </div>
     );
 };

@@ -299,7 +299,8 @@ const Pending = () => {
               style={{ width: "100%" }}
             />
 
-            <div style={{ marginTop: "10px", textAlign: "right" }}>
+<div style={{ marginTop: "10px", display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
+
               {selectedTemplate && (
                 <button
                   style={{ marginLeft: "10px" }}
