@@ -8,7 +8,9 @@
     background-color: #fff;
     font-family: Arial, sans-serif;
   }
-  
+  .checkbox1{
+    margin: 0 !important;
+  }
   .pending-students-container h2 {
     text-align: center;
     color: #333;

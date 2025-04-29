@@ -160,6 +160,53 @@ const CourseForm = () => {
 
 
 
+  // const handleAddCourse = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await fetch(
+  //       "https://software.iqjita.com/administration.php?action=course_details",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           ...newCourse,
+  //           updated_by: user.name,
+  //         }),
+  //       }
+  //     );
+
+  //     console.log("sdjnkjdf",response)
+
+  //     const text = await response.text(); // Read response as text first
+  //     const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find second "{"
+  //     const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON part
+      
+  //     const data = JSON.parse(cleanJson); // Parse the cleaned JSON
+
+  //     if (data.status === "success") {
+  //       alert(data.message);
+  //       setShowAddForm(false);
+  //       setNewCourse({
+  //         course: "",
+  //         duration: "",
+  //         exact_fee: "",
+  //         admission_fee: "",
+  //         install1: "",
+  //         install2: "",
+  //         install3: "",
+  //         install4: "",
+  //         install5: "",
+  //       });
+  //       fetchCourses();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding course:", error);
+  //     alert("Failed to add course");
+  //   }
+  // };
+
   const handleAddCourse = async (e) => {
     e.preventDefault();
     try {
@@ -176,13 +223,28 @@ const CourseForm = () => {
           }),
         }
       );
-
-      const text = await response.text(); // Read response as text first
-      const jsonStartIndex = text.indexOf("{", text.indexOf("{") + 1); // Find second "{"
-      const cleanJson = text.slice(jsonStartIndex); // Extract valid JSON part
-
-      const data = JSON.parse(cleanJson); // Parse the cleaned JSON
-
+  
+      const rawText = await response.text();
+      console.log("RAW response body:", rawText);
+  
+      let data;
+      try {
+        // Try parsing full response first
+        data = JSON.parse(rawText.trim());
+      } catch (parseError) {
+        // If that fails, extract only the JSON part
+        const firstBrace = rawText.indexOf("{");
+        const lastBrace = rawText.lastIndexOf("}");
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          const cleanJsonString = rawText.slice(firstBrace, lastBrace + 1);
+          data = JSON.parse(cleanJsonString);
+        } else {
+          throw new Error("Valid JSON not found in server response.");
+        }
+      }
+  
+      console.log("Parsed JSON:", data);
+  
       if (data.status === "success") {
         alert(data.message);
         setShowAddForm(false);
@@ -198,14 +260,15 @@ const CourseForm = () => {
           install5: "",
         });
         fetchCourses();
+      } else {
+        alert(data.message || "Something went wrong while adding the course.");
       }
     } catch (error) {
       console.error("Error adding course:", error);
-      alert("Failed to add course");
+      alert("Failed to add course.");
     }
   };
-
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewCourse({

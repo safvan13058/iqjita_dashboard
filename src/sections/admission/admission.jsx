@@ -94,13 +94,13 @@ const AdmissionForm = ({ onBack }) => {
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
             documents_submitted: [], education_qualification: "", updated_by: user.name, dob: "",
-            branch: 1, photo: null, photoPreview: null, gender: '',referredby:'',referredbycategory:''
+            branch: 1, photo: null, photoPreview: null, gender: '', referredby: '', referredbycategory: ''
         };
     });
 
     const [feeData, setFeeData] = useState(() => {
         return JSON.parse(localStorage.getItem("feeData")) || {
-            admission_number: "", course: "", final_fee: "", name: "", contact_number: "",payment_method:""
+            admission_number: "", course: "", final_fee: "", name: "", contact_number: "", payment_method: ""
         };
     });
 
@@ -131,8 +131,8 @@ const AdmissionForm = ({ onBack }) => {
             }
             const text = await response.text(); // Read raw response
             console.log("Raw Response:", text); // Debugging: check raw response
-            
-            
+
+
             // Trim extra characters and safely parse JSON
             const jsonStartIndex = text.indexOf("{"); // Find first "{"
             const cleanJson = jsonStartIndex !== -1 ? text.slice(jsonStartIndex).trim() : text;
@@ -195,7 +195,7 @@ const AdmissionForm = ({ onBack }) => {
             name: "", location: "", contact_number: "", parent_contact: "", email: "",
             course: "", duration: "", exact_fee: "", discount: 0, final_fee: "", batch_time: "",
             address: "", pin_code: "", city: "", district: "", state: "", country: "",
-            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null, gender: '',referredby:'',referredbycategory:''
+            documents_submitted: [], education_qualification: "", dob: "", photo: null, photoPreview: null, gender: '', referredby: '', referredbycategory: ''
         });
         setFeeData({
             admission_number: "", course: "", final_fee: "", name: "", contact_number: ""
@@ -269,7 +269,7 @@ const AdmissionForm = ({ onBack }) => {
     };
     const isStudentDataComplete = () => {
         return Object.entries(studentData).every(([key, value]) => {
-            if (["discount", "documents_submitted", "photo", "photoPreview","referredby","referredbycategory"].includes(key)) {
+            if (["discount", "documents_submitted", "photo", "photoPreview", "referredby", "referredbycategory"].includes(key)) {
                 return true; // ✅ Explicitly allow null for these fields
             }
 
@@ -427,7 +427,7 @@ const AdmissionForm = ({ onBack }) => {
                         amount: 1000,
                         type: "credit",
                         category: "Admission",
-                        payment_method:feeData.payment_method,
+                        payment_method: feeData.payment_method,
                         remark: feeData.admission_number || "N/A",
                         updated_by: user.name,
                     }),
@@ -888,8 +888,8 @@ const AdmissionForm = ({ onBack }) => {
                             <select name="batch_time" value={studentData.batch_time} onChange={handleChange} required>
                                 <option value="">Select Batch Time</option>
                                 <option value="9 AM - 11 AM">9 AM - 11 AM</option>
-                                <option value="10 AM - 12 PM">10 AM - 12 PM</option>
-                                <option value="1 PM - 3 PM">1 PM - 3 PM</option>
+                                <option value="11 AM - 1 PM">11 AM - 1 PM</option>
+                                <option value="2 PM - 4 PM">2 PM - 4 PM</option>
                             </select>
 
                             <label>Documents Submitted</label>
@@ -920,15 +920,16 @@ const AdmissionForm = ({ onBack }) => {
                                 name="referredby"
                                 onChange={handleChange}
                                 value={studentData.referredby || ""}
-                                // readOnly
+                            // readOnly
                             />
-                              <label>Ref category</label>
-                            <select name="" value={studentData.referredbycategory} onChange={handleChange} required>
+                            <label>Ref category</label>
+                            <select name="referredbycategory" value={studentData.referredbycategory} onChange={handleChange} required>
                                 <option value="">Ref category</option>
                                 <option value="Students">Students</option>
                                 <option value="Staff">Staff</option>
                                 <option value="Other">Other</option>
                             </select>
+
 
 
                         </div>
@@ -1013,7 +1014,7 @@ const AdmissionForm = ({ onBack }) => {
                             </div>
 
                             <div>
-                                <p style={{ fontSize:'8px' }}>Filename: {studentData.photo?.name || studentData.photo?.filename || 'N/A'}</p>
+                                <p style={{ fontSize: '8px' }}>Filename: {studentData.photo?.name || studentData.photo?.filename || 'N/A'}</p>
                             </div>
                             <p><strong>Full Name:</strong> {studentData.name}</p>
                             <p><strong>Date of Birth:</strong> {studentData.dob}</p>
@@ -1113,7 +1114,7 @@ const AdmissionForm = ({ onBack }) => {
                         amount: 1000,
                         timpstamp: format(new Date(), 'yyyy-MM-dd HH:mm'),
                         user: user.name,
-                        category:"ADMISSION FEE"
+                        category: "ADMISSION FEE"
 
                     })}>🖨 Print Receipt</button>
                     <button onClick={resetAdmission}>Start New Admission</button>

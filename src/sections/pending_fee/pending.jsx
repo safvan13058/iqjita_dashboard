@@ -299,7 +299,7 @@ const Pending = () => {
               style={{ width: "100%" }}
             />
 
-<div style={{ marginTop: "10px", display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
+            <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
 
               {selectedTemplate && (
                 <button
@@ -387,6 +387,7 @@ const Pending = () => {
                     <td>
                       <input
                         type="checkbox"
+                        className="checkbox1"
                         checked={selected.some((s) => s.admission_number === student.admission_number)}
                         onChange={() => toggleSelectStudent(student.admission_number)}
                       />
@@ -400,21 +401,16 @@ const Pending = () => {
                     <td>{student.paid_amount}</td>
                     <td>{student.pending_amount}</td>
                     <td>
-                      {user.role === 'admin' || user.role === 'superadmin' ? (
-                        <button
-                          className="action-btn edit-btn"
-                          onClick={() => {
-                            setCurrentStudent(student);
-                            setIsPopupOpen(true);
-                          }}
-                        >
-                          View
-                        </button>
-                      ) : (
-                        <button className="action-btn edit-btn" disabled>
-                          Restricted
-                        </button>
-                      )}
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={() => {
+                          setCurrentStudent(student);
+                          setIsPopupOpen(true);
+                        }}
+                      >
+                        View
+                      </button>
+
                     </td>
 
                   </tr>
@@ -443,9 +439,11 @@ const Pending = () => {
             <label>New Due Date:</label>
             <input
               type="date"
+              min={new Date().toISOString().split('T')[0]} // sets today's date as the minimum
               value={newDueDate}
               onChange={(e) => setNewDueDate(e.target.value)}
             />
+
 
             <button onClick={async () => {
               const response = await fetch('https://software.iqjita.com/pendingfee.php?mode=update_due_date', {

@@ -151,6 +151,7 @@ const Account = () => {
             .then((data) => {
                 if (data.status === 'success') {
                     setHistory(data.data);
+                    console.log("accounts history==",data.data)
                 }
             });
     };
