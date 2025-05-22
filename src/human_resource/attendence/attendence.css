@@ -1,0 +1,114 @@
+/* Main Container */
+.attent-table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+  border-radius: 6px;
+  background-color: var(--hr-card-background, #151529);
+  padding: 10px;
+  box-shadow: var(--hr-box-shadow-dark, 2px 0 10px rgba(0, 0, 0, 0.5));
+}
+
+/* Control Panel */
+.attent-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  justify-content: space-around;
+}
+
+.attent-search-input {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.attent-button {
+  background-color: var(--hr-button-primary-bg, #27293d);
+  color: var(--hr-button-primary-text, #ffffff);
+  padding: 3px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.attent-button:hover {
+  background-color: var(--hr-button-hover-bg, #3d3f6e);
+}
+
+/* Table Styles */
+.attent-attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--hr-table-text, #ffffff);
+}
+
+.attent-attendance-table th {
+  background-color: var(--hr-table-header-bg, #0e0e23);
+  color: var(--hr-table-header-text, #ffffff);
+  padding: 8px;
+  text-align: left;
+}
+
+.attent-attendance-table td {
+  padding: 8px;
+  text-align: left;
+}
+
+.attent-table-row {
+  background-color: var(--hr-table-row-bg, #151529);
+}
+
+.attent-table-row-alt {
+  background-color: var(--hr-table-row-alt-bg, #1f1f3b);
+}
+
+.attent-attendance-table tr:hover {
+  background-color: var(--hr-background-light, #1a1a2e);
+}
+
+/* Status Colors */
+.attent-status-present {
+  color: green;
+}
+
+.attent-status-absent {
+  color: red;
+}
+
+.attent-status-leave {
+  color: orange;
+}
+.attent-dropdown {
+  padding: 5px;
+  width:200px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: var(--hr-card-background, #151529);
+  color: var(--hr-text-primary, #ffffff);
+}
+.attent-search-input {
+  width: 220px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--hr-text-primary);
+  background-color: var(--hr-input-background);
+  border: 1.5px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  transition: border-color var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+  outline: none;
+}
+
+.attent-search-input::placeholder {
+  color: var(--hr-text-secondary);
+}
+
+.attent-search-input:hover {
+  border-color: var(--hr-button-hover-bg);
+}
+
+.attent-search-input:focus {
+  border-color: var(--hr-input-focus-border);
+  box-shadow: 0 0 8px var(--hr-input-focus-border);
+}

@@ -20,6 +20,14 @@ import UnauthorizedPage from "./sections/Erorr/unauthorized/Unauthorized";
 import LoadingPage from "./sections/loading/loading";
 import Pending from "./sections/pending_fee/pending";
 import Account from "./sections/accounts/account";
+
+import BodyBackgroundHandler from './human_resource/hr_layout/BodyBackgroundHandler';
+import HrLayout from "./human_resource/hr_layout/hr_layout";
+import HrDashboard from "./human_resource/dashboard/dashboard";
+import EmployeePage from "./human_resource/employees/employee";
+import AttendanceTable from "./human_resource/attendence/attendence";
+import LeaveTable from "./human_resource/Leave/leave";
+import PayrollTable from "./human_resource/Payroll/payroll"
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -36,6 +44,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <BodyBackgroundHandler /> 
         <Routes>
           {/* Public route */}
           <Route path="/login" element={<Login />} />
@@ -46,7 +55,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/pending" element={<Pending />} />
-            <Route path="/faculty" element={<UnderConstruction />} />
+             <Route path="/faculty" element={<Navigate to="/hr" />} />
             <Route path="/sales" element={<UnderConstruction />} />
             {/* <Route path="/accounts" element={<Account />} /> */}
            <Route path="/are_you_fool" element={<UnauthorizedPage />} />
@@ -58,6 +67,17 @@ function App() {
 
           <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
             <Route path="/accounts" element={<Account />} />
+          </Route>
+
+          <Route path="/hr" element={<HrLayout />}>
+            <Route index element={<HrDashboard />} />
+            <Route path="employees" element={<EmployeePage/>} />
+            <Route path="attendance" element={<AttendanceTable />} />
+            <Route path="Leave" element={<LeaveTable/>} />
+            <Route path="Payroll" element={<PayrollTable/>} />
+            <Route path="Performance" element={<EmployeePage/>} />
+            <Route path="Expense" element={<EmployeePage/>} />
+            {/* add more HR routes here */}
           </Route>
 
           {/* Redirect all other paths to login if not authenticated */}

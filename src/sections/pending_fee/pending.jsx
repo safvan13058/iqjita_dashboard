@@ -22,6 +22,20 @@ const Pending = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [savedTemplates, setSavedTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+const [filteredStudents, setFilteredStudents] = useState([]);
+useEffect(() => {
+  if (searchQuery.trim() === "") {
+    setFilteredStudents(students); // Show all if query is empty
+  } else {
+    const lowerQuery = searchQuery.toLowerCase();
+    const filtered = students.filter(student =>
+      student.name.toLowerCase().includes(lowerQuery)
+    );
+    setFilteredStudents(filtered);
+  }
+}, [searchQuery, students]);
+
   const user = JSON.parse(localStorage.getItem('user'));
 
 
@@ -351,8 +365,8 @@ const Pending = () => {
           <input
             type="text"
             placeholder="Search by name..."
-          // value={searchQuery}
-          // onChange={(e) => setSearchQuery(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
@@ -380,9 +394,9 @@ const Pending = () => {
               </tr>
             </thead>
             <tbody>
-              {students.length > 0 ? (
+              {filteredStudents.length > 0 ? (
 
-                (console.log("students", students), students.map((student) => (
+                (console.log("students", filteredStudents), filteredStudents.map((student) => (
                   <tr key={student.admission_number} className={selected.some((s) => s.admission_number === student.admission_number) ? "selected" : ""}>
                     <td>
                       <input

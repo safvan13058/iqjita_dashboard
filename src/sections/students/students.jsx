@@ -10,8 +10,8 @@ const StudentsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCourse, setSelectedCourse] = useState('Computer Science');
   const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
   const [viewError, setViewError] = useState(null)
@@ -401,7 +401,15 @@ const StudentsPage = () => {
         }));
 
         console.log("✅ Transformed Course Options:", formattedCourses);
+       
         setCourses(formattedCourses); // Set the fetched courses in state
+    
+         // ✅ Set the first course as selected
+      if (formattedCourses.length > 0) {
+        console.log(formattedCourses[0])     
+        setSelectedCourse(formattedCourses[0].course);
+
+      }
       } else {
         console.error("❌ Failed to fetch courses:", data);
       }
@@ -590,7 +598,7 @@ const StudentsPage = () => {
                   <div className="detail-section">
                     <h3>Course Information</h3>
                     <p><strong>Course:</strong> {selectedStudent.s_course}</p>
-                    <p><strong>Duration:</strong> {selectedStudent.duration} year(s)</p>
+                    <p><strong>Duration:</strong> {selectedStudent.duration} MONTHS</p>
                     <p><strong>Batch Time:</strong> {selectedStudent.batch_time}</p>
                     <p><strong>Exact Fee:</strong>  {selectedStudent.exact_fee}</p>
                     <p><strong>Discount:</strong> {selectedStudent.discount}</p>
@@ -622,6 +630,7 @@ const StudentsPage = () => {
                   <div className="detail-section">
                     <h3>Additional Information</h3>
                     <p><strong>Address:</strong> {selectedStudent.address || 'N/A'}</p>
+                    <p><strong>Pin Code:</strong> {selectedStudent.pin_code || 'N/A'}</p>
                     <p><strong>City:</strong> {selectedStudent.city || 'N/A'}</p>
                     <p><strong>District:</strong> {selectedStudent.district || 'N/A'}</p>
                     <p><strong>State:</strong> {selectedStudent.state || 'N/A'}</p>

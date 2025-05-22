@@ -1,0 +1,270 @@
+.leavetable-container {
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+.leavetable-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--hr-card-background);
+  color: var(--hr-text-primary);
+  box-shadow: var(--hr-box-shadow-light);
+  border-radius: var(--hr-border-radius);
+}
+
+.leavetable-table th, .leavetable-table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--hr-input-border);
+  text-align: left;
+}
+
+.leavetable-table th {
+  background-color: var(--hr-table-header-bg);
+  color: var(--hr-table-header-text);
+  user-select: none;
+}
+
+.leavetable-row {
+  background-color: var(--hr-table-row-bg);
+}
+
+.leavetable-row-alt {
+  background-color: var(--hr-table-row-alt-bg);
+}
+
+.leavetable-action-btn {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background-color var(--hr-transition-speed);
+}
+
+.leavetable-action-btn:hover {
+  background-color: var(--hr-button-hover-bg);
+}
+.leavetable-search-input {
+  width: 260px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1.5px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  background-color: var(--hr-input-background);
+  color: var(--hr-text-primary);
+  transition: border-color var(--hr-transition-speed);
+}
+
+.leavetable-search-input::placeholder {
+  color: var(--hr-text-secondary);
+}
+
+.leavetable-search-input:focus {
+  border-color: var(--hr-input-focus-border);
+  outline: none;
+  /* box-shadow: 0 0 8px var(--hr-input-focus-border); */
+}
+.leavetable-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(14, 14, 35, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.leavetable-modal {
+  background-color: var(--hr-card-background);
+  color: var(--hr-text-primary);
+  padding: 25px 30px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  width: 320px;
+  max-width: 90%;
+  text-align: left;
+  position: relative;
+}
+
+.leavetable-modal h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.leavetable-modal p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.leavetable-close-btn {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color var(--hr-transition-speed);
+}
+
+.leavetable-close-btn:hover {
+  background-color: var(--hr-button-hover-bg);
+}
+
+
+
+
+.hrleave-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(14, 14, 35, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.hrleave-modal {
+  background-color: var(--hr-card-background);
+  color: var(--hr-text-primary);
+  padding: 2rem;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  width: 90%;
+  max-width: 500px;
+}
+
+.hrleave-heading {
+  margin-bottom: 1.2rem;
+  font-size: 1.6rem;
+  color: var(--hr-text-heading);
+}
+
+.hrleave-info {
+  margin-bottom: 0.5rem;
+  color: var(--hr-text-paragraph);
+}
+
+.hrleave-remark-group {
+  margin-top: 1rem;
+}
+
+.hrleave-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--hr-text-secondary);
+  font-weight: 500;
+}
+
+.hrleave-input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--hr-input-background);
+  border: 1px solid var(--hr-input-border);
+  color: var(--hr-input-text);
+  border-radius: var(--hr-border-radius);
+  resize: vertical;
+  transition: border var(--hr-transition-speed);
+}
+
+.hrleave-input:focus {
+  border-color: var(--hr-input-focus-border);
+  outline: none;
+}
+
+.hrleave-button-group {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.hrleave-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  color: var(--hr-button-primary-text);
+  background-color: var(--hr-button-primary-bg);
+  transition: background var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+  cursor: pointer;
+}
+
+.hrleave-button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: 0 2px 6px var(--hr-button-hover-shadow);
+}
+
+.hrleave-approve-btn {
+  background-color: #3fa649; /* Darker green that fits your theme */
+  color: var(--hr-button-primary-text);
+}
+
+.hrleave-approve-btn:hover {
+  background-color: #4ec85a;
+  box-shadow: 0 2px 6px var(--hr-button-hover-shadow);
+}
+
+.hrleave-reject-btn {
+  background-color: #c22c2c; /* Muted red that works on dark backgrounds */
+  color: var(--hr-button-primary-text);
+}
+
+.hrleave-reject-btn:hover {
+  background-color: #e54848;
+  box-shadow: 0 2px 6px var(--hr-button-hover-shadow);
+}
+
+
+.hrleave-close-btn {
+  background-color: var(--hr-button-secondary-bg);
+}
+/* Text Utility Classes */
+.hr-text-primary label span {
+  
+  color: var(--hr-text-primary);
+   font-weight: 700;
+}
+.hr-text-primary span{
+  font-weight: 700;
+}
+.hrleave-display-input {
+  background-color: transparent;
+  /* border: none; */
+  color: var(--hr-text-primary);
+  font: inherit;
+  padding: 5px 2px ;
+  margin-left: 8px;
+  pointer-events: none;
+  font-weight: 400;
+}
+.leavedate{
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+}
+
+.hr-text-secondary {
+  color: var(--hr-text-secondary);
+}
+
+.hr-text-heading {
+  color: var(--hr-text-heading);
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.hr-text-paragraph {
+  color: var(--hr-text-paragraph);
+}
+
+.hr-text-light {
+  color: var(--hr-text-light);
+}

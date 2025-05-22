@@ -1,0 +1,151 @@
+.sidebarhr {
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #0e0e23;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+  transition: width 0.3s ease;
+  z-index: 100;
+  padding-top: 50px;
+}
+
+.sidebarhr.expanded {
+  width: 250px;
+}
+
+.sidebarhr.collapsed {
+  width: 70px;
+  
+
+}
+/* Adjust main content based on sidebar state */
+.hrmaincontent {
+  width: 100%;
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  background-color: var(--hr-background-dark);
+}
+
+.sidebarhr.collapsed ~ .hrmaincontent {
+  margin-left: 70px;
+}
+
+.sidebar-footerhr {
+  border-top: 1px solid var(--hr-input-border);
+  margin-top: auto;
+}
+.toggle-button {
+  padding: 10px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sidebar-navhr {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.nav-linkhr {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  margin: 5px 10px;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-linkhr:hover {
+  background-color: #2d2d6e;
+  color: #ffffff;
+}
+
+.nav-linkhr.active {
+  background-color: #ffffff;
+  color: #0e0e23;
+}
+
+.nav-linkhr.active .nav-iconhr {
+  color: #0e0e23;
+}
+
+.nav-iconhr {
+  font-size: 1.4rem;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-labelhr {
+  display: none;
+}
+
+.nav-labelhr {
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+/* @media (max-width: 768px) {
+  .sidebar.expanded {
+    width: 100px;
+  }
+
+  .sidebar.collapsed {
+    width: 60px;
+  }
+
+  .nav-link {
+    justify-content: center;
+    padding: 15px 0;
+  }
+
+  .nav-icon {
+    margin-right: 0;
+    font-size: 1.4rem;
+  }
+
+  .sidebar.expanded .nav-label {
+    display: none;
+  }
+} */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+      width: 70px;
+      overflow: hidden;
+      background-color: var(--background-dark);
+  }
+  
+  .sidebar-header h2,
+  .nav-label,
+  .theme-selector label {
+      display: none;
+  }
+  
+  .nav-link {
+      justify-content: center;
+      padding: 15px 0;
+  }
+  
+  .nav-icon {
+      margin-right: 0;
+      font-size: 1.4rem;
+  }
+  
+  .theme-select {
+      padding: 8px 4px;
+  }
+}

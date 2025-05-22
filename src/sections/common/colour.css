@@ -48,6 +48,55 @@
     /* Miscellaneous */
     --border-radius: 6px; /* Rounded corners for buttons & inputs */
     --transition-speed: 0.3s ease-in-out; /* Smooth animations */
+     /* ------------------------ */
+      /* Primary Brand Colors */
+  --hr-primary-color: #0e0e23; /* Deep navy background */
+  --hr-secondary-color: #ffffff; /* White text contrast */
+
+  /* Backgrounds */
+  --hr-background-light: #1a1a2e;
+  --hr-background-dark: #0e0e23;
+  --hr-card-background: #151529;
+
+  /* Text Colors */
+  --hr-text-primary: #ffffff;
+  --hr-text-secondary: #c7c7c7;
+  --hr-text-heading: #ffffff;
+  --hr-text-paragraph: #dcdcdc;
+  --hr-text-light: #ffffff;
+
+  /* Buttons */
+  --hr-button-primary-bg: #27293d;
+  --hr-button-primary-text: #ffffff;
+  --hr-button-secondary-bg: #393a5a;
+  --hr-button-secondary-text: #ffffff;
+  --hr-button-hover-bg: #3d3f6e;
+  --hr-button-hover-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Box Shadows */
+  --hr-box-shadow-light: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  --hr-box-shadow-dark: 2px 0 10px rgba(0, 0, 0, 0.5);
+
+  /* Forms & Inputs */
+  --hr-input-border: #444;
+  --hr-input-focus-border: #ffffff;
+  --hr-input-background: #1a1a2e;
+  --hr-input-text: #ffffff;
+
+  /* Table Styles */
+  --hr-table-header-bg: #0e0e23;
+  --hr-table-header-text: #ffffff;
+  --hr-table-row-bg: #151529;
+  --hr-table-row-alt-bg: #1f1f3b;
+  --hr-table-text: #ffffff;
+
+  /* Links */
+  --hr-link-color: #ffffff;
+  --hr-link-hover-color: #9B5A2A;
+
+  /* Miscellaneous */
+  --hr-border-radius: 6px;
+  --hr-transition-speed: 0.3s ease-in-out;
   }
   :roo1 {
     /* Primary Brand Colors */

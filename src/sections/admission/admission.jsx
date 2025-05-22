@@ -14,8 +14,14 @@ const AdmissionForm = ({ onBack }) => {
     const [error, setError] = useState(null);
     const [courseOptions, setCourseOptions] = useState([]);
     const [discountcal, setdiscountcal] = useState({});
-    const [selectedCountry, setSelectedCountry] = useState("");
-    const [selectedState, setSelectedState] = useState("");
+    const [selectedCountry, setSelectedCountry] = useState(() => {
+    return localStorage.getItem("selectedCountry") || "";
+});
+
+const [selectedState, setSelectedState] = useState(() => {
+    return localStorage.getItem("selectedState") || "";
+});
+
     const [selectedCity, setSelectedCity] = useState("");
     const [studentsalldata, setstudentsall] = useState("");
     const [step, setStep] = useState(() => {
@@ -225,34 +231,55 @@ const AdmissionForm = ({ onBack }) => {
 
         setStudentData(updatedForm);
     };
-    const handleCountryChange = (e) => {
-        const countryCode = e.target.value;
-        const country = Country.getAllCountries().find((c) => c.isoCode === countryCode);
-        setSelectedCountry(countryCode);
-        setSelectedState("");
-        setSelectedCity("");
-        setStudentData((prev) => ({
-            ...prev,
-            country: country ? country.name : "",
-            state: "",
-            city: "",
-            district: "",
-        }));
-    };
+   const handleCountryChange = (e) => {
+    const countryCode = e.target.value;
+    const country = Country.getAllCountries().find((c) => c.isoCode === countryCode);
+    
+    setSelectedCountry(countryCode);
+    setSelectedState("");
+    setSelectedCity("");
 
-    // Handle state selection
-    const handleStateChange = (e) => {
-        const stateCode = e.target.value;
-        const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === stateCode);
-        setSelectedState(stateCode);
-        setSelectedCity("");
-        setStudentData((prev) => ({
-            ...prev,
-            state: state ? state.name : "",
-            city: "",
-            district: "",
-        }));
-    };
+    // Save to localStorage
+    localStorage.setItem("selectedCountry", countryCode);
+    localStorage.removeItem("selectedState"); // Clear dependent state
+
+    setStudentData((prev) => ({
+        ...prev,
+        country: country ? country.name : "",
+        state: "",
+        city: "",
+        district: "",
+    }));
+};
+useEffect(() => {
+    const country = Country.getAllCountries().find((c) => c.isoCode === selectedCountry);
+    const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === selectedState);
+
+    setStudentData((prev) => ({
+        ...prev,
+        country: country ? country.name : "",
+        state: state ? state.name : "",
+    }));
+}, [selectedCountry, selectedState]);
+
+const handleStateChange = (e) => {
+    const stateCode = e.target.value;
+    const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === stateCode);
+
+    setSelectedState(stateCode);
+
+    // Save to localStorage
+    localStorage.setItem("selectedState", stateCode);
+
+    setSelectedCity("");
+    setStudentData((prev) => ({
+        ...prev,
+        state: state ? state.name : "",
+        city: "",
+        district: "",
+    }));
+};
+
 
     // Handle city selection
     const handleCityChange = (e) => {

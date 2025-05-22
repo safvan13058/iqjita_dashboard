@@ -1,0 +1,418 @@
+
+
+.hr-container {
+  background-color: var(--hr-background-dark);
+  min-height: 100vh;
+
+  color: var(--hr-text-primary);
+  font-family: sans-serif;
+}
+
+.hr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hr-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--hr-text-heading);
+}
+
+.hr-button {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background-color var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+  box-shadow: var(--hr-box-shadow-light);
+}
+
+.hr-button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: var(--hr-button-hover-shadow);
+}
+
+.hr-search {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  background-color: var(--hr-input-background);
+  color: var(--hr-input-text);
+}
+
+.hr-table-container {
+  background-color: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+  overflow-x: auto;
+  box-shadow: var(--hr-box-shadow-dark);
+}
+
+.hr-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--hr-table-text);
+}
+
+.hr-table th,
+.hr-table td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.hr-table thead {
+  background-color: var(--hr-table-header-bg);
+  color: var(--hr-table-header-text);
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.hr-table tbody tr:nth-child(even) {
+  background-color: var(--hr-table-row-alt-bg);
+}
+
+.hr-table tbody tr:nth-child(odd) {
+  background-color: var(--hr-table-row-bg);
+}
+.hr-action-button {
+  background-color: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+}
+
+.hr-action-button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: var(--hr-box-shadow-light);
+}
+.hr-toggle-buttons {
+  display: flex;
+  gap: 8px;
+  /* margin-bottom: 16px; */
+}
+
+.hr-toggle-button {
+  background-color: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background-color var(--hr-transition-speed);
+}
+
+.hr-toggle-button.active {
+  background-color: var(--hr-button-hover-bg);
+  font-weight: bold;
+}
+.hr-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.hr-employee-card {
+  background-color: var(--hr-card-background);
+  color: var(--hr-text-primary);
+  padding: 16px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  display:flex;
+  gap:10px;
+  transition: transform 0.2s ease;
+}
+.hr-card-img-div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hr-employee-card:hover {
+  transform: translateY(-4px);
+}
+
+.hr-employee-card h3 {
+  margin: 0 0 8px;
+}
+
+.hr-employee-card p {
+  margin: 4px 0;
+}
+/* Headings */
+.hr-title,
+.hr-employee-card h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--hr-text-heading);
+  margin-bottom: 8px;
+}
+
+/* Paragraph Text */
+.hr-text,
+.hr-employee-card p {
+  color: var(--hr-text-paragraph);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.hr-employee-card p strong {
+  color: var(--hr-text-light);
+  font-weight: 600;
+}
+.hr-headbtn{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 50px;
+}
+
+/* Muted/Secondary Text */
+.hr-text-secondary {
+  color: var(--hr-text-secondary);
+  font-size: 0.85rem;
+}
+
+/* Labels (Optional) */
+.hr-label {
+  display: block;
+  color: var(--hr-text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+
+/* Input Placeholder Styling (if needed globally) */
+.hr-search::placeholder {
+  color: var(--hr-text-secondary);
+  opacity: 0.8;
+}
+/* Employee Page CSS */
+
+.hr-container {
+ 
+  background-color: var(--hr-background-dark);
+  color: var(--hr-text-primary);
+}
+.hr-card-img{
+  width: 100px;
+  height: 100px;
+  border-radius: 14px;
+}
+
+.hr-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: var(--hr-text-heading);
+}
+
+.hr-button {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color var(--hr-transition-speed);
+}
+
+.hr-button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: var(--hr-button-hover-shadow);
+}
+
+.hr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(14, 14, 35, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.hr-modal {
+  background-color: var(--hr-card-background);
+  padding: 20px;
+  border-radius: var(--hr-border-radius);
+  width: 80%;
+  height: 80%;
+  max-width: 90%;
+  position: relative;
+  color: var(--hr-text-primary);
+}
+
+.hr-modal h2, .hr-modal h3 {
+  color: var(--hr-text-primary);
+  margin-bottom: 15px;
+}
+
+.hr-modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  background-color: var(--hr-input-background);
+  color: var(--hr-input-text);
+}
+
+.hr-modal input:focus {
+  border-color: var(--hr-input-focus-border);
+  outline: none;
+}
+
+.hr-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.hr-modal-actions button {
+  background-color: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background-color var(--hr-transition-speed);
+}
+
+.hr-modal-actions button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: var(--hr-button-hover-shadow);
+}
+
+.hr-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.hr-modal-close:hover {
+  background:none;
+}
+
+.hr-form-container {
+  background-color: var(--hr-background-dark);
+  color: var(--hr-text-primary);
+  padding: 20px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  overflow-y: scroll;
+  height: 70%;
+
+  scroll-behavior: smooth;
+}
+/* WebKit Scrollbar Styles */
+.hr-form-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hr-form-container::-webkit-scrollbar-track {
+  background: var(--hr-background-light);
+  border-radius: var(--hr-border-radius);
+}
+
+.hr-form-container::-webkit-scrollbar-thumb {
+  background-color: #3d3f6e; /* You can also use a theme variable */
+  border-radius: 10px;
+  border: 2px solid var(--hr-background-light);
+}
+
+.hr-form-container::-webkit-scrollbar-thumb:hover {
+  background-color: #575b8c;
+}
+
+/* Firefox Scrollbar */
+.hr-form-container {
+  scrollbar-width: thin;
+  scrollbar-color: #3d3f6e var(--hr-background-light);
+}
+.hr-form-heading {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--hr-text-heading);
+}
+
+.hr-form-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hr-form-column {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hr-form-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hr-label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--hr-text-secondary);
+}
+.hr-summary-container{
+  height: 70%;
+  overflow-y: auto;
+}
+.hr-input {
+  padding: 0.6rem;
+  background-color: var(--hr-input-background);
+  width: 400px !important;
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  color: var(--hr-input-text);
+  transition: border var(--hr-transition-speed);
+}
+
+.hr-input:focus {
+  border-color: var(--hr-input-focus-border);
+  outline: none;
+}
+.hr-summary-container {
+  height: 280px;
+  overflow: auto;
+  /* border: 1px solid #ccc; */
+  padding: 1rem;
+}
+.hr-summary-grid {
+  display: flex;
+  gap: 2rem;
+}
+.hr-summary-grid ul {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+}
+.hr-summary-grid li {
+  margin-bottom: 0.5rem;
+}
+.hr-label {
+  font-weight: 600;
+}

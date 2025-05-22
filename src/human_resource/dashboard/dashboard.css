@@ -1,0 +1,95 @@
+
+.dashboard-container {
+  padding-top: 5px ;
+  background-color: var(--hr-background-dark);
+  width:100%;
+  min-height: 100vh;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--hr-text-heading);
+  margin-bottom: 24px;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  overflow-x: auto; /* allows horizontal scrolling if needed */
+}
+
+.hrchart {
+
+  background-color: var(--hr-card-background);
+  padding: 16px;
+  width: 60%;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+}
+.hrsection2{
+   margin-top: 32px;
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+}
+.notifications{
+  width:38%;
+
+  height: 400px;
+  background-color: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+
+}
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  background-color: var(--hr-card-background);
+  padding: 10px;
+  width: 200px;
+  height: 100px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  transition: transform var(--hr-transition-speed);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-heading {
+  color: var(--hr-text-secondary);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--hr-button-primary-text);
+}
+
+.leave-list li,
+.announcement-list li {
+  color: var(--hr-text-paragraph);
+  margin-bottom: 4px;
+}
+
+.announcement-card {
+  margin-top: 24px;
+  background-color: var(--hr-card-background);
+  padding: 16px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+}
+
+.announcement-date {
+  font-size: 12px;
+  color: var(--hr-text-secondary);
+}

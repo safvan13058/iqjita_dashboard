@@ -1,0 +1,412 @@
+import React, { useState, useEffect } from 'react';
+import './employee.css';
+
+const EmployeePage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState('table');
+  const [showModal, setShowModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [employees, setEmployees] = useState([]);
+
+  // const employees = [
+  //   { id: 1, name: 'John Doe', email: 'john@company.com', department: 'HR', joiningDate: '2022-01-15' },
+  //   { id: 2, name: 'Jane Smith', email: 'jane@company.com', department: 'Finance', joiningDate: '2023-04-20' },
+  //   { id: 3, name: 'Raj Patel', email: 'raj@company.com', department: 'Engineering', joiningDate: '2021-09-01' },
+  //   { id: 4, name: 'Fatima Ali', email: 'fatima@company.com', department: 'Marketing', joiningDate: '2024-02-11' },
+  // ];
+  useEffect(() => {
+    fetch("https://software.iqjita.com/hr/employee.php?action=read")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const validData = data.filter(
+            (emp) =>
+              emp.FullName &&
+              emp.Email &&
+              emp.JoiningDate !== "0000-00-00" &&
+              emp.EmployeeID
+          );
+          setEmployees(validData);
+        }
+      })
+      .catch((err) => console.error("Error fetching employee data:", err));
+  }, []);
+
+  const filteredEmployees = employees.filter(emp =>
+    emp.FullName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const openModal = () => setShowModal(true);
+  const closeModal = () => {
+    setShowModal(false);
+    setCurrentStep(1);
+  };
+
+
+
+  const [formData, setFormData] = useState({
+    FullName: "",
+    Email: "",
+    PhoneNumber: "",
+    Department: "",
+    Designation: "",
+    JoiningDate: "",
+    Address: "",
+    DateOfBirth: "",
+    EmergencyContact: "",
+    Education: "",
+    Certificates: "",
+    Branch: "",
+    NetSalaryHourly: "",
+    NetSalaryDaily: "",
+    NetSalaryMonthly: "",
+    BasicSalary: "",
+    Allowances: "",
+    AccountNumber: "",
+    IFSCCode: "",
+    BankName: "",
+    BankBranchName: "",
+    AccountType: "Savings",
+  });
+
+  const [ProfileImage, setProfileImage] = useState(null);
+  const [CertificateImage, setCertificateImage] = useState(null);
+  const [AgreementImage, setAgreementImage] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e, setter) => {
+    setter(e.target.files[0]);
+  };
+  const handleSubmit = () => {
+    setErrorMessage("");
+    const data = new FormData();
+    for (let key in formData) {
+      data.append(key, formData[key]);
+    }
+    if (ProfileImage) data.append("ProfileImage", ProfileImage);
+    if (CertificateImage) data.append("CertificateImage", CertificateImage);
+    if (AgreementImage) data.append("AgreementImage", AgreementImage);
+
+    // Debug log
+    for (let pair of data.entries()) {
+      console.log(pair[0] + ": ", pair[1]);
+    }
+
+    fetch("https://software.iqjita.com/hr/employee.php?action=create", {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // alert(data.message);
+          closeModal()
+
+        } else {
+          setErrorMessage(data.message || "Failed to create employee.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setErrorMessage("An error occurred while submitting the form.");
+      });
+
+  };
+
+
+
+  const nextStep = () => setCurrentStep(prev => (prev < 3 ? prev + 1 : prev));
+  const prevStep = () => setCurrentStep(prev => (prev > 1 ? prev - 1 : prev));
+  return (
+    <div className="hr-container">
+      <div className="hr-header">
+        <h1 className="hr-title">Employees</h1>
+        <div className='hr-headbtn'>
+          <div className="hr-toggle-buttons">
+            <button
+              className={`hr-toggle-button ${viewMode === 'table' ? 'active' : ''}`}
+              onClick={() => setViewMode('table')}
+            >
+              List Table
+            </button>
+            <button
+              className={`hr-toggle-button ${viewMode === 'card' ? 'active' : ''}`}
+              onClick={() => setViewMode('card')}
+            >
+              Card
+            </button>
+          </div>
+          <button className="hr-button" onClick={openModal}>+ Add Employee</button>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        className="hr-search"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+
+
+      {viewMode === 'table' ? (
+        <div className="hr-table-container">
+          <table className="hr-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Joining Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEmployees.length > 0 ? (
+                filteredEmployees.map((emp, index) => (
+                  <tr key={emp.id}>
+                    <td>{index + 1}</td>
+                    <td>{emp.FullName}</td>
+                    <td>{emp.Email}</td>
+                    <td>{emp.Department}</td>
+                    <td>{emp.JoiningDate}</td>
+                    <td>
+                      <button className="hr-action-button">View</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">No employees found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="hr-card-grid">
+          {filteredEmployees.length > 0 ? (
+            filteredEmployees.map((emp) => (
+              <div className="hr-employee-card" key={emp.EmployeeID}>
+                <div className='hr-card-img-div'>
+                <img
+                  src={emp.ProfileImage || "/default-profile.png"}
+                  alt={emp.FullName}
+                  className="hr-card-img"
+                />
+                </div>
+                <div>
+                <h3>{emp.FullName}</h3>
+                <p>Email: {emp.Email}</p>
+                <p>Department: {emp.Department}</p>
+                <p>Joining: {emp.JoiningDate}</p>
+                <button className='hr-button'onClick={() => alert(`Viewing ${emp.FullName}`)}>
+                  View
+                </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="hr-text">No employees found.</p>
+          )}
+        </div>
+
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="hr-modal-overlay">
+          <div className="hr-modal">
+            <p style={{ color: 'red' }}>{errorMessage}</p>
+
+            <h2>Step {currentStep} of 3</h2>
+
+
+            {currentStep === 1 && (
+              <div className="hr-form-container">
+                <h3>Personal Data & Education</h3>
+                <div className="hr-form-grid">
+                  <div className="hr-form-column">
+                    <div className="hr-form-group">
+                      <label htmlFor="FullName" className='hr-label'>Full Name</label>
+                      <input id="FullName" name="FullName" value={formData.FullName} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="PhoneNumber" className='hr-label'>Phone Number</label>
+                      <input id="PhoneNumber" name="PhoneNumber" value={formData.PhoneNumber} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="Designation" className='hr-label'>Designation</label>
+                      <input id="Designation" name="Designation" value={formData.Designation} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="DateOfBirth" className='hr-label'>Date of Birth</label>
+                      <input id="DateOfBirth" name="DateOfBirth" type="date" value={formData.DateOfBirth} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="Education " className='hr-label'>Education</label>
+                      <input id="Education" name="Education" value={formData.Education} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="ProfileImage" className='hr-label'>Profile Image</label>
+                      <input id="ProfileImage" name="ProfileImage" type="file" onChange={(e) => handleFileChange(e, setProfileImage)} />
+                    </div>
+                  </div>
+                  <div className="hr-form-column">
+                    <div className="hr-form-group">
+                      <label htmlFor="Email" className='hr-label'>Email</label>
+                      <input id="Email" name="Email" value={formData.Email} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="Department" className='hr-label'>Department</label>
+                      <input id="Department" name="Department" value={formData.Department} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="JoiningDate" className='hr-label'>Joining Date</label>
+                      <input id="JoiningDate" name="JoiningDate" type="date" value={formData.JoiningDate} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="Address" className='hr-label'>Address</label>
+                      <input id="Address" name="Address" value={formData.Address} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="EmergencyContact" className='hr-label'>Emergency Contact</label>
+                      <input id="EmergencyContact" name="EmergencyContact" value={formData.EmergencyContact} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="Certificates" className='hr-label'>Certificates</label>
+                      <input id="Certificates" name="Certificates" value={formData.Certificates} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="CertificateImage" className='hr-label'>Certificate Image</label>
+                      <input id="CertificateImage" name="CertificateImage" type="file" onChange={(e) => handleFileChange(e, setCertificateImage)} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="AgreementImage" className='hr-label'>Agreement Image</label>
+                      <input id="AgreementImage" name="AgreementImage" type="file" onChange={(e) => handleFileChange(e, setAgreementImage)} />
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 2 && (
+              <div className="hr-form-container">
+                <h3>Salary & Account Details</h3>
+                <div className="hr-form-grid">
+                  <div className="hr-form-column">
+                    <div className="hr-form-group">
+                      <label htmlFor="NetSalaryHourly" className='hr-label'>Hourly Salary</label>
+                      <input id="NetSalaryHourly" name="NetSalaryHourly" value={formData.NetSalaryHourly} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="NetSalaryDaily" className='hr-label'>Daily Salary</label>
+                      <input id="NetSalaryDaily" name="NetSalaryDaily" value={formData.NetSalaryDaily} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="NetSalaryMonthly" className='hr-label'>Monthly Salary</label>
+                      <input id="NetSalaryMonthly" name="NetSalaryMonthly" value={formData.NetSalaryMonthly} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
+                      <input id="BasicSalary" name="BasicSalary" value={formData.BasicSalary} onChange={handleChange} />
+                    </div>
+                  </div>
+                  <div className="hr-form-column">
+                    <div className="hr-form-group">
+                      <label htmlFor="Allowances" className='hr-label'>Allowances</label>
+                      <input id="Allowances" name="Allowances" value={formData.Allowances} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="AccountNumber" className='hr-label'>Bank Account Number</label>
+                      <input id="AccountNumber" name="AccountNumber" value={formData.AccountNumber} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="IFSCCode" className='hr-label'>IFSC Code</label>
+                      <input id="IFSCCode" name="IFSCCode" value={formData.IFSCCode} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="BankName" className='hr-label'>Bank Name</label>
+                      <input id="BankName" name="BankName" value={formData.BankName} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="BankBranchName" className='hr-label'>Branch Name</label>
+                      <input id="BankBranchName" name="BankBranchName" value={formData.BankBranchName} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="AccountType" className='hr-label'>Account Type</label>
+                      <select id="AccountType" name="AccountType" value={formData.AccountType} onChange={handleChange}>
+                        <option value="Savings">Savings</option>
+                        <option value="Current">Current</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 3 && (
+              <div>
+                <h3>Confirmation</h3>
+                <p>Review all details below before confirming:</p>
+                <div className="hr-summary-container hr-form-container" style={{ overflow: 'auto' }}>
+                  <div className="hr-summary-grid" style={{ display: 'flex', gap: '2rem' }}>
+                    {[
+                      [
+                        "FullName", "Email", "PhoneNumber", "Department", "Designation", "JoiningDate",
+                        "Address", "DateOfBirth", "EmergencyContact", "Education", "Certificates", "Branch"
+                      ],
+                      [
+                        "NetSalaryHourly", "NetSalaryDaily", "NetSalaryMonthly", "BasicSalary", "Allowances",
+                        "AccountNumber", "IFSCCode", "BankName", "BankBranchName", "AccountType",
+                        "ProfileImage", "CertificateImage", "AgreementImage"
+                      ]
+                    ].map((fields, index) => (
+                      <ul key={index} style={{ flex: 1 }}>
+                        {fields.map((label) => {
+                          const value =
+                            label === "ProfileImage"
+                              ? ProfileImage?.name || "null"
+                              : label === "CertificateImage"
+                                ? CertificateImage?.name || "null"
+                                : label === "AgreementImage"
+                                  ? AgreementImage?.name || "null"
+                                  : formData[label] || "null";
+                          return (
+                            <li key={label}>
+                              <div className="hr-label">{label.replace(/([A-Z])/g, " $1")}:</div > {value}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="hr-modal-actions">
+              <button onClick={prevStep} disabled={currentStep === 1}>Back</button>
+              {currentStep < 3 ? (
+                <button onClick={nextStep}>Next</button>
+              ) : (
+                <button onClick={handleSubmit}>Confirm</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+    </div>
+  );
+};
+
+export default EmployeePage;
