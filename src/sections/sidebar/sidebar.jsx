@@ -16,7 +16,7 @@ const Sidebar = () => {
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
     { path: "/students", label: "Students", icon: <PiStudentFill /> },
     { path: "/pending", label: "Pending Fee", icon: <FaHourglassHalf style={{ fontSize: '18px' }} /> },
-    { path: "/faculty", label: "Faculty", icon: <MdOutlinePersonOutline /> },
+    { path: "/faculty", label: "Human Resources", icon: <MdOutlinePersonOutline /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
     { path: "/alumni", label: "Alumni", icon: <FaGraduationCap /> },
