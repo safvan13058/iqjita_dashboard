@@ -1,0 +1,239 @@
+/* :root {
+  --hr-primary-color: #0e0e23;
+  --hr-secondary-color: #ffffff;
+  --hr-background-light: #1a1a2e;
+  --hr-background-dark: #0e0e23;
+  --hr-card-background: #151529;
+  --hr-text-primary: #ffffff;
+  --hr-text-secondary: #c7c7c7;
+  --hr-text-heading: #ffffff;
+  --hr-text-paragraph: #dcdcdc;
+  --hr-text-light: #ffffff;
+  --hr-button-primary-bg: #27293d;
+  --hr-button-primary-text: #ffffff;
+  --hr-button-secondary-bg: #393a5a;
+  --hr-button-secondary-text: #ffffff;
+  --hr-button-hover-bg: #3d3f6e;
+  --hr-button-hover-shadow: rgba(0, 0, 0, 0.5);
+  --hr-box-shadow-dark: 2px 0 10px rgba(0, 0, 0, 0.5);
+  --hr-input-border: #444;
+  --hr-input-focus-border: #ffffff;
+  --hr-input-background: #1a1a2e;
+  --hr-input-text: #ffffff;
+  --hr-border-radius: 6px;
+  --hr-transition-speed: 0.3s ease-in-out;
+} */
+
+/* Container */
+.hr-page-container {
+    padding: 0;
+  padding-top: 1rem;
+  background: var(--hr-background-dark);
+  color: var(--hr-text-primary);
+}
+.hr-perform-cards{
+ display: flex;
+ flex-wrap: wrap;
+ gap: 20px;
+}
+/* Card */
+.hr-card-perform {
+  background-color: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  padding: 1rem;
+  width: 45%;
+  margin-bottom: 2rem;
+}
+
+/* Headers */
+.hr-heading {
+  font-size: 1.5rem;
+  color: var(--hr-text-heading);
+  margin-bottom: 1rem;
+}
+
+.hr-subsection-heading {
+  font-size: 1.2rem;
+  color: var(--hr-text-secondary);
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* Employee Box */
+.hr-employee-box {
+  margin-bottom: 2rem;
+}
+
+/* Profile Header */
+.hr-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.hr-profile-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--hr-input-border);
+}
+
+/* Info section */
+.hr-info p {
+  margin: 0.2rem 0;
+  color: var(--hr-text-secondary);
+}
+
+/* Details Grid */
+.hr-details-grid {
+  display: flex;
+ 
+  gap: 1rem;
+  flex-direction: column;
+
+}
+.hr-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Labels */
+.emp-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--hr-text-light);
+}
+
+/* Inputs */
+.hr-input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--hr-input-background);
+  color: var(--hr-input-text);
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  transition: border var(--hr-transition-speed);
+}
+
+.hr-input:focus {
+  outline: none;
+  border-color: var(--hr-input-focus-border);
+}
+
+/* Buttons */
+.hr-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: all var(--hr-transition-speed);
+}
+
+.hr-btn-primary {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+}
+
+.hr-btn-primary:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: 0 0 10px var(--hr-button-hover-shadow);
+}
+.hr-criteria-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(14, 14, 35, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.hr-criteria-modal {
+  background-color: var(--hr-card-background);
+  padding: 2rem;
+  border-radius: var(--hr-border-radius);
+  width: 420px;
+  box-shadow: var(--hr-box-shadow-dark);
+  color: var(--hr-text-light);
+}
+
+.hr-criteria-heading {
+  color: var(--hr-text-heading);
+  margin-bottom: 1rem;
+}
+
+.hr-criteria-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.hr-criteria-item {
+  display: flex;
+  justify-content: space-between;
+  background: var(--hr-table-row-bg);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.hr-criteria-name {
+  color: var(--hr-text-light);
+}
+
+.hr-criteria-delete-btn {
+  background: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--hr-transition-speed);
+}
+.hr-criteria-delete-btn:hover {
+  background: var(--hr-button-hover-bg);
+}
+
+.hr-criteria-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.hr-criteria-input {
+  flex: 1;
+  padding: 0.5rem;
+  background: var(--hr-input-background);
+  color: var(--hr-input-text);
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+}
+
+.hr-criteria-add-btn {
+  background: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+}
+.hr-criteria-add-btn:hover {
+  background: var(--hr-button-hover-bg);
+}
+
+.hr-criteria-close-btn {
+  background: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+}

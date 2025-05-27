@@ -80,6 +80,17 @@
 .attent-status-leave {
   color: orange;
 }
+
+.remark-late {
+  /* background-color: yellow; */
+  color: yellow; /* for readability */
+}
+
+.remark-ontime {
+  /* background-color: #28a745; bootstrap green or your green */
+  color:  #28a745;
+}
+
 .attent-dropdown {
   padding: 5px;
   width:200px;

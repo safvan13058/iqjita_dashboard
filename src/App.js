@@ -27,7 +27,9 @@ import HrDashboard from "./human_resource/dashboard/dashboard";
 import EmployeePage from "./human_resource/employees/employee";
 import AttendanceTable from "./human_resource/attendence/attendence";
 import LeaveTable from "./human_resource/Leave/leave";
-import PayrollTable from "./human_resource/Payroll/payroll"
+import PayrollTable from "./human_resource/Payroll/payroll";
+import EmployeeDetails from "./human_resource/single_emp/single_emp"
+import EmployeePerformance from "./human_resource/Performance/performance";
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -75,8 +77,9 @@ function App() {
             <Route path="attendance" element={<AttendanceTable />} />
             <Route path="Leave" element={<LeaveTable/>} />
             <Route path="Payroll" element={<PayrollTable/>} />
-            <Route path="Performance" element={<EmployeePage/>} />
-            <Route path="Expense" element={<EmployeePage/>} />
+            <Route path="Performance" element={<EmployeePerformance/>} />
+            <Route path="Expense" element={<EmployeeDetails/>} />
+           <Route path="employee/:id" element={<EmployeeDetails />} />  
             {/* add more HR routes here */}
           </Route>
 

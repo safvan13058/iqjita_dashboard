@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './employee.css';
-
+import { useNavigate } from 'react-router-dom';
 const EmployeePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('table');
@@ -66,6 +66,7 @@ const EmployeePage = () => {
     IFSCCode: "",
     BankName: "",
     BankBranchName: "",
+    Gender: "",
     AccountType: "Savings",
   });
 
@@ -73,10 +74,34 @@ const EmployeePage = () => {
   const [CertificateImage, setCertificateImage] = useState(null);
   const [AgreementImage, setAgreementImage] = useState(null);
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Convert value to number only for calculations
+    const numericValue = parseFloat(value);
+
+    if (name === 'BasicSalary') {
+      const daily = numericValue ? (numericValue / 30).toFixed(2) : '';
+      const hourly = daily ? (daily / 8).toFixed(2) : '';
+
+      setFormData((prevData) => ({
+        ...prevData,
+        BasicSalary: value,
+        NetSalaryDaily: daily,
+        NetSalaryHourly: hourly,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
+
 
   const handleFileChange = (e, setter) => {
     setter(e.target.files[0]);
@@ -117,6 +142,41 @@ const EmployeePage = () => {
 
   };
 
+const clearForm = () => {
+  setFormData({
+    FullName: "",
+    Email: "",
+    PhoneNumber: "",
+    Department: "",
+    Designation: "",
+    JoiningDate: "",
+    Address: "",
+    DateOfBirth: "",
+    EmergencyContact: "",
+    Education: "",
+    Certificates: "",
+    Branch: "",
+    NetSalaryHourly: "",
+    NetSalaryDaily: "",
+    NetSalaryMonthly: "",
+    BasicSalary: "",
+    Allowances: "",
+    AccountNumber: "",
+    IFSCCode: "",
+    BankName: "",
+    BankBranchName: "",
+    Gender: "",
+    AccountType: "Savings",
+    // Add other fields as needed
+  });
+  setCurrentStep(1); // Optional: reset to step 1
+  setErrorMessage('');
+};
+  const navigate = useNavigate();
+
+  const handleView = (id) => {
+    navigate(`/hr/employee/${id}`);
+  };
 
 
   const nextStep = () => setCurrentStep(prev => (prev < 3 ? prev + 1 : prev));
@@ -177,7 +237,12 @@ const EmployeePage = () => {
                     <td>{emp.Department}</td>
                     <td>{emp.JoiningDate}</td>
                     <td>
-                      <button className="hr-action-button">View</button>
+                     <button
+                  className="hr-action-button"
+                  onClick={() => handleView(emp.id)}
+                >
+                  View
+                </button>
                     </td>
                   </tr>
                 ))
@@ -195,20 +260,20 @@ const EmployeePage = () => {
             filteredEmployees.map((emp) => (
               <div className="hr-employee-card" key={emp.EmployeeID}>
                 <div className='hr-card-img-div'>
-                <img
-                  src={emp.ProfileImage || "/default-profile.png"}
-                  alt={emp.FullName}
-                  className="hr-card-img"
-                />
+                  <img
+                    src={emp.ProfileImage || "/default-profile.png"}
+                    alt={emp.FullName}
+                    className="hr-card-img"
+                  />
                 </div>
                 <div>
-                <h3>{emp.FullName}</h3>
-                <p>Email: {emp.Email}</p>
-                <p>Department: {emp.Department}</p>
-                <p>Joining: {emp.JoiningDate}</p>
-                <button className='hr-button'onClick={() => alert(`Viewing ${emp.FullName}`)}>
-                  View
-                </button>
+                  <h3>{emp.FullName}</h3>
+                  <p>Email: {emp.Email}</p>
+                  <p>Department: {emp.Department}</p>
+                  <p>Joining: {emp.JoiningDate}</p>
+                  <button className='hr-button' onClick={() => alert(`Viewing ${emp.FullName}`)}>
+                    View
+                  </button>
                 </div>
               </div>
             ))
@@ -223,6 +288,8 @@ const EmployeePage = () => {
       {showModal && (
         <div className="hr-modal-overlay">
           <div className="hr-modal">
+            <button onClick={closeModal} className="hr-modal-close">X</button>
+
             <p style={{ color: 'red' }}>{errorMessage}</p>
 
             <h2>Step {currentStep} of 3</h2>
@@ -249,6 +316,42 @@ const EmployeePage = () => {
                       <label htmlFor="DateOfBirth" className='hr-label'>Date of Birth</label>
                       <input id="DateOfBirth" name="DateOfBirth" type="date" value={formData.DateOfBirth} onChange={handleChange} />
                     </div>
+                    <div className="hr-form-group">
+                      <label className="hr-label">Gender</label>
+                      <div className="hr-radio-group ">
+                        <label className='hr-label' >
+                          <input
+                            type="radio"
+                            name="Gender"
+                            value="Male"
+                            checked={formData.Gender === 'Male'}
+                            onChange={handleChange}
+                          />
+                          Male
+                        </label>
+                        <label className='hr-label'>
+                          <input
+                            type="radio"
+                            name="Gender"
+                            value="Female"
+                            checked={formData.Gender === 'Female'}
+                            onChange={handleChange}
+                          />
+                          Female
+                        </label>
+                        <label className='hr-label'>
+                          <input
+                            type="radio"
+                            name="Gender"
+                            value="Others"
+                            checked={formData.Gender === 'Others'}
+                            onChange={handleChange}
+                          />
+                          Others
+                        </label>
+                      </div>
+                    </div>
+
                     <div className="hr-form-group">
                       <label htmlFor="Education " className='hr-label'>Education</label>
                       <input id="Education" name="Education" value={formData.Education} onChange={handleChange} />
@@ -303,6 +406,10 @@ const EmployeePage = () => {
                 <div className="hr-form-grid">
                   <div className="hr-form-column">
                     <div className="hr-form-group">
+                      <div className="hr-form-group">
+                        <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
+                        <input id="BasicSalary" name="BasicSalary" value={formData.BasicSalary} onChange={handleChange} />
+                      </div>
                       <label htmlFor="NetSalaryHourly" className='hr-label'>Hourly Salary</label>
                       <input id="NetSalaryHourly" name="NetSalaryHourly" value={formData.NetSalaryHourly} onChange={handleChange} />
                     </div>
@@ -310,14 +417,11 @@ const EmployeePage = () => {
                       <label htmlFor="NetSalaryDaily" className='hr-label'>Daily Salary</label>
                       <input id="NetSalaryDaily" name="NetSalaryDaily" value={formData.NetSalaryDaily} onChange={handleChange} />
                     </div>
-                    <div className="hr-form-group">
+                    {/* <div className="hr-form-group">
                       <label htmlFor="NetSalaryMonthly" className='hr-label'>Monthly Salary</label>
                       <input id="NetSalaryMonthly" name="NetSalaryMonthly" value={formData.NetSalaryMonthly} onChange={handleChange} />
-                    </div>
-                    <div className="hr-form-group">
-                      <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
-                      <input id="BasicSalary" name="BasicSalary" value={formData.BasicSalary} onChange={handleChange} />
-                    </div>
+                    </div> */}
+
                   </div>
                   <div className="hr-form-column">
                     <div className="hr-form-group">
@@ -364,7 +468,7 @@ const EmployeePage = () => {
                         "Address", "DateOfBirth", "EmergencyContact", "Education", "Certificates", "Branch"
                       ],
                       [
-                        "NetSalaryHourly", "NetSalaryDaily", "NetSalaryMonthly", "BasicSalary", "Allowances",
+                        "NetSalaryHourly", "NetSalaryDaily",  "BasicSalary", "Allowances",
                         "AccountNumber", "IFSCCode", "BankName", "BankBranchName", "AccountType",
                         "ProfileImage", "CertificateImage", "AgreementImage"
                       ]
@@ -394,6 +498,9 @@ const EmployeePage = () => {
 
             <div className="hr-modal-actions">
               <button onClick={prevStep} disabled={currentStep === 1}>Back</button>
+              <button onClick={clearForm} >
+                Clear
+              </button>
               {currentStep < 3 ? (
                 <button onClick={nextStep}>Next</button>
               ) : (

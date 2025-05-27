@@ -30,25 +30,25 @@ const PayrollTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPayroll, setSelectedPayroll] = useState(null);
   // const [searchTerm, setSearchTerm] = useState("");
-const [employeeIdSearch, setEmployeeIdSearch] = useState("");
-const [selectedMonth, setSelectedMonth] = useState("");
-const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-const employeeList = [
-  { id: "EMP001", name: "Alice" },
-  { id: "EMP002", name: "Bob" },
-  { id: "EMP003", name: "Charlie" },
-  // ... populate dynamically or via API
-];
+  const [employeeIdSearch, setEmployeeIdSearch] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+  const employeeList = [
+    { id: "EMP001", name: "Alice" },
+    { id: "EMP002", name: "Bob" },
+    { id: "EMP003", name: "Charlie" },
+    // ... populate dynamically or via API
+  ];
 
-const handleMonthFilter = (type) => {
-  const today = new Date();
-  if (type === 'thisMonth') {
-    setSelectedMonth(today.toISOString().slice(0, 7)); // YYYY-MM
-  } else if (type === 'previousMonth') {
-    const prev = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    setSelectedMonth(prev.toISOString().slice(0, 7));
-  }
-};
+  const handleMonthFilter = (type) => {
+    const today = new Date();
+    if (type === 'thisMonth') {
+      setSelectedMonth(today.toISOString().slice(0, 7)); // YYYY-MM
+    } else if (type === 'previousMonth') {
+      const prev = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      setSelectedMonth(prev.toISOString().slice(0, 7));
+    }
+  };
 
   const filteredData = payrollData.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,50 +63,55 @@ const handleMonthFilter = (type) => {
   const closeModal = () => {
     setSelectedPayroll(null);
   };
+const handleSavePayroll = (updatedPayroll) => {
+  // Here, update your backend or state
+  console.log("Saving payroll:", updatedPayroll);
+  closeModal(); // Close after save
+};
 
   return (
     <>
       <h2 className='hr-title'>Payroll Information</h2>
 
       <div className="payroll-filter-container">
-  {/* Left Side - Search by Name, Department, Designation */}
-  <div className="payroll-filter-left">
-    <input
-      type="text"
-      className="payroll-search-input"
-      placeholder="Search by Name, Department or Designation"
-      value={searchTerm}
-      onChange={e => setSearchTerm(e.target.value)}
-    />
-  </div>
+        {/* Left Side - Search by Name, Department, Designation */}
+        <div className="payroll-filter-left">
+          <input
+            type="text"
+            className="payroll-search-input"
+            placeholder="Search by Name, Department or Designation"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-  {/* Right Side - Month Filters & Employee ID Search */}
-  <div className="payroll-filter-right">
-    <button className="payroll-filter-btn" onClick={() => handleMonthFilter('thisMonth')}>This Month</button>
-    <button className="payroll-filter-btn" onClick={() => handleMonthFilter('previousMonth')}>Previous Month</button>
+        {/* Right Side - Month Filters & Employee ID Search */}
+        <div className="payroll-filter-right">
+          <button className="payroll-filter-btn" onClick={() => handleMonthFilter('thisMonth')}>This Month</button>
+          <button className="payroll-filter-btn" onClick={() => handleMonthFilter('previousMonth')}>Previous Month</button>
 
-    <input
-      type="month"
-      className="payroll-month-picker"
-      value={selectedMonth}
-      onChange={e => setSelectedMonth(e.target.value)}
-    />
+          <input
+            type="month"
+            className="payroll-month-picker"
+            value={selectedMonth}
+            onChange={e => setSelectedMonth(e.target.value)}
+          />
 
-   <select
-  className="payroll-employee-id-input"
-  value={selectedEmployeeId}
-  onChange={(e) => setSelectedEmployeeId(e.target.value)}
->
-  <option value="">Select Employee ID</option>
-  {employeeList.map((employee) => (
-    <option key={employee.id} value={employee.id}>
-      {employee.id} - {employee.name}
-    </option>
-  ))}
-</select>
+          <select
+            className="payroll-employee-id-input"
+            value={selectedEmployeeId}
+            onChange={(e) => setSelectedEmployeeId(e.target.value)}
+          >
+            <option value="">Select Employee ID</option>
+            {employeeList.map((employee) => (
+              <option key={employee.id} value={employee.id}>
+                {employee.id} - {employee.name}
+              </option>
+            ))}
+          </select>
 
-  </div>
-</div>
+        </div>
+      </div>
 
       <div className="payroll-table-container">
         <table className="payroll-table">
@@ -140,10 +145,10 @@ const handleMonthFilter = (type) => {
                   <td>{item.payDate}</td>
                   <td>{item.payDate}</td>
                   <td>{item.payDate}</td>
-               
+
                   <td>{item.netPay}</td>
                   <td>
-                    <button 
+                    <button
                       className="payroll-action-btn"
                       onClick={() => openModal(item)}
                     >
@@ -166,21 +171,99 @@ const handleMonthFilter = (type) => {
       {/* Modal */}
       {selectedPayroll && (
         <div className="payroll-modal-overlay" onClick={closeModal}>
-          <div className="payroll-modal" onClick={e => e.stopPropagation()}>
-            <h3>Payroll Details</h3>
-            <p><strong>Employee ID:</strong> {selectedPayroll.employeeId}</p>
-            <p><strong>Name:</strong> {selectedPayroll.name}</p>
-            <p><strong>Department:</strong> {selectedPayroll.department}</p>
-            <p><strong>Designation:</strong> {selectedPayroll.designation}</p>
-            <p><strong>Pay Date:</strong> {selectedPayroll.payDate}</p>
-            <p><strong>Basic Salary:</strong> {selectedPayroll.basicSalary}</p>
-            <p><strong>Allowances:</strong> {selectedPayroll.allowances}</p>
-            <p><strong>Deductions:</strong> {selectedPayroll.deductions}</p>
-            <p><strong>Net Pay:</strong> {selectedPayroll.netPay}</p>
-            <button className="payroll-close-btn" onClick={closeModal}>Close</button>
+          <div className="payroll-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="payroll-heading">Edit Payroll Details</h3>
+
+            <div className="payroll-form-group">
+              <label>Employee ID</label>
+              <input
+                type="text"
+                value={selectedPayroll.employeeId}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, employeeId: e.target.value })}
+                disabled
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                value={selectedPayroll.name}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, name: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Department</label>
+              <input
+                type="text"
+                value={selectedPayroll.department}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, department: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Designation</label>
+              <input
+                type="text"
+                value={selectedPayroll.designation}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, designation: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Pay Date</label>
+              <input
+                type="date"
+                value={selectedPayroll.payDate}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, payDate: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Basic Salary</label>
+              <input
+                type="number"
+                value={selectedPayroll.basicSalary}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, basicSalary: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Allowances</label>
+              <input
+                type="number"
+                value={selectedPayroll.allowances}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, allowances: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Deductions</label>
+              <input
+                type="number"
+                value={selectedPayroll.deductions}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, deductions: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-form-group">
+              <label>Net Pay</label>
+              <input
+                type="number"
+                value={selectedPayroll.netPay}
+                onChange={(e) => setSelectedPayroll({ ...selectedPayroll, netPay: e.target.value })}
+              />
+            </div>
+
+            <div className="payroll-modal-buttons">
+              <button className="payroll-save-btn" onClick={() => handleSavePayroll(selectedPayroll)}>Save</button>
+              <button className="payroll-close-btn" onClick={closeModal}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
+
     </>
   );
 };

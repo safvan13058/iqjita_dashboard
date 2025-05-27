@@ -194,3 +194,39 @@
   background-color: var(--hr-button-hover-bg);
 }
 
+.payroll-form-group {
+  margin-bottom: 1rem;
+}
+.payroll-form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+.payroll-form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.payroll-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.payroll-save-btn {
+  background-color: #0F6D66;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.payroll-close-btn {
+  background-color: #9B5A2A;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

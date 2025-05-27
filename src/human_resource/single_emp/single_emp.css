@@ -1,0 +1,113 @@
+.hr-page-container {
+  background-color: var(--hr-background-dark);
+  color: var(--hr-text-primary);
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.hr-card {
+  background-color: var(--hr-card-background);
+  padding: 2rem;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.emp-label{
+     display: block;
+  color: white;
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+.hr-back-button-container {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.hr-btn-back{
+    font-size: larger;
+    color: white;
+    cursor: pointer;
+}
+.hr-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hr-profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--hr-input-border);
+}
+
+.hr-info {
+  flex: 1;
+}
+
+.hr-heading {
+  color: var(--hr-text-heading);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.hr-subheading {
+  color: var(--hr-text-secondary);
+  font-size: 1.1rem;
+}
+
+.hr-branch {
+  color: var(--hr-text-paragraph);
+}
+
+.hr-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.hr-subsection-heading {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--hr-text-heading);
+  border-bottom: 1px solid var(--hr-input-border);
+  padding-bottom: 0.5rem;
+}
+
+.hr-action-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+}
+
+.hr-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--hr-border-radius);
+  font-size: 1rem;
+  transition: background-color var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+  cursor: pointer;
+  border: none;
+}
+
+.hr-btn-primary {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+}
+
+.hr-btn-secondary {
+  background-color: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+}
+
+.hr-btn-graph {
+  background-color: var(--hr-button-hover-bg);
+  color: var(--hr-button-primary-text);
+}
+
+.hr-btn:hover {
+  box-shadow: var(--hr-button-hover-shadow);
+}

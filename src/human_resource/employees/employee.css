@@ -55,7 +55,10 @@
   overflow-x: auto;
   box-shadow: var(--hr-box-shadow-dark);
 }
-
+.hr-radio-group{
+  display: flex;
+  justify-content: space-around;
+}
 .hr-table {
   width: 100%;
   border-collapse: collapse;
