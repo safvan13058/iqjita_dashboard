@@ -8,7 +8,7 @@ const EmployeePage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [employees, setEmployees] = useState([]);
-
+const user = JSON.parse(localStorage.getItem('user'))
   // const employees = [
   //   { id: 1, name: 'John Doe', email: 'john@company.com', department: 'HR', joiningDate: '2022-01-15' },
   //   { id: 2, name: 'Jane Smith', email: 'jane@company.com', department: 'Finance', joiningDate: '2023-04-20' },
@@ -56,7 +56,7 @@ const EmployeePage = () => {
     EmergencyContact: "",
     Education: "",
     Certificates: "",
-    Branch: "",
+    Branch: user.branch_id,
     NetSalaryHourly: "",
     NetSalaryDaily: "",
     NetSalaryMonthly: "",
@@ -68,6 +68,7 @@ const EmployeePage = () => {
     BankBranchName: "",
     Gender: "",
     AccountType: "Savings",
+    Addedby:user.name,
   });
 
   const [ProfileImage, setProfileImage] = useState(null);
@@ -84,7 +85,7 @@ const EmployeePage = () => {
     // Convert value to number only for calculations
     const numericValue = parseFloat(value);
 
-    if (name === 'BasicSalary') {
+    if (name === 'NetSalaryMonthly') {
       const daily = numericValue ? (numericValue / 30).toFixed(2) : '';
       const hourly = daily ? (daily / 8).toFixed(2) : '';
 
@@ -239,7 +240,7 @@ const clearForm = () => {
                     <td>
                      <button
                   className="hr-action-button"
-                  onClick={() => handleView(emp.id)}
+                  onClick={() => handleView(emp.EmployeeID)}
                 >
                   View
                 </button>
@@ -408,7 +409,7 @@ const clearForm = () => {
                     <div className="hr-form-group">
                       <div className="hr-form-group">
                         <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
-                        <input id="BasicSalary" name="BasicSalary" value={formData.BasicSalary} onChange={handleChange} />
+                        <input id=" NetSalaryMonthly" name=" NetSalaryMonthly" value={formData. NetSalaryMonthly} onChange={handleChange} />
                       </div>
                       <label htmlFor="NetSalaryHourly" className='hr-label'>Hourly Salary</label>
                       <input id="NetSalaryHourly" name="NetSalaryHourly" value={formData.NetSalaryHourly} onChange={handleChange} />

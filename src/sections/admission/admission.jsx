@@ -327,11 +327,11 @@ const handleStateChange = (e) => {
         console.log("studentdata==", studentData)
 
         // Validate before sending request
-        if (!isStudentDataComplete()) {
-            setError("Please fill all required fields before submitting.");
-            setLoading(false);
-            return;
-        }
+        // if (!isStudentDataComplete()) {
+        //     setError("Please fill all required fields before submitting.");
+        //     setLoading(false);
+        //     return;
+        // }
 
 
         // ✅ Add "updated_by" field dynamically
@@ -359,8 +359,10 @@ const handleStateChange = (e) => {
         formData.append("pin_code", updatedStudentData.pin_code);
         formData.append("city", updatedStudentData.city);
         formData.append("district", updatedStudentData.district);
-        formData.append("state", updatedStudentData.state);
-        formData.append("country", updatedStudentData.country);
+        // formData.append("state", updatedStudentData.state);
+        formData.append("state", "KERALA");
+        formData.append("country", "INDIA");
+        // formData.append("country", updatedStudentData.country);
         formData.append("documents_submitted", updatedStudentData.documents_submitted);
         formData.append("gender", updatedStudentData.gender);
         formData.append("education_qualification", updatedStudentData.education_qualification);
@@ -748,7 +750,7 @@ const handleStateChange = (e) => {
                             />
 
                             {/* Country Selection */}
-                            <label>Country</label>
+                            {/* <label>Country</label>
                             <select value={selectedCountry} onChange={handleCountryChange}>
                                 <option value="">Select Country</option>
                                 {Country.getAllCountries().map((c) => (
@@ -756,10 +758,10 @@ const handleStateChange = (e) => {
                                         {c.name}
                                     </option>
                                 ))}
-                            </select>
+                            </select> */}
 
                             {/* State Selection */}
-                            <label>State</label>
+                            {/* <label>State</label>
                             <select value={selectedState} onChange={handleStateChange} disabled={!selectedCountry}>
                                 <option value="">Select State</option>
                                 {selectedCountry &&
@@ -768,7 +770,7 @@ const handleStateChange = (e) => {
                                             {s.name}
                                         </option>
                                     ))}
-                            </select>
+                            </select> */}
                             {/* District Selection
                             <label>District</label>
                             <select value={selectedDistrict} onChange={handleDistrictChange} disabled={!selectedState}>
@@ -793,7 +795,7 @@ const handleStateChange = (e) => {
                                     ))}
                             </select> */}
 
-                            {/* <label>Country</label>
+                            <label>Country</label>
                             <input
                                 type="text"
                                 name="country"
@@ -801,8 +803,8 @@ const handleStateChange = (e) => {
                                 value={studentData.country || ""}
                                 onChange={handleChange}
                                 required
-                            /> */}
-                            {/* <label>State</label>
+                            />
+                            <label>State</label>
                             <input
                                 type="text"
                                 name="state"
@@ -810,7 +812,7 @@ const handleStateChange = (e) => {
                                 value={studentData.state || ""}
                                 onChange={handleChange}
                                 required
-                            />}*/}
+                            />
                             <label>District</label>
                             <input
                                 type="text"

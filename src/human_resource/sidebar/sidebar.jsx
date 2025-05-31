@@ -19,7 +19,7 @@ const Sidebar = () => {
     { path: "/hr/Leave", label: "Leave", icon: <MdOutlinePersonOutline /> },
     { path: "/hr/Payroll", label: "Payroll", icon: <BsGraphUpArrow /> },
     { path: "/hr/Performance", label: "Performance", icon: <MdAccountBalanceWallet /> },
-    { path: "/hr/Expense", label: "Expense", icon: <FaGraduationCap /> },
+    { path: "/hr/Expense", label: "Calender", icon: <FaGraduationCap /> },
   ];
 
   return (

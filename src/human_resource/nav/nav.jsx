@@ -220,17 +220,17 @@ const Navbar = () => {
           {showAccountPopup && (
            
             <div className="account-popup-overlay">
-              <div className="account-popup">
-                <button className="close-btn" onClick={() => setShowAccountPopup(false)} >×</button>
+              <div className="account-popup-hr">
+                <button className="close-btn clos-pro" onClick={() => setShowAccountPopup(false)} >×</button>
 
-                <div className="profile-header">
+                <div className="profile-header-hr">
                   <div className="profile-container">
                     <img src={profile || "/default-profile.png"} alt="Profile" className="profile-pics" />
                     <button className="edit-icon" onClick={() => setShowPopup(true)}>
                       ✏️ {/* You can replace this with an actual icon */}
                     </button>
                   </div>
-                  <div className="name-card">
+                  <div className="name-card-hr">
                   <h2>{user.name}</h2>
                   <p>{user.role}</p>
                   </div>
@@ -241,7 +241,7 @@ const Navbar = () => {
                 <div className="hrform-group">
                   <label>Name</label>
 
-                  <div className="form-value">{user.name}</div>
+                  <div className="form-valuehr">{user.name}</div>
 
                 </div>
 

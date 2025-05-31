@@ -59,7 +59,9 @@
   align-items: center;
   gap: 1.5rem;
 }
-
+.close-btn.clos-pro{
+  color: black;
+}
 .navbar-logo {
   text-align: center;
   font-size: 1.5rem;

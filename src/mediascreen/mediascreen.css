@@ -30,7 +30,7 @@
         width: 0px;
         /* width: 100%; */
     }
-    .navbar{
+    .navbar,.navbarhr{
         flex-direction: row !important;
     }
     .navbar-right {
@@ -85,7 +85,7 @@
         .navbar{
             padding: 10px 10px !important;
         }
-        .sidebar {
+        .sidebar,.sidebarhr {
             width: 100% !important;
             height: 60px !important; /* adjust based on your design */
             position: fixed !important;
@@ -99,14 +99,14 @@
             box-shadow:5px 1px 20px 4px rgba(0, 0, 0, 0.3) !important;
 
           }
-          .sidebar-nav{
+          .sidebar-nav,.sidebar-navhr{
             display: flex;
             justify-content: space-around;
           }
-          .nav-link {
+          .nav-link ,.nav-linkhr{
             padding: 12px 20px !important;
           }
-          .sidebar-nav{
+          .sidebar-nav,.sidebar-navhr{
             margin-top: 0px!important;
         }
 
@@ -123,7 +123,35 @@
         .gender-ratio label{
             margin-left: -10px;
         }
+        .hrsection2{
+          flex-direction: column !important;
+
+        }
+        .hrchart{
+          width: 100% !important;
+          padding:0px !important;
+        }
+        .notifications{
+          width: 100% !important;
+        }
+
+        .hr-card-perform{
+          width: 100% !important;
+        }
          
+        .hr-card{
+          padding:5px !important;
+        }
+        .hr-input-perf{
+          width: 90% !important;
+        }
+        .hrmaincontent{
+          padding:60px 5px 0 5px !important;
+          padding-top: 70px;
+        }
+        .navbarhr{
+          padding: .5rem !important;
+        }
            
           
     }
@@ -210,6 +238,7 @@
       flex-direction: column !important;
       gap: 1rem !important;
     }
+
   }
   @media (max-width: 750px) {
     .student-listall {

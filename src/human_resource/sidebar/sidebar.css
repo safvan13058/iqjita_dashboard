@@ -149,3 +149,8 @@
       padding: 8px 4px;
   }
 }
+@media (max-width:450px){
+  .sidebarhr{
+    padding-top: 5px;
+  }
+}

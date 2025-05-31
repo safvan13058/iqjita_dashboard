@@ -1,0 +1,201 @@
+
+
+.calendar-container {
+  max-width: 90%;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  background-color: var(--hr-background-dark);
+  color: var(--hr-text-primary);
+  border-radius: var(--hr-border-radius);
+  padding: 20px;
+  box-shadow: var(--hr-box-shadow-dark);
+  user-select: none;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-header button {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  border-radius: var(--hr-border-radius);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color var(--hr-transition-speed);
+  box-shadow: var(--hr-box-shadow-light);
+}
+
+.calendar-header button:hover {
+  background: var(--hr-button-hover-bg);
+  box-shadow: 0 2px 6px var(--hr-button-hover-shadow);
+}
+
+.calendar-days-of-week,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  padding-bottom: 10px;
+  color: var(--hr-text-secondary);
+  gap: 5px;
+}
+
+.calendar-days-of-week {
+  font-weight: bold;
+  color: var(--hr-text-secondary);
+}
+
+.calendar-day {
+  background: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+  padding: 10px;
+  min-height: 60px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.calendar-day:hover {
+  background: var(--hr-button-hover-bg);
+  color: white;
+}
+
+.today {
+  background: #9B5A2A !important;
+  color: white !important;
+}
+
+.blank {
+  background: transparent;
+  cursor: default;
+}
+
+.event-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #0F6D66;
+  border-radius: 50%;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Themed Modal */
+.hr-cale {
+  background: var(--hr-card-background);
+  padding: 20px;
+  border-radius: var(--hr-border-radius);
+  width: 320px;
+  color: var(--hr-text-primary);
+  box-shadow: var(--hr-box-shadow-dark);
+  transition: var(--hr-transition-speed);
+}
+
+.hr-cale input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  background: var(--hr-input-background);
+  border: 1px solid var(--hr-input-border);
+  color: var(--hr-input-text);
+  border-radius: var(--hr-border-radius);
+}
+
+/* Modal Buttons */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.modal-buttons button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  background: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  transition: var(--hr-transition-speed);
+}
+
+.modal-buttons button:last-child {
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: 0 2px 6px var(--hr-button-hover-shadow);
+}
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  margin-bottom: 10px;
+  user-select: none;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+.reminder-label {
+  cursor: pointer; /* so clicking label toggles checkbox */
+  font-weight: 700;
+  font-size: 14px;
+  color:#ffff;
+  margin-top: 0;
+
+}
+
+.reminder input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Event List in Modal */
+.hr-cale ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.hr-cale li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--hr-text-paragraph);
+  margin-bottom: 6px;
+}
+
+.hr-cale li button {
+  background: transparent;
+  border: none;
+  color: var(--hr-link-hover-color);
+  cursor: pointer;
+}

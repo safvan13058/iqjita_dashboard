@@ -30,6 +30,7 @@ import LeaveTable from "./human_resource/Leave/leave";
 import PayrollTable from "./human_resource/Payroll/payroll";
 import EmployeeDetails from "./human_resource/single_emp/single_emp"
 import EmployeePerformance from "./human_resource/Performance/performance";
+import Calendar from "./human_resource/calendar/calendar";
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -71,14 +72,14 @@ function App() {
             <Route path="/accounts" element={<Account />} />
           </Route>
 
-          <Route path="/hr" element={<HrLayout />}>
+          <Route path="/hr" element={<HrLayout allowedRoles={['admin', 'superadmin','Human Resource']} />}>
             <Route index element={<HrDashboard />} />
             <Route path="employees" element={<EmployeePage/>} />
             <Route path="attendance" element={<AttendanceTable />} />
             <Route path="Leave" element={<LeaveTable/>} />
             <Route path="Payroll" element={<PayrollTable/>} />
             <Route path="Performance" element={<EmployeePerformance/>} />
-            <Route path="Expense" element={<EmployeeDetails/>} />
+            <Route path="Expense" element={<Calendar/>} />
            <Route path="employee/:id" element={<EmployeeDetails />} />  
             {/* add more HR routes here */}
           </Route>

@@ -362,7 +362,7 @@ const Navbar = () => {
             // </div>
             <div className="account-popup-overlay">
               <div className="account-popup">
-                <button className="close-btn" onClick={() => setShowAccountPopup(false)} >×</button>
+                <button className="close-btn clos-pro" onClick={() => setShowAccountPopup(false)} >×</button>
 
                 <div className="profile-header">
                   <div className="profile-container">

@@ -237,3 +237,14 @@
   border-radius: var(--hr-border-radius);
   cursor: pointer;
 }
+.hr-perform-filter{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.hr-perform-filter select{
+  width: 100px;
+}
+.hr-input.hr-input-perf{
+  width:90% !important;
+}
