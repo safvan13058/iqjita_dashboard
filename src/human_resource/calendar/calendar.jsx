@@ -86,11 +86,11 @@ function CalendarApp() {
   return (
     <div className="calendar-container">
       <div className="calendar-header">
-        {/* <button onClick={() => setCurrentYear(y => y - 1)}>{'<<'}</button> */}
+        <button onClick={() => setCurrentYear(y => y - 1)}>{'<'}</button>
         <button onClick={() => setCurrentMonth(m => m === 0 ? (setCurrentYear(y => y - 1), 11) : m - 1)}>Prev</button>
         <h2>{monthNames[currentMonth]} {currentYear}</h2>
         <button onClick={() => setCurrentMonth(m => m === 11 ? (setCurrentYear(y => y + 1), 0) : m + 1)}>Next</button>
-        {/* <button onClick={() => setCurrentYear(y => y + 1)}>{'>>'}</button> */}
+        <button onClick={() => setCurrentYear(y => y + 1)}>{'>'}</button>
       </div>
 
       <div className="calendar-days-of-week">

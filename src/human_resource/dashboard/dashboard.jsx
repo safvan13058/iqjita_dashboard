@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './dashboard.css'; // Make sure this file exists
 import { motion, AnimatePresence } from "framer-motion";
+import Lottie from "lottie-react";
+import animation1 from '../images/notify.json';
+
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -180,23 +183,31 @@ const Dashboard = () => {
           )}
         </div>
 
-        <div className='notifications'>
-          <div className='notification-content-hr'>
-            {notifications.map((item, index) => (
-              <div className="notfy-card" key={index}>
-                <div className='notfy-img'>
-                  <img src={item.image ? item.image : profileimg} alt={item.name} />
-                </div>
-                <div className='notfy-content'>
-                  <h2>{item.type}</h2>
-                  <p>{item.name}</p>
-                  <p>{item.date}</p>
-                </div>
-              </div>
-            ))}
+       <div className='notifications'>
+  <div className='notification-content-hr'>
+    {notifications.length > 0 ? (
+      notifications.map((item, index) => (
+        <div className="notfy-card" key={index}>
+          <div className='notfy-img'>
+            <img src={item.image ? item.image : profileimg} alt={item.name} />
           </div>
-
+          <div className='notfy-content'>
+            <h2>{item.type}</h2>
+            <p>{item.name}</p>
+            <p>{item.date}</p>
+          </div>
         </div>
+      ))
+    ) : (
+      <div className='no-notifications'>
+        <Lottie animationData={animation1} loop={true} style={{ height: 300, width: 300 }} />
+        <p>No notifications to show</p>
+      </div>
+    )}
+  </div>
+</div>
+
+
       </div>
 
     </div>
