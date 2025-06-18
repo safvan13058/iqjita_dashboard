@@ -4,9 +4,15 @@ import "./sidebar.css";
 import { IoHomeOutline } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import { MdPending } from 'react-icons/md';
-import { MdOutlinePersonOutline,MdAccountBalanceWallet  } from "react-icons/md";
+import { MdOutlinePersonOutline, MdAccountBalanceWallet, MdOutlinePeopleAlt } from "react-icons/md";
 import { BsGraphUpArrow } from "react-icons/bs";
-import { FaGraduationCap,FaHourglassHalf } from "react-icons/fa";
+import { FaGraduationCap, FaHourglassHalf } from "react-icons/fa";
+import { FaBullhorn, FaUserShield, FaUsers, FaUserTie } from "react-icons/fa";
+// import { BsGraphUpArrow } from "react-icons/bs";
+import { GiGraduateCap } from "react-icons/gi";
+import { RiTeamLine } from "react-icons/ri";
+import { HiOutlineUserGroup } from "react-icons/hi";
+
 import logo from '../images/logo.png'
 const Sidebar = () => {
   const location = useLocation();
@@ -16,10 +22,14 @@ const Sidebar = () => {
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
     { path: "/students", label: "Students", icon: <PiStudentFill /> },
     { path: "/pending", label: "Pending Fee", icon: <FaHourglassHalf style={{ fontSize: '18px' }} /> },
-    { path: "/faculty", label: "Human Resources", icon: <MdOutlinePersonOutline /> },
+    { path: "/AnnouncementPanel", label: "Announcements", icon: <FaBullhorn /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
-    { path: "/alumni", label: "Alumni", icon: <FaGraduationCap /> },
+    { path: "/alumni", label: "Alumni", icon: <GiGraduateCap /> },
+    { path: "/faculty", label: "Human Resources", icon: <RiTeamLine /> },
+    { path: "/usermanage", label: "User Manage", icon: <FaUserShield /> },
+
+
   ];
 
   return (
@@ -27,7 +37,7 @@ const Sidebar = () => {
       {/* <div className="sidebar-header">
           <div className="navbar-logo"><img src={logo} alt="" /></div>
       </div> */}
-      
+
       <nav className="sidebar-nav">
         {navItems.map((item) => (
           <Link

@@ -3,6 +3,7 @@ import { useAuth } from "./auth";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 import logo from '../images/logo.png'
+import { requestFcmToken } from '../../push-notification';
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,6 +12,7 @@ function Login() {
   const [sending, setSending] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const resetPassword = async () => {
     if (!email || !email.includes("@")) {
@@ -92,7 +94,9 @@ function Login() {
       if (data.status === "success") {
         localStorage.setItem("user", JSON.stringify(data.user)); // Store user data in localStorage
         login(data.user); // Implement login function to update state/context
+        requestFcmToken(data.user.id)
         navigate("/"); // Redirect after login
+        
       } else {
         setError(data.message || "Invalid email or password");
       }

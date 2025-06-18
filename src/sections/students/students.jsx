@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './students.css';
 import { format } from 'date-fns';
+import { FaPen, FaSpinner } from "react-icons/fa";
 
 // import recipt from '../Recipts/studentdata.html'
 
@@ -25,6 +26,8 @@ const StudentsPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [showModal, setShowModal] = useState(false);
   const [installmentStarted, setInstallmentStarted] = useState({});
+  const [photoFile, setPhotoFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [startingDate, setStartingDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
@@ -32,16 +35,12 @@ const StudentsPage = () => {
   const [periodDays, setPeriodDays] = useState(30);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState({
-    address: "",
-    pin_code: "",
-    city: "",
-    district: "",
-    state: "",
-    country: "",
-    documents_submitted: "",
-    education_qualification: "",
-    batch_time: "",
+    name: "", location: "", contact_number: "", parent_contact: "", email: "", dob: "",
+    address: "", pin_code: "", city: "", district: "", state: "", country: "",
+    documents_submitted: "", education_qualification: "", course: "", duration: "",
+    exact_fee: "", discount: "", final_fee: "", batch_time: "", gender: "", updated_by: ""
   });
+
 
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
@@ -101,6 +100,13 @@ const StudentsPage = () => {
   const handleEditClick = () => {
     if (selectedStudent) {
       setEditForm({
+        name: selectedStudent.name || "",
+        photo: selectedStudent.photo || "",
+        location: selectedStudent.location || "",
+        contact_number: selectedStudent.contact_number || "",
+        parent_contact: selectedStudent.parent_contact || "",
+        email: selectedStudent.email || "",
+        dob: selectedStudent.dob || "",
         address: selectedStudent.address || "",
         pin_code: selectedStudent.pin_code || "",
         city: selectedStudent.city || "",
@@ -109,11 +115,76 @@ const StudentsPage = () => {
         country: selectedStudent.country || "",
         documents_submitted: selectedStudent.documents_submitted || "",
         education_qualification: selectedStudent.education_qualification || "",
+        course: selectedStudent.course || "",
+        duration: selectedStudent.duration || "",
+        exact_fee: selectedStudent.exact_fee || "",
+        discount: selectedStudent.discount || "",
+        final_fee: selectedStudent.final_fee || "",
         batch_time: selectedStudent.batch_time || "",
+        gender: selectedStudent.gender || "",
+        updated_by: selectedStudent.updated_by || ""
       });
+
       setShowEditModal(true);
     }
   };
+  const handlePhotoUploadClick = () => {
+    document.getElementById("photoInput").click();
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedStudent.admission_number) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("admission_number", selectedStudent.admission_number);
+
+    try {
+      const response = await fetch("https://software.iqjita.com/updatephoto.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        // Update student's photo path in UI
+        setSelectedStudent((prev) => ({
+          ...prev,
+          photo: data.photo_path,
+        }));
+      } else {
+        alert("Upload failed: " + data.message);
+      }
+    } catch (error) {
+      alert("Upload error: " + error.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  const handleUpdateStatus = async (statusValue) => {
+    const res = await fetch("https://software.iqjita.com/update_student_status.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        student_id: selectedStudent.admission_number, // Replace this with actual student ID
+        status: statusValue,
+      }),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      alert(`Status set to ${statusValue}`);
+      // optionally refresh data or update UI
+    } else {
+      alert("Failed to update status: " + result.message);
+    }
+  };
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditForm({ ...editForm, [name]: value });
@@ -401,15 +472,15 @@ const StudentsPage = () => {
         }));
 
         console.log("✅ Transformed Course Options:", formattedCourses);
-       
-        setCourses(formattedCourses); // Set the fetched courses in state
-    
-         // ✅ Set the first course as selected
-      if (formattedCourses.length > 0) {
-        console.log(formattedCourses[0])     
-        setSelectedCourse(formattedCourses[0].course);
 
-      }
+        setCourses(formattedCourses); // Set the fetched courses in state
+
+        // ✅ Set the first course as selected
+        if (formattedCourses.length > 0) {
+          console.log(formattedCourses[0])
+          setSelectedCourse(formattedCourses[0].course);
+
+        }
       } else {
         console.error("❌ Failed to fetch courses:", data);
       }
@@ -449,7 +520,7 @@ const StudentsPage = () => {
 
       // ✅ Check if API returned success or error
       if (result.status === "success") {
-        console.log("✅ Student Details Fetched:", result.student);
+        console.log("✅ Student Details Fetched:", result.student[0]);
         // fetchStatus()
         setSelectedStudent(result.student[0] || {}); // ✅ Ensure we get the first student object
 
@@ -502,12 +573,15 @@ const StudentsPage = () => {
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
             className="course-select"
+            style={{ width: '100%' }} // ✅ Proper inline style
           >
-            {console.log("courses", courses)}
             {courses.map(course => (
-              <option key={course.course} value={course.course}>{course.course}</option>
+              <option key={course.course} value={course.course}>
+                {course.course}
+              </option>
             ))}
           </select>
+
           <input
             type="text"
             placeholder="Search students..."
@@ -589,9 +663,35 @@ const StudentsPage = () => {
                       <p><strong>Email:</strong> {selectedStudent.email}</p>
                       <p><strong>Location:</strong> {selectedStudent.location}</p>
                     </div>
-                    <div className='pr-image'>
-                      <img src={`https://software.iqjita.com/${selectedStudent.photo}`} alt="Student Photo" />
+                    <div className="pr-image">
+                      <div className="pr-image-wrapper">
+                        <img
+                          src={`https://software.iqjita.com/${selectedStudent.photo}`}
+                          alt="Student"
+                        />
+                        <button
+                          className="edit-photo-icon"
+                          onClick={handlePhotoUploadClick}
+                          disabled={isUploading}
+                        >
+                          {isUploading ? (
+                            <FaSpinner className="fa-spin" />
+                          ) : (
+                            <FaPen />
+                          )}
+                        </button>
+
+                        <input
+                          type="file"
+                          id="photoInput"
+                          style={{ display: "none" }}
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                        />
+                      </div>
                     </div>
+
+
 
                   </div>
 
@@ -602,6 +702,9 @@ const StudentsPage = () => {
                     <p><strong>Batch Time:</strong> {selectedStudent.batch_time}</p>
                     <p><strong>Exact Fee:</strong>  {selectedStudent.exact_fee}</p>
                     <p><strong>Discount:</strong> {selectedStudent.discount}</p>
+                    <p><strong>Offer price:</strong> {selectedStudent.a_offer_price}</p>
+                    <p><strong>One-time payment:</strong> {selectedStudent.a_one_time_payment_discount_percentage}%</p>
+                    <p><strong>Group Discount:</strong> {selectedStudent.a_group_discount_percentage}%</p>
                     <p><strong>Final Fee:</strong> {selectedStudent.final_fees}</p>
                   </div>
 
@@ -637,18 +740,34 @@ const StudentsPage = () => {
                     <p><strong>Country:</strong> {selectedStudent.country || 'N/A'}</p>
                     <p><strong>Documents Submitted:</strong>{JSON.stringify(selectedStudent.documents_submitted) || 'N/A'}</p>
                     <p><strong>Education Qualification:</strong> {selectedStudent.education_qualification || 'N/A'}</p>
+                    <p><strong>Referred by:</strong> {selectedStudent.a_refferedby || 'N/A'}</p>
+                    <p><strong>Ref category:</strong> {selectedStudent.a_refcategory || 'N/A'}</p>
                   </div>
                 </div>
 
                 <div className="modal-footer">
-                  {!installmentStarted && (
+                  <button
+                    className="action-btn edit-btn"
+                    onClick={() => handleUpdateStatus("left")}
+                  >
+                    Quit
+                  </button>
+                  {!installmentStarted ? (
                     <button
                       className="action-btn edit-btn"
                       onClick={() => setShowModal(true)}
                     >
                       Start Batch
                     </button>
+                  ) : (
+                    <button
+                      className="action-btn edit-btn"
+                      onClick={() => handleUpdateStatus("finished")}
+                    >
+                      Finish Batch
+                    </button>
                   )}
+
                   {(user.role === 'admin' || user.role === 'superadmin') && (
                     <button className="action-btn edit-btn" onClick={handleEditClick}>
                       Edit Details
@@ -670,6 +789,38 @@ const StudentsPage = () => {
                 <div className="stude-modal-content">
                   <h2>Edit Student Details</h2>
                   <form onSubmit={handleUpdateSubmit}>
+                    <label>
+                      Name:
+                      <input name="name" value={editForm.name} onChange={handleInputChange} placeholder="Name" />
+                    </label>
+
+
+
+                    <label>
+                      Location:
+                      <input name="location" value={editForm.location} onChange={handleInputChange} placeholder="Location" />
+                    </label>
+
+                    <label>
+                      Contact Number:
+                      <input name="contact_number" value={editForm.contact_number} onChange={handleInputChange} placeholder="Contact Number" />
+                    </label>
+
+                    <label>
+                      Parent Contact:
+                      <input name="parent_contact" value={editForm.parent_contact} onChange={handleInputChange} placeholder="Parent Contact" />
+                    </label>
+
+                    <label>
+                      Email:
+                      <input name="email" value={editForm.email} onChange={handleInputChange} placeholder="Email" />
+                    </label>
+
+                    <label>
+                      Date of Birth:
+                      <input type="date" name="dob" value={editForm.dob} onChange={handleInputChange} />
+                    </label>
+
                     <label>
                       Address:
                       <input name="address" value={editForm.address} onChange={handleInputChange} placeholder="Address" />
@@ -710,20 +861,60 @@ const StudentsPage = () => {
                       <input name="education_qualification" value={editForm.education_qualification} onChange={handleInputChange} placeholder="Education Qualification" />
                     </label>
 
+                    {/* <label>
+          Course:
+          <input name="course" value={editForm.course} onChange={handleInputChange} placeholder="Course" />
+        </label> */}
+
+                    {/* <label>
+          Duration:
+          <input name="duration" value={editForm.duration} onChange={handleInputChange} placeholder="Duration" />
+        </label> */}
+
+                    {/* <label>
+          Exact Fee:
+          <input name="exact_fee" type="number" value={editForm.exact_fee} onChange={handleInputChange} placeholder="Exact Fee" />
+        </label>
+
+        <label>
+          Discount:
+          <input name="discount" type="number" value={editForm.discount} onChange={handleInputChange} placeholder="Discount" />
+        </label>
+
+        <label>
+          Final Fee:
+          <input name="final_fee" type="number" value={editForm.final_fee} onChange={handleInputChange} placeholder="Final Fee" />
+        </label> */}
+
                     <label>
                       Batch Time:
                       <input name="batch_time" value={editForm.batch_time} onChange={handleInputChange} placeholder="Batch Time" />
                     </label>
+
+                    <label>
+                      Gender:
+                      <select name="gender" value={editForm.gender} onChange={handleInputChange}>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </label>
+
+                    {/* <label>
+          Updated By:
+          <input name="updated_by" value={editForm.updated_by} onChange={handleInputChange} placeholder="Updated By" />
+        </label> */}
 
                     <div className="modal-footer">
                       <button type="submit" className="action-btn save-btn">Save</button>
                     </div>
                   </form>
                   <button type="button" className="action-btn cancel-btn" onClick={() => setShowEditModal(false)}>X</button>
-
                 </div>
               </div>
             )}
+
 
 
             {/* Start Batch Modal */}

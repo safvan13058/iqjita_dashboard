@@ -1,0 +1,124 @@
+/* .announcement-container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #ddd;
+  font-family: sans-serif;
+} */
+
+/* .announcement-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+} */
+
+.announcement-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.announcement-form label {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.announcement-form input,
+.announcement-form textarea,
+.announcement-form select {
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.announcement-form textarea {
+  resize: vertical;
+}
+
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.channels label {
+  font-weight: normal;
+}
+
+.send-btn {
+  margin-top: 20px;
+  background-color: #0f6d66;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.send-btn:hover {
+  background-color: #0c5953;
+}
+
+.recent-announcements {
+  margin-top: 40px;
+}
+
+.recent-announcements ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recent-announcements li {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-left: 4px solid #0f6d66;
+  border-radius: 4px;
+}
+
+.recent-announcements li p {
+  margin: 5px 0 0;
+}
+
+.checkbox-list input{
+    width: 20px;
+}
+.checkbox-item input{
+    width: 20px;
+}
+.checkbox-list {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  gap: 8px;
+  margin-top: 5px;
+}
+.checkbox-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.checkbox-item {
+  display: block;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.checkbox-item input[type="checkbox"] {
+  accent-color: #0f6d66; /* Custom tick color */
+}

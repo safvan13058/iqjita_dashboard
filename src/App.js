@@ -20,6 +20,9 @@ import UnauthorizedPage from "./sections/Erorr/unauthorized/Unauthorized";
 import LoadingPage from "./sections/loading/loading";
 import Pending from "./sections/pending_fee/pending";
 import Account from "./sections/accounts/account";
+import UserTable from "./sections/usermanage/usermanage";
+import  AnnouncementPanel  from "./sections/announcement/announcement"
+import AlumniStudentsPage from "./sections/alumni/alumni";
 
 import BodyBackgroundHandler from './human_resource/hr_layout/BodyBackgroundHandler';
 import HrLayout from "./human_resource/hr_layout/hr_layout";
@@ -31,6 +34,7 @@ import PayrollTable from "./human_resource/Payroll/payroll";
 import EmployeeDetails from "./human_resource/single_emp/single_emp"
 import EmployeePerformance from "./human_resource/Performance/performance";
 import Calendar from "./human_resource/calendar/calendar";
+import MailPage from "./human_resource/mailbox/mailbox";
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -65,11 +69,13 @@ function App() {
             <Route path="/admission" element={<AdmissionForm />} />
             <Route path="/fee-payment" element={<FeeForm />} />
             <Route path="/course" element={<CourseForm />} />
-            <Route path="/alumni" element={<UnderConstruction />} />
+            <Route path="/alumni" element={<AlumniStudentsPage />} />
+            <Route path="/AnnouncementPanel" element={<AnnouncementPanel />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
             <Route path="/accounts" element={<Account />} />
+            <Route path="/usermanage" element={<UserTable />} />
           </Route>
 
           <Route path="/hr" element={<HrLayout allowedRoles={['admin', 'superadmin','Human Resource']} />}>
@@ -79,7 +85,8 @@ function App() {
             <Route path="Leave" element={<LeaveTable/>} />
             <Route path="Payroll" element={<PayrollTable/>} />
             <Route path="Performance" element={<EmployeePerformance/>} />
-            <Route path="Expense" element={<Calendar/>} />
+            <Route path="calendar" element={<Calendar/>} />
+            <Route path="mailbox" element={<MailPage/>} />
            <Route path="employee/:id" element={<EmployeeDetails />} />  
             {/* add more HR routes here */}
           </Route>

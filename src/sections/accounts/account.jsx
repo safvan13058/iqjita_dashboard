@@ -20,6 +20,7 @@ const Account = () => {
     const [height, setHeight] = useState(window.innerWidth < 480 ? 200 : 300);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenhistory, setIsOpenhistory] = useState(false);
+     const [showMobileFilter, setShowMobileFilter] = useState(false);
     const [history, setHistory] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -38,6 +39,7 @@ const Account = () => {
     const [closingremark, setClosingremark] = useState("");
     const [isClosePopupOpen, setIsClosePopupOpen] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState('');
+ 
     // const [closingAmount, setClosingAmount] = useState(0);
 
 
@@ -59,6 +61,57 @@ const Account = () => {
         category: '',
         remark: ''
     });
+    const [showPopup, setShowPopup] = useState(false);
+    // const [transactions, setTransactionss] = useState([]);
+    const [editingRow, setEditingRow] = useState(null);
+    const [editedData, setEditedData] = useState({});
+    const [searchTerm, setSearchTerm] = useState("");
+
+
+    useEffect(() => {
+        if (showPopup) {
+            fetchTransactions();
+        }
+    }, [showPopup]);
+
+    // const fetchTransactionss = async () => {
+    //     try {
+    //         const response = await fetch("https://your-domain.com/api/get_transactions.php");
+    //         const data = await response.json();
+    //         setTransactions(data);
+    //     } catch (err) {
+    //         console.error("Failed to fetch transactions", err);
+    //     }
+    // };
+
+    const handleEditClick = (index) => {
+        setEditingRow(index);
+        setEditedData({ ...transactions[index] });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditedData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = async () => {
+        // send to backend (update logic)
+        const res = await fetch("https://software.iqjita.com/update_transaction.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editedData),
+        });
+        const result = await res.json();
+        if (result.success) {
+            const newTransactions = [...transactions];
+            newTransactions[editingRow] = editedData;
+            setTransactions(newTransactions);
+            setEditingRow(null);
+        }
+    };
+    const filteredTransactions = transactions.filter((txn) =>
+        txn.bill_number.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     // const totalCredits = {
     //     cash: 2500.00,
     //     bank: 7200.50,
@@ -151,7 +204,7 @@ const Account = () => {
             .then((data) => {
                 if (data.status === 'success') {
                     setHistory(data.data);
-                    console.log("accounts history==",data.data)
+                    console.log("accounts history==", data.data)
                 }
             });
     };
@@ -479,7 +532,7 @@ const Account = () => {
                     </div>
                     <div className="stat-card" onClick={() => setIsOpen(true)} >
                         <h2>Bank Closing</h2>
-                         <p>Handle daily collections and close accounts</p>
+                        <p>Handle daily collections and close accounts</p>
                     </div>
                     <div className="stat-card" onClick={() => setIsOpenhistory(true)}>
                         <h2>Report</h2>
@@ -487,6 +540,102 @@ const Account = () => {
                     </div>
 
                 </div>
+            </div>
+            <div>
+                <div>
+                    {user.role=== "superadmin" && (
+                        <button className="open-btn" onClick={() => setShowPopup(true)}>
+                            Edit transaction
+                        </button>
+                    )}
+                    {showPopup && (
+                        <div className="popup-overlay">
+                            <div className="popup-content">
+                                <div className="popup-header">
+                                    <h3>Transaction List</h3>
+                                    <button className="close-btn " style={{
+                                        fontSize: "24px",
+                                        background: "transparent",
+                                        border: "none",
+                                        color: "#333",
+
+                                    }} onClick={() => setShowPopup(false)}>×</button>
+                                </div>
+
+                                <div className="search-box">
+                                    <input
+                                        type="text"
+                                        placeholder="Search by Bill Number"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+
+                                <table className="transaction-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Amount</th>
+                                            <th>Type</th>
+                                            <th>Bill No</th>
+                                            <th>Balance</th>
+                                            <th>Method</th>
+                                            <th>Remark</th>
+                                            <th>Updated By</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredTransactions.map((txn, index) => (
+                                            <tr key={txn.transaction_id}>
+                                                {editingRow === index ? (
+                                                    <>
+                                                        <td>{txn.transaction_id}</td>
+                                                        <td><input name="amount" value={editedData.amount} onChange={handleChange} /></td>
+                                                        <td>
+                                                            <select name="type" value={editedData.type} onChange={handleChange}>
+                                                                <option value="credit">credit</option>
+                                                                <option value="debit">debit</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input name="bill_number" value={editedData.bill_number} onChange={handleChange} /></td>
+                                                        <td><input name="current_balance" value={editedData.current_balance} onChange={handleChange} /></td>
+                                                        <td>
+                                                            <select name="payment_method" value={editedData.payment_method} onChange={handleChange}>
+                                                                <option value="cash">CASH</option>
+                                                                <option value="upi">UPI</option>
+                                                                <option value="bank">BANK</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input name="remark" value={editedData.remark} onChange={handleChange} /></td>
+                                                        <td><input name="updated_by" value={editedData.updated_by} onChange={handleChange} /></td>
+                                                        <td>
+                                                            <button onClick={handleSave}>Save</button>
+                                                            <button onClick={() => setEditingRow(null)}>Cancel</button>
+                                                        </td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <td>{txn.transaction_id}</td>
+                                                        <td>{txn.amount}</td>
+                                                        <td>{txn.type}</td>
+                                                        <td>{txn.bill_number}</td>
+                                                        <td>{txn.current_balance}</td>
+                                                        <td>{txn.payment_method}</td>
+                                                        <td>{txn.remark}</td>
+                                                        <td>{txn.updated_by}</td>
+                                                        <td><button onClick={() => handleEditClick(index)}>Edit</button></td>
+                                                    </>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
             </div>
 
 
@@ -509,7 +658,7 @@ const Account = () => {
 
 
             {/* Filters */}
-            <div className="filters-container account">
+            <div className="filters-container account desktop-only">
                 <div className="filter-group account">
                     <label>Transaction Type</label>
                     <select onChange={(e) => setFilter(e.target.value)} value={filter}>
@@ -539,6 +688,57 @@ const Account = () => {
                     <input type="date" onChange={(e) => setEndDate(e.target.value)} value={endDate} />
                 </div>
             </div>
+             <div className="mobile-only">
+        <button className="open-filter-btn" onClick={() => setShowMobileFilter(true)}>Filter</button>
+      </div>
+
+      {/* Mobile Modal Popup */}
+      {showMobileFilter && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-btn"  style={{
+    
+    color: 'black',
+  
+  }}
+onClick={() => setShowMobileFilter(false)}>×</button>
+            <h3>Filters</h3>
+
+            <div className="filter-group">
+              <label>Transaction Type</label>
+              <select onChange={(e) => setFilter(e.target.value)} value={filter}>
+                <option value="all">All</option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Filter by Date</label>
+              <input type="date" onChange={(e) => setDate(e.target.value)} value={date} />
+            </div>
+
+            <div className="filter-group">
+              <label>Filter by Month</label>
+              <input type="month" onChange={(e) => setMonth(e.target.value)} value={month} />
+            </div>
+
+            <div className="filter-group">
+              <label>Start Date</label>
+              <input type="date" onChange={(e) => setStartDate(e.target.value)} value={startDate} />
+            </div>
+
+            <div className="filter-group">
+              <label>End Date</label>
+              <input type="date" onChange={(e) => setEndDate(e.target.value)} value={endDate} />
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={() => setShowMobileFilter(false)}>Apply Filters</button>
+            </div>
+          </div>
+        </div>
+      )}
 
             {/* Transaction Table */}
             <div className="popup-table-container accocunt">
@@ -658,7 +858,7 @@ const Account = () => {
             {isOpenhistory && (
                 <div className="reportmodal-overlay">
                     <div className="reportmodal-content">
-                    <button className="r-close-btn" onClick={() => setIsOpenhistory(false)}>X</button>
+                        <button className="r-close-btn" onClick={() => setIsOpenhistory(false)}>X</button>
 
                         <h2>Bank Closing History</h2>
 
@@ -668,53 +868,53 @@ const Account = () => {
                             <button onClick={() => handleGroupToggle('month')}>Month</button>
                         </div>
                         <div className="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Cash</th>
-                                    <th>UPI</th>
-                                    <th>Bank</th>
-                                    <th>Total</th>
-                                    <th>Closed</th>
-                                    <th>Balance</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {history.map((item) => (
-                                    <tr key={item.period}>
-                                        <td>{item.period}</td>
-                                        <td>₹{item.cash.toFixed(2)}</td>
-                                        <td>₹{item.upi.toFixed(2)}</td>
-                                        <td>₹{item.bank.toFixed(2)}</td>
-                                        <td>₹{item.total_credit.toFixed(2)}</td>
-                                        <td>₹{item.closed_amount.toFixed(2)}</td>
-                                        <td>₹{item.balance.toFixed(2)}</td>
-                                        <td>
-                                            {/* Show the Close Balance button only for "day" grouping */}
-                                            {groupBy === 'day' && item.balance > 0 ? (
-                                                <button
-                                                onClick={() => {
-                                                  setSelectedPeriod(item.period);
-                                                  setClosingAmount(item.balance);
-                                                  setIsClosePopupOpen(true);
-                                                }}
-                                              >
-                                                Close Balance
-                                              </button>
-                                              
-                                            ) : (
-                                                '-'
-                                            )}
-                                        </td>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Cash</th>
+                                        <th>UPI</th>
+                                        <th>Bank</th>
+                                        <th>Total</th>
+                                        <th>Closed</th>
+                                        <th>Balance</th>
+                                        <th>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {history.map((item) => (
+                                        <tr key={item.period}>
+                                            <td>{item.period}</td>
+                                            <td>₹{item.cash.toFixed(2)}</td>
+                                            <td>₹{item.upi.toFixed(2)}</td>
+                                            <td>₹{item.bank.toFixed(2)}</td>
+                                            <td>₹{item.total_credit.toFixed(2)}</td>
+                                            <td>₹{item.closed_amount.toFixed(2)}</td>
+                                            <td>₹{item.balance.toFixed(2)}</td>
+                                            <td>
+                                                {/* Show the Close Balance button only for "day" grouping */}
+                                                {groupBy === 'day' && item.balance > 0 ? (
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedPeriod(item.period);
+                                                            setClosingAmount(item.balance);
+                                                            setIsClosePopupOpen(true);
+                                                        }}
+                                                    >
+                                                        Close Balance
+                                                    </button>
+
+                                                ) : (
+                                                    '-'
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
 
-                        
+
                     </div>
                 </div>
             )}
@@ -742,8 +942,8 @@ const Account = () => {
                                 value={closingAmountbalance}
 
                                 onChange={(e) => setClosingbalanceAmount(parseFloat(e.target.value) || 0)}
-                                // step="0.01"
-                                // min="0"
+                            // step="0.01"
+                            // min="0"
                             />
                         </label>
 

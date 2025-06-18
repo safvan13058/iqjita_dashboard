@@ -8,6 +8,7 @@ import { Maximize, Minimize } from "lucide-react";
 const Home = () => {
   const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState(null);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [transactions1, setTransactions1] = useState([]);
@@ -269,7 +270,7 @@ const Home = () => {
             </div>
 
             {/* Filters */}
-            <div className="filters-container">
+            <div className="filters-container desktop-only">
               <div className="filter-group">
                 <label>Transaction Type</label>
                 <select onChange={(e) => setFilter(e.target.value)} value={filter}>
@@ -299,6 +300,58 @@ const Home = () => {
                 <input type="date" onChange={(e) => setEndDate(e.target.value)} value={endDate} />
               </div>
             </div>
+             {/* Mobile Filter Button */}
+      <div className="mobile-only">
+        <button className="open-filter-btn" onClick={() => setShowMobileFilter(true)}>Filter</button>
+      </div>
+
+      {/* Mobile Modal Popup */}
+      {showMobileFilter && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-btn"  style={{
+    
+    color: 'black',
+  
+  }}
+onClick={() => setShowMobileFilter(false)}>×</button>
+            <h3>Filters</h3>
+
+            <div className="filter-group">
+              <label>Transaction Type</label>
+              <select onChange={(e) => setFilter(e.target.value)} value={filter}>
+                <option value="all">All</option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Filter by Date</label>
+              <input type="date" onChange={(e) => setDate(e.target.value)} value={date} />
+            </div>
+
+            <div className="filter-group">
+              <label>Filter by Month</label>
+              <input type="month" onChange={(e) => setMonth(e.target.value)} value={month} />
+            </div>
+
+            <div className="filter-group">
+              <label>Start Date</label>
+              <input type="date" onChange={(e) => setStartDate(e.target.value)} value={startDate} />
+            </div>
+
+            <div className="filter-group">
+              <label>End Date</label>
+              <input type="date" onChange={(e) => setEndDate(e.target.value)} value={endDate} />
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={() => setShowMobileFilter(false)}>Apply Filters</button>
+            </div>
+          </div>
+        </div>
+      )}
 
             {/* Transaction Table */}
             <div className="popup-table-container">

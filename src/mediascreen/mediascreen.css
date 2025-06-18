@@ -87,7 +87,7 @@
         }
         .sidebar,.sidebarhr {
             width: 100% !important;
-            height: 60px !important; /* adjust based on your design */
+            height: 70px !important; /* adjust based on your design */
             position: fixed !important;
             bottom: 0 !important;
             top: auto !important;

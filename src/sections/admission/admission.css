@@ -182,7 +182,7 @@ strong {
 
 /* Receipt Container */
 .receipt-container {
-    max-width: 500px;
+    max-width: 100%;
     margin: 20px auto;
     padding: 20px;
     background: var(--card-background);
@@ -380,6 +380,211 @@ strong {
 /* .discount-buttons button{
  padding: 0 15px;   
 } */
+.iq-receipt-page {
+    width: 210mm;
+    max-width: 100%;
+    height: auto;
+    border-bottom: 1px dashed #ccc;
+    padding: 20px;
+    margin: auto;
+}
+
+.iq-receipt-page h1 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.iq-receipt-info,
+.iq-receipt-summary {
+    margin-top: 10px;
+}
+
+.iq-receipt-info strong {
+    color: #007B9E;
+}
+
+.iq-receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.iq-receipt-table th {
+    background-color: #0F6D66;
+    color: white;
+    padding: 6px;
+    text-align: left;
+}
+
+.iq-receipt-table td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+.iq-receipt-total-row td {
+    font-weight: bold;
+}
+
+.iq-receipt-logo {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.iq-receipt-logo img {
+    width: 100%;
+}
+
+.iq-receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.iq-receipt-details {
+    text-align: left;
+    flex: 1;
+}
+
+.iq-receipt-details h4 {
+    margin: 4px 0;
+    border-bottom: none;
+    color: black;
+}
+
+.iq-receipt-seal {
+    margin-top: 40px;
+    text-align: right;
+    font-style: italic;
+    font-size: 14px;
+    color: #555;
+    padding-right: 20px;
+    position: relative;
+}
+
+.iq-receipt-seal p {
+    text-align: right;
+}
+
+.iq-receipt-seal::before {
+    content: "";
+    display: block;
+    width: 180px;
+    height: 1px;
+    background-color: #aaa;
+    position: absolute;
+    right: 20px;
+    top: -10px;
+}
+
+/* ---------- Responsive Media Queries ---------- */
+
+/* Tablets */
+@media screen and (max-width: 1024px) {
+    .iq-receipt-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .iq-receipt-logo {
+        margin-bottom: 10px;
+    }
+
+    .iq-receipt-details {
+        text-align: left;
+    }
+
+    .iq-receipt-page {
+        padding: 15px;
+    }
+}
+
+/* Mobiles */
+@media screen and (max-width: 768px) {
+  .iq-receipt-page {
+    padding: 10px;
+    width: 100%;
+    height: auto;
+  }
+
+  .iq-receipt-page h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .iq-receipt-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .iq-receipt-logo {
+    width: 80px;
+    margin: 0 auto 10px;
+  }
+
+  .iq-receipt-details {
+    text-align: left;
+  }
+
+  .iq-receipt-details h4 {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+
+  .iq-receipt-table {
+    font-size: 13px;
+    margin-top: 8px;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .iq-receipt-table th,
+  .iq-receipt-table td {
+    padding: 5px;
+    font-size: 13px;
+    word-break: break-word;
+  }
+
+  .iq-receipt-summary p {
+    font-size: 14px;
+  }
+
+  .iq-receipt-seal {
+    font-size: 12px;
+    padding-right: 10px;
+  }
+
+  .iq-receipt-seal::before {
+    width: 120px;
+    right: 10px;
+  }
+}
+
+
+/* Print */
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .iq-receipt-page {
+        page-break-inside: avoid;
+        border: none;
+        width: 100%;
+        height: auto;
+        padding: 0;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
     .form-row {

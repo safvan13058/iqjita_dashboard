@@ -283,3 +283,84 @@
     margin-top: 10px;
   }
 }
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Show on desktop only */
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Show on mobile only */
+@media (max-width: 768px) {
+  .popup-table-container {
+  max-height: 100%;
+  overflow-y: auto;
+}
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .open-filter-btn {
+    padding: 10px 20px;
+    background-color: #0F6D66;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-actions {
+    text-align: right;
+    margin-top: 10px;
+  }
+
+  .modal-actions button {
+    padding: 10px 16px;
+    background: #9B5A2A;
+    color: white;
+    border: none;
+    border-radius: 8px;
+  }
+}

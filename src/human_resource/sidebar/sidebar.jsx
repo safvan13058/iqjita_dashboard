@@ -8,18 +8,22 @@ import { BsGraphUpArrow } from "react-icons/bs";
 import { FaGraduationCap, FaHourglassHalf } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
+import { FaUserTie, FaUmbrellaBeach, FaMoneyCheckAlt, FaRegCalendarAlt, FaChartLine } from "react-icons/fa";
+import { MdAccessTime, MdTrendingUp, MdEmail } from "react-icons/md";
+
 const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
 
   const navItems = [
     { path: "/hr", label: "Dashboard", icon: <IoHomeOutline /> },
-    { path: "/hr/employees", label: "Employee", icon: <PiStudentFill /> },
-    { path: "/hr/attendance", label: "Attendance", icon: <FaHourglassHalf /> },
-    { path: "/hr/Leave", label: "Leave", icon: <MdOutlinePersonOutline /> },
-    { path: "/hr/Payroll", label: "Payroll", icon: <BsGraphUpArrow /> },
-    { path: "/hr/Performance", label: "Performance", icon: <MdAccountBalanceWallet /> },
-    { path: "/hr/Expense", label: "Calender", icon: <FaGraduationCap /> },
+    { path: "/hr/employees", label: "Employee", icon: <FaUserTie /> },
+    { path: "/hr/attendance", label: "Attendance", icon: <MdAccessTime /> },
+    { path: "/hr/leave", label: "Leave", icon: <FaUmbrellaBeach /> },
+    { path: "/hr/payroll", label: "Payroll", icon: <FaMoneyCheckAlt /> },
+    { path: "/hr/performance", label: "Performance", icon: <MdTrendingUp /> },
+    { path: "/hr/calendar", label: "Calendar", icon: <FaRegCalendarAlt /> },
+    { path: "/hr/mailbox", label: "Mail Box", icon: <MdEmail /> },
   ];
 
   return (
@@ -41,16 +45,16 @@ const Sidebar = () => {
 
 
         ))}
-         <div className="sidebar-footerhr">
-        <Link to="/" className="nav-linkhr">
-          <span className="nav-iconhr">
-            <FiChevronLeft />
-          </span>
-          {isOpen && <span className="nav-labelhr">Back</span>}
-        </Link>
-      </div>
+        <div className="sidebar-footerhr">
+          <Link to="/" className="nav-linkhr">
+            <span className="nav-iconhr">
+              <FiChevronLeft />
+            </span>
+            {isOpen && <span className="nav-labelhr">Back</span>}
+          </Link>
+        </div>
       </nav>
-     
+
     </div>
   );
 };

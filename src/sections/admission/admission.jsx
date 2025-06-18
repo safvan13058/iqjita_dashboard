@@ -15,12 +15,12 @@ const AdmissionForm = ({ onBack }) => {
     const [courseOptions, setCourseOptions] = useState([]);
     const [discountcal, setdiscountcal] = useState({});
     const [selectedCountry, setSelectedCountry] = useState(() => {
-    return localStorage.getItem("selectedCountry") || "";
-});
+        return localStorage.getItem("selectedCountry") || "";
+    });
 
-const [selectedState, setSelectedState] = useState(() => {
-    return localStorage.getItem("selectedState") || "";
-});
+    const [selectedState, setSelectedState] = useState(() => {
+        return localStorage.getItem("selectedState") || "";
+    });
 
     const [selectedCity, setSelectedCity] = useState("");
     const [studentsalldata, setstudentsall] = useState("");
@@ -231,54 +231,54 @@ const [selectedState, setSelectedState] = useState(() => {
 
         setStudentData(updatedForm);
     };
-   const handleCountryChange = (e) => {
-    const countryCode = e.target.value;
-    const country = Country.getAllCountries().find((c) => c.isoCode === countryCode);
-    
-    setSelectedCountry(countryCode);
-    setSelectedState("");
-    setSelectedCity("");
+    const handleCountryChange = (e) => {
+        const countryCode = e.target.value;
+        const country = Country.getAllCountries().find((c) => c.isoCode === countryCode);
 
-    // Save to localStorage
-    localStorage.setItem("selectedCountry", countryCode);
-    localStorage.removeItem("selectedState"); // Clear dependent state
+        setSelectedCountry(countryCode);
+        setSelectedState("");
+        setSelectedCity("");
 
-    setStudentData((prev) => ({
-        ...prev,
-        country: country ? country.name : "",
-        state: "",
-        city: "",
-        district: "",
-    }));
-};
-useEffect(() => {
-    const country = Country.getAllCountries().find((c) => c.isoCode === selectedCountry);
-    const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === selectedState);
+        // Save to localStorage
+        localStorage.setItem("selectedCountry", countryCode);
+        localStorage.removeItem("selectedState"); // Clear dependent state
 
-    setStudentData((prev) => ({
-        ...prev,
-        country: country ? country.name : "",
-        state: state ? state.name : "",
-    }));
-}, [selectedCountry, selectedState]);
+        setStudentData((prev) => ({
+            ...prev,
+            country: country ? country.name : "",
+            state: "",
+            city: "",
+            district: "",
+        }));
+    };
+    useEffect(() => {
+        const country = Country.getAllCountries().find((c) => c.isoCode === selectedCountry);
+        const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === selectedState);
 
-const handleStateChange = (e) => {
-    const stateCode = e.target.value;
-    const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === stateCode);
+        setStudentData((prev) => ({
+            ...prev,
+            country: country ? country.name : "",
+            state: state ? state.name : "",
+        }));
+    }, [selectedCountry, selectedState]);
 
-    setSelectedState(stateCode);
+    const handleStateChange = (e) => {
+        const stateCode = e.target.value;
+        const state = State.getStatesOfCountry(selectedCountry).find((s) => s.isoCode === stateCode);
 
-    // Save to localStorage
-    localStorage.setItem("selectedState", stateCode);
+        setSelectedState(stateCode);
 
-    setSelectedCity("");
-    setStudentData((prev) => ({
-        ...prev,
-        state: state ? state.name : "",
-        city: "",
-        district: "",
-    }));
-};
+        // Save to localStorage
+        localStorage.setItem("selectedState", stateCode);
+
+        setSelectedCity("");
+        setStudentData((prev) => ({
+            ...prev,
+            state: state ? state.name : "",
+            city: "",
+            district: "",
+        }));
+    };
 
 
     // Handle city selection
@@ -370,8 +370,10 @@ const handleStateChange = (e) => {
         formData.append("branch", updatedStudentData.branch);
         formData.append("referredby", updatedStudentData.referredby);
         formData.append("referredbycategory", updatedStudentData.referredbycategory);
-
-        // File input (make sure it's from an <input type="file" /> or similar)
+        // Append discountcal fields
+        formData.append("offerPrice", parseFloat(discountcal.offerPrice) || 0);
+        formData.append("groupDiscountPercentage", parseFloat(discountcal.groupDiscountPercentage) || 0);
+        formData.append("oneTimePaymentDiscountPercentage", parseFloat(discountcal.oneTimePaymentDiscountPercentage) || 0);
         if (updatedStudentData.photo instanceof File) {
             formData.append("photo", updatedStudentData.photo);
         }
@@ -925,7 +927,9 @@ const handleStateChange = (e) => {
                             <select multiple value={studentData.documents_submitted} onChange={handleDocumentsChange}>
                                 <option value="ID Proof">ID Proof</option>
                                 <option value="Birth Certificate">Birth Certificate</option>
-                                <option value="Education Certificates">Education Certificates</option>
+                                {/* <option value="Education Certificates">Education Certificates</option> */}
+                                <option value="SSLC">SSLC</option>
+                                <option value="+2 Certificates">+2 Certificates</option>
                                 <option value="Passport">Passport</option>
                             </select>
 
@@ -939,6 +943,7 @@ const handleStateChange = (e) => {
                             <select name="education_qualification" value={studentData.education_qualification} onChange={handleChange} required>
                                 <option value="">Select Qualification</option>
                                 <option value="High School">High School</option>
+                                <option value="High secondary">High secondary</option>
                                 <option value="Diploma">Diploma</option>
                                 <option value="Undergraduate">Undergraduate</option>
                                 <option value="Postgraduate">Postgraduate</option>
@@ -1129,11 +1134,67 @@ const handleStateChange = (e) => {
                     <h3>Step 4: Payment Receipt</h3>
 
                     <div className="receipt-box">
-                        <p><strong>Name:</strong> {studentData.name}</p>
+                        {/* <p><strong>Name:</strong> {studentData.name}</p>
                         <p><strong>Course:</strong> {studentData.course}</p>
                         <p><strong>Receipt Number:</strong> {receipt.bill_number || `R-${receipt.admission_number}`}</p>
                         <p><strong>Admission Number:</strong> {receipt.admission_number}</p>
-                        {/* <p><strong>Message:</strong> {receipt.message}</p> */}
+                        <p><strong>Message:</strong> {receipt.message}</p> */}
+                        <div className="iq-receipt-page">
+                            <h1>PAYMENT RECEIPT</h1>
+                            <div className="iq-receipt-header">
+                                <div className="iq-receipt-logo">
+                                    <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo" />
+                                </div>
+                                <div className="iq-receipt-details">
+                                    <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br />SMART TRADE CITY, KOTTAKKAL</p>
+                                    <p>PH: +91 6235774801</p>
+                                    <p>Email: iqjita@gmail.com</p>
+                                    <p>Web: www.iqjita.com</p>
+                                </div>
+                            </div>
+
+                            <div className="iq-receipt-details">
+                                <h4>Date: {format(new Date(), 'yyyy-MM-dd HH:mm')}</h4>
+                                <h4>INVOICE: {receipt.bill_number || `R-${receipt.admission_number}`}</h4>
+                                <h4>Name: {studentData.name}</h4>
+                                <h4>Course: {studentData.course}</h4>
+                            </div>
+
+                            <table className="iq-receipt-table">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Discount</th>
+                                        <th>Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ADMISSION FEE</td>
+                                        <td>₹ 1000</td>
+                                        <td>₹0</td>
+                                        <td>₹ 1000</td>
+                                    </tr>
+                                    <tr className="iq-receipt-total-row">
+                                        <td colSpan="3">Total</td>
+                                        <td>₹{receipt.amount}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div className="iq-receipt-summary">
+                                <p><strong>Amount in figure:</strong> ₹ ONE THOUSAND ONLY</p>
+                                <p><strong>Amount paid:</strong> ₹ 1000</p>
+                                <p><strong>Attended by:</strong> {user.name}</p>
+                            </div>
+
+                            <div className="iq-receipt-seal">
+                                <p>Sign & seal</p>
+                            </div>
+                        </div>
+
+
                     </div>
 
                     <button onClick={() => ReceiptPrint({

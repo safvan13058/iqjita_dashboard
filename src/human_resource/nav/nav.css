@@ -342,11 +342,11 @@
   cursor: pointer;
 }
 
-.edit-btn,
+/* .edit-btn,
 .save-btn {
   background: var(--hr-button-primary-bg);
   color: var(--hr-button-primary-text);
-}
+} */
 
 .cancel-btn {
   background: #ccc;

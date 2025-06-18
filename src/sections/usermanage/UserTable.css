@@ -1,0 +1,296 @@
+
+.user-management {
+  /* padding: 20px; */
+  font-family: sans-serif;
+  /* background: var(--background-light); */
+  color: var(--text-paragraph);
+}
+
+.usermanageh1 {
+  color: var(--text-heading);
+  /* margin-bottom: 20px; */
+  margin-top:0px;
+}
+
+.status-message {
+  margin-bottom: 15px;
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.controls label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.controls select {
+  margin-left: 10px;
+  padding: 6px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  background: var(--input-background);
+  color: var(--input-text);
+  transition: border var(--transition-speed);
+}
+
+.controls select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+}
+
+.add-user-btn {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+  box-shadow: var(--box-shadow-light);
+}
+
+.add-user-btn:hover {
+  background-color: var(--button-hover-bg);
+  box-shadow: 0px 4px 10px var(--button-hover-shadow);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: var(--card-background);
+  box-shadow: var(--box-shadow-light);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.user-table th {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-text);
+  padding: 12px;
+  text-align: left;
+}
+
+.user-table td {
+  padding: 5px;
+  color: var(--table-text);
+  border-bottom: 1px solid #ddd;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: var(--table-row-alt-bg);
+}
+
+.user-table tr:hover {
+  background-color: #e9f5f4;
+}
+
+.user-table select {
+  padding: 6px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  background: var(--input-background);
+  color: var(--input-text);
+}
+
+.user-table select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+}
+
+/* Modal Overlay */
+.add-user-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal Box */
+.add-user-modal {
+  background: var(--card-background);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.add-user-modal h3 {
+  margin-bottom: 10px;
+  color: var(--text-heading);
+}
+
+/* Inputs inside modal */
+.add-user-modal input,
+.add-user-modal select {
+  padding: 10px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  background: var(--input-background);
+  color: var(--input-text);
+  transition: border var(--transition-speed);
+}
+
+.add-user-modal input:focus,
+.add-user-modal select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+}
+
+/* Modal buttons */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.modal-actions button:first-child {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.modal-actions button:first-child:hover {
+  background: var(--button-hover-bg);
+  box-shadow: var(--box-shadow-light);
+}
+
+.modal-actions .cancel-btn {
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.modal-actions .cancel-btn:hover {
+  background: #7e4622;
+}
+/* === Responsive Styling === */
+
+/* For tablets and below */
+@media (max-width: 1024px) {
+  .user-table th,
+  .user-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .add-user-modal {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-user-btn {
+    width: 100%;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+  .user-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .add-user-modal {
+    width: 95%;
+  }
+
+  .add-user-modal input,
+  .add-user-modal select {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .usermanageh1 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .status-message {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .controls label {
+    font-size: 14px;
+  }
+
+  .controls select {
+    width: 100%;
+  }
+
+  .user-management {
+    padding: 10px;
+  }
+}
+
+/* Very small devices */
+@media (max-width: 480px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-user-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .modal-actions button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .user-table th,
+  .user-table td {
+    font-size: 12px;
+  }
+}
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
