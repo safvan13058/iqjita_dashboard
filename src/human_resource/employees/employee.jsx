@@ -8,7 +8,7 @@ const EmployeePage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [employees, setEmployees] = useState([]);
-const user = JSON.parse(localStorage.getItem('user'))
+  const user = JSON.parse(localStorage.getItem('user'))
   // const employees = [
   //   { id: 1, name: 'John Doe', email: 'john@company.com', department: 'HR', joiningDate: '2022-01-15' },
   //   { id: 2, name: 'Jane Smith', email: 'jane@company.com', department: 'Finance', joiningDate: '2023-04-20' },
@@ -68,7 +68,9 @@ const user = JSON.parse(localStorage.getItem('user'))
     BankBranchName: "",
     Gender: "",
     AccountType: "Savings",
-    Addedby:user.name,
+    emergency_relation: "",
+    emergency_name: "",
+    Addedby: user.name,
   });
 
   const [ProfileImage, setProfileImage] = useState(null);
@@ -143,36 +145,38 @@ const user = JSON.parse(localStorage.getItem('user'))
 
   };
 
-const clearForm = () => {
-  setFormData({
-    FullName: "",
-    Email: "",
-    PhoneNumber: "",
-    Department: "",
-    Designation: "",
-    JoiningDate: "",
-    Address: "",
-    DateOfBirth: "",
-    EmergencyContact: "",
-    Education: "",
-    Certificates: "",
-    Branch: "",
-    NetSalaryHourly: "",
-    NetSalaryDaily: "",
-    NetSalaryMonthly: "",
-    BasicSalary: "",
-    Allowances: "",
-    AccountNumber: "",
-    IFSCCode: "",
-    BankName: "",
-    BankBranchName: "",
-    Gender: "",
-    AccountType: "Savings",
-    // Add other fields as needed
-  });
-  setCurrentStep(1); // Optional: reset to step 1
-  setErrorMessage('');
-};
+  const clearForm = () => {
+    setFormData({
+      FullName: "",
+      Email: "",
+      PhoneNumber: "",
+      Department: "",
+      Designation: "",
+      JoiningDate: "",
+      Address: "",
+      DateOfBirth: "",
+      EmergencyContact: "",
+      Education: "",
+      Certificates: "",
+      Branch: "",
+      NetSalaryHourly: "",
+      NetSalaryDaily: "",
+      NetSalaryMonthly: "",
+      BasicSalary: "",
+      Allowances: "",
+      AccountNumber: "",
+      IFSCCode: "",
+      BankName: "",
+      BankBranchName: "",
+      Gender: "",
+      emergency_relation: "",
+      emergency_name: "",
+      AccountType: "Savings",
+      // Add other fields as needed
+    });
+    setCurrentStep(1); // Optional: reset to step 1
+    setErrorMessage('');
+  };
   const navigate = useNavigate();
 
   const handleView = (id) => {
@@ -238,12 +242,12 @@ const clearForm = () => {
                     <td>{emp.Department}</td>
                     <td>{emp.JoiningDate}</td>
                     <td>
-                     <button
-                  className="hr-action-button"
-                  onClick={() => handleView(emp.EmployeeID)}
-                >
-                  View
-                </button>
+                      <button
+                        className="hr-action-button"
+                        onClick={() => handleView(emp.EmployeeID)}
+                      >
+                        View
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -311,8 +315,29 @@ const clearForm = () => {
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="Designation" className='hr-label'>Designation</label>
-                      <input id="Designation" name="Designation" value={formData.Designation} onChange={handleChange} />
+                      <select id="Designation" className="hr-input" name="Designation" value={formData.Designation} onChange={handleChange}>
+                        <option value="">Select Designation</option>
+                        <option value="HR Head">HR Head</option>
+                        <option value="HR Executive cum Placement Officer">HR Executive cum Placement Officer</option>
+                        <option value="Digital Marketer">Digital Marketer</option>
+                        <option value="SEO Specialist">SEO Specialist</option>
+                        <option value="Videographer cum Editor">Videographer cum Editor</option>
+                        <option value="Graphic Designer">Graphic Designer</option>
+                        <option value="GD Faculty">GD Faculty</option>
+                        <option value="DM Faculty">DM Faculty</option>
+                        <option value="English Trainer">English Trainer</option>
+                        <option value="Management Faculty">Management Faculty</option>
+                        <option value="Academic Head">Academic Head</option>
+                        <option value="Full Stack Development Faculty">Full Stack Development Faculty</option>
+                        <option value="AI & Data Science Faculty">AI & Data Science Faculty</option>
+                        <option value="Office Admin">Office Admin</option>
+                        <option value="Academic Counselor">Academic Counselor</option>
+                        <option value="Exam Controller">Exam Controller</option>
+                        <option value="LDC Coordinator">LDC Coordinator</option>
+                        <option value="Operations Head">Operations Head</option>
+                      </select>
                     </div>
+
                     <div className="hr-form-group">
                       <label htmlFor="DateOfBirth" className='hr-label'>Date of Birth</label>
                       <input id="DateOfBirth" name="DateOfBirth" type="date" value={formData.DateOfBirth} onChange={handleChange} />
@@ -369,7 +394,23 @@ const clearForm = () => {
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="Department" className='hr-label'>Department</label>
-                      <input id="Department" name="Department" value={formData.Department} onChange={handleChange} />
+                      <select
+                        id="Department"
+                        name="Department"
+                        className="hr-input"
+                        value={formData.Department}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Select Department</option>
+                        <option value="Human Resources">Human Resources</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Management">Management</option>
+                        <option value="Administrator">Administrator</option>
+                        <option value="Academics">Academics</option>
+                      </select>
+
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="JoiningDate" className='hr-label'>Joining Date</label>
@@ -378,6 +419,42 @@ const clearForm = () => {
                     <div className="hr-form-group">
                       <label htmlFor="Address" className='hr-label'>Address</label>
                       <input id="Address" name="Address" value={formData.Address} onChange={handleChange} />
+                    </div>
+                    <div className="hr-form-group">
+                      <label htmlFor="emergency_name" className="hr-label">Emergency Contact Name</label>
+                      <input
+                        type="text"
+                        id="emergency_name"
+                        name="emergency_name"
+                        className="hr-input"
+                        placeholder="Enter full name"
+                        value={formData.emergency_name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="hr-form-group">
+                      <label htmlFor="emergency_relation" className="hr-label">Emergency Contact (Relation)</label>
+                      <select
+                        id="emergency_relation"
+                        name="emergency_relation"
+                        className="hr-input"
+                        value={formData.emergency_relation}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Select Relation</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                        <option value="Brother">Brother</option>
+                        <option value="Sister">Sister</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Relative">Relative</option>
+                        <option value="Other">Other</option>
+                      </select>
+
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="EmergencyContact" className='hr-label'>Emergency Contact</label>
@@ -409,7 +486,7 @@ const clearForm = () => {
                     <div className="hr-form-group">
                       <div className="hr-form-group">
                         <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
-                        <input id=" NetSalaryMonthly" name=" NetSalaryMonthly" value={formData. NetSalaryMonthly} onChange={handleChange} />
+                        <input id=" NetSalaryMonthly" name=" NetSalaryMonthly" value={formData.NetSalaryMonthly} onChange={handleChange} />
                       </div>
                       <label htmlFor="NetSalaryHourly" className='hr-label'>Hourly Salary</label>
                       <input id="NetSalaryHourly" name="NetSalaryHourly" value={formData.NetSalaryHourly} onChange={handleChange} />
@@ -469,7 +546,7 @@ const clearForm = () => {
                         "Address", "DateOfBirth", "EmergencyContact", "Education", "Certificates", "Branch"
                       ],
                       [
-                        "NetSalaryHourly", "NetSalaryDaily",  "BasicSalary", "Allowances",
+                        "NetSalaryHourly", "NetSalaryDaily", "BasicSalary", "Allowances",
                         "AccountNumber", "IFSCCode", "BankName", "BankBranchName", "AccountType",
                         "ProfileImage", "CertificateImage", "AgreementImage"
                       ]

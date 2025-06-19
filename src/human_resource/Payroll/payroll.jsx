@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './payroll.css';
 
 const payrollData = [
@@ -29,6 +29,7 @@ const payrollData = [
 const PayrollTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPayroll, setSelectedPayroll] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   // const [searchTerm, setSearchTerm] = useState("");
   const [employeeIdSearch, setEmployeeIdSearch] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -63,11 +64,93 @@ const PayrollTable = () => {
   const closeModal = () => {
     setSelectedPayroll(null);
   };
-const handleSavePayroll = (updatedPayroll) => {
-  // Here, update your backend or state
-  console.log("Saving payroll:", updatedPayroll);
-  closeModal(); // Close after save
+  const handleSavePayroll = (updatedPayroll) => {
+    // Here, update your backend or state
+    console.log("Saving payroll:", updatedPayroll);
+    closeModal(); // Close after save
+  };
+  const [employees, setEmployees] = useState([]);
+  const [selectedEmpId, setSelectedEmpId] = useState("");
+  const [employeeData, setEmployeeData] = useState({
+    name: "",
+    department: "",
+    designation: "",
+    baseSalary: ""
+  });
+
+  useEffect(() => {
+    fetch("https://software.iqjita.com/hr/employee.php?action=read")
+      .then((res) => res.json())
+      .then((data) => setEmployees(data));
+  }, []);
+const handleEmployeeChange = (e) => {
+  const empId = e.target.value;
+  setSelectedEmpId(empId);
+
+  console.log("Selected Employee ID:", empId);
+
+  if (!empId) return;
+
+  fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${empId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("API Response:", data);
+
+      if (data.status === "success" && data.data) {
+        const emp = data.data;
+        console.log("Employee Details:", emp);
+
+        setEmployeeData({
+          name: emp.FullName || "",
+          department: emp.Department || "",
+          designation: emp.Designation || "",
+          baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
+        });
+
+        console.log("Updated Form State:", {
+          name: emp.FullName || "",
+          department: emp.Department || "",
+          designation: emp.Designation || "",
+          baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
+        });
+      } else {
+        console.warn("Failed to fetch employee data");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching employee data:", error);
+    });
 };
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.numLeaves = parseInt(data.numLeaves);
+    data.earlyOut = parseInt(data.earlyOut);
+    data.lateComing = parseInt(data.lateComing);
+    data.reducingAmount = parseFloat(data.reducingAmount);
+    data.leaveCompensation = parseFloat(data.leaveCompensation);
+    data.baseSalary = parseFloat(data.baseSalary);
+    data.totalSalary = parseFloat(data.totalSalary);
+
+    fetch("https://software.iqjita.com/hr/payroll.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        alert(result.message || "Payroll added");
+        setShowModal(false);
+        form.reset();
+      })
+      .catch((err) => {
+        alert("Error adding payroll");
+        console.error(err);
+      });
+  }
 
   return (
     <>
@@ -87,6 +170,7 @@ const handleSavePayroll = (updatedPayroll) => {
 
         {/* Right Side - Month Filters & Employee ID Search */}
         <div className="payroll-filter-right">
+          <button className="payroll-hr-button" onClick={() => setShowModal(true)}> Pay Salary  </button>
           <button className="payroll-filter-btn" onClick={() => handleMonthFilter('thisMonth')}>This Month</button>
           <button className="payroll-filter-btn" onClick={() => handleMonthFilter('previousMonth')}>Previous Month</button>
 
@@ -262,6 +346,131 @@ const handleSavePayroll = (updatedPayroll) => {
             </div>
           </div>
         </div>
+      )}
+      {showModal && (
+        <div className="payroll-hr-overlay">
+          <div className="payroll-hr-modal">
+            <button
+              className="payroll-hr-close-btn"
+              onClick={() => setShowModal(false)}
+            >
+              ×
+            </button>
+            <h3>Create Payroll</h3>
+            <form onSubmit={handleSubmit} className="payroll-hr-form">
+              <div className="payroll-hr-form-grid">
+                <div className="payroll-hr-form-col">
+                  <label>
+                    Employee ID
+                    <select value={selectedEmpId} onChange={handleEmployeeChange} required>
+                      <option value="">Select Employee</option>
+                      {employees.map((emp) => (
+                        <option key={emp.EmployeeID} value={emp.EmployeeID}>
+                          {emp.EmployeeID} - {emp.FullName}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+
+
+                  <label>
+                    Name
+                    <input
+                      name="name"
+                      placeholder="Name"
+                      value={employeeData.name}
+                      readOnly
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Department
+                    <input
+                      name="department"
+                      placeholder="Department"
+                      value={employeeData.department}
+                      readOnly
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Designation
+                    <input
+                      name="designation"
+                      placeholder="Designation"
+                      value={employeeData.designation}
+                      readOnly
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Number of Leaves
+                    <input name="numLeaves" type="number" placeholder="Leaves" required />
+                  </label>
+
+                  <label>
+                    Early Out
+                    <input name="earlyOut" type="number" placeholder="Early Out" required />
+                  </label>
+                </div>
+
+
+                <div className="payroll-hr-form-col">
+                  <label>
+                    Late Coming
+                    <input name="lateComing" type="number" placeholder="Late Coming" required />
+                  </label>
+
+                  <label>
+                    Reducing Amount
+                    <input name="reducingAmount" type="number" placeholder="Reducing Amount" required />
+                  </label>
+
+                  <label>
+                    Leave Compensation
+                    <input name="leaveCompensation" type="number" placeholder="Leave Compensation" required />
+                  </label>
+
+                  <label>
+                    Base Salary
+                    <input
+                      name="baseSalary"
+                      type="number"
+                      placeholder="Base Salary"
+                      value={employeeData.baseSalary}
+                      readOnly
+                      required
+                    />
+                  </label>
+
+
+                  <label>
+                    Total Salary
+                    <input name="totalSalary" type="number" placeholder="Total Salary" required />
+                  </label>
+
+                  <label>
+                    Pay Date
+                    <input name="payDate" type="date" required />
+                  </label>
+
+                  {/* <label>
+                    Updated By
+                    <input name="updatedBy" placeholder="Updated By" required />
+                  </label> */}
+                </div>
+
+              </div>
+
+              <button type="submit" className="payroll-hr-submit-btn">Submit</button>
+            </form>
+
+          </div >
+        </div >
       )}
 
     </>

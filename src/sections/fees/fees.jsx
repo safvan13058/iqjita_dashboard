@@ -16,6 +16,9 @@ const FeeForm = ({ onBack, currentUser }) => {
   const [selecteds, selected] = useState(false);
   const [error, setError] = useState(null);
   const [receiptData, setReceiptData] = useState(null);
+  const [date, setDate] = useState(() => {
+    return new Date().toISOString().split('T')[0]; // Default to today
+  });
   // const [selectedStudent, setSelectedStudent] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
   const [viewError, setViewError] = useState(null);
@@ -272,9 +275,10 @@ const FeeForm = ({ onBack, currentUser }) => {
               amount: parseFloat(amount),
               type: "credit",
               category: "Fee",
-              payment_method:paymentMethod,
+              payment_method: paymentMethod,
               remark: selectedStudent.admission_number.toString(), // Admission number as remark
-              updated_by: user?.name || "admin"
+              updated_by: user?.name || "admin",
+              date: date
             }),
           }
         );
@@ -482,6 +486,19 @@ const FeeForm = ({ onBack, currentUser }) => {
                 autoFocus
               />
             </div>
+            <div className="fee-form-field">
+              <label className="fee-form-label">Date</label>
+              <input
+                type="date"
+                className="fee-form-input"
+                placeholder="Select date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+
 
             <div className="fee-form-field">
               <label className="fee-form-label">Payment Method</label>

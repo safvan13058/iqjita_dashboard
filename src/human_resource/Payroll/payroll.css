@@ -230,3 +230,136 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.payroll-hr-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(14, 14, 35, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.payroll-hr-modal {
+  background: var(--hr-card-background);
+  width: 80%;
+  height: 75%;
+  padding: 24px;
+  overflow-y: auto;
+  box-shadow: var(--hr-box-shadow-dark);
+  color: var(--hr-text-primary);
+  position: relative;
+  transition: var(--hr-transition-speed);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}
+
+.payroll-hr-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+  width: 60%;
+}
+.payroll-hr-form-col label {
+  display: flex;
+  flex-direction: column;
+  color: var(--hr-text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.payroll-hr-form-col select {
+  padding: 10px;
+  background-color: var(--hr-input-background);
+  border: 1px solid var(--hr-input-border);
+  color: var(--hr-input-text);
+  border-radius: var(--hr-border-radius);
+  transition: var(--hr-transition-speed);
+}
+
+.payroll-hr-modal input {
+  padding: 10px;
+  background-color: var(--hr-input-background);
+  border: 1px solid var(--hr-input-border);
+  color: var(--hr-input-text);
+  border-radius: var(--hr-border-radius);
+  transition: var(--hr-transition-speed);
+  
+}
+
+.payroll-hr-modal input:focus {
+  outline: none;
+  border-color: var(--hr-input-focus-border);
+}
+
+.payroll-hr-button {
+  padding: 10px 20px;
+  background-color: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: var(--hr-transition-speed);
+  box-shadow: var(--hr-box-shadow-light);
+}
+
+.payroll-hr-button:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: 0 4px 12px var(--hr-button-hover-shadow);
+}
+
+.payroll-hr-submit-btn {
+  background-color: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  padding: 10px;
+  border: none;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: var(--hr-transition-speed);
+}
+
+.payroll-hr-submit-btn:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: 0 4px 12px var(--hr-button-hover-shadow);
+}
+
+.payroll-hr-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  color: var(--hr-text-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--hr-transition-speed);
+}
+
+.payroll-hr-close-btn:hover {
+  color: var(--hr-link-hover-color);
+}
+.payroll-hr-form-grid {
+  display: flex;
+  gap: 30px;
+  flex-direction: row;
+}
+
+.payroll-hr-form-col {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payroll-hr-form-col input {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .payroll-hr-form-grid {
+    flex-direction: column;
+  }
+}
