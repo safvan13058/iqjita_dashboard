@@ -77,50 +77,119 @@ const PayrollTable = () => {
     designation: "",
     baseSalary: ""
   });
+  const today = new Date().toISOString().split('T')[0];
+  const [formData, setFormData] = useState({
+    numLeaves: "",
+    earlyOut: "",
+    lateComing: "",
+    reducingAmount: "",
+    leaveCompensation: 1,
+    totalSalary: "",
+    baseSalary: "",
+    payDate: today,
+  });
+
+  const calculateTotalSalary = ({
+    numLeaves,
+    earlyOut,
+    lateComing,
+    reducingAmount,
+    leaveCompensation,
+    baseSalary,
+  }) => {
+    const oneDaySalary = baseSalary / 30;
+    const totalLateEarly = lateComing + earlyOut;
+
+    // Deduct 0.5 day for every 2 late/early, starting from 2 (not ignoring any)
+    const halfDays = Math.floor(totalLateEarly / 2) * 0.5;
+    const lateEarlyDeduction = oneDaySalary * halfDays;
+
+    // Leave deduction: 1st leave is compensated
+    const leaveDeduction = Math.max(numLeaves - 1, 0) * oneDaySalary;
+
+    // Leave compensation: default to 1 day if not given
+    const effectiveLeaveCompensation =
+      leaveCompensation > 0 ? leaveCompensation : numLeaves > 0 ? oneDaySalary : 0;
+
+    const totalSalary =
+      baseSalary - leaveDeduction - lateEarlyDeduction - reducingAmount;
+
+    return totalSalary >= 0 ? Math.round(totalSalary) : 0;
+  };
+
+
+
+  useEffect(() => {
+    if (employeeData?.baseSalary) {
+      setFormData((prev) => ({
+        ...prev,
+        baseSalary: parseFloat(employeeData.baseSalary || 0),
+        leaveCompensation: 1 // user can override this, or default will apply in calculation
+      }));
+    }
+  }, [employeeData]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    const val = parseFloat(value) || 0;
+
+    const updatedForm = {
+      ...formData,
+      [name]: val,
+    };
+
+    updatedForm.leaveCompensation = updatedForm.numLeaves >= 1 ? 0 : 1;
+
+    const total = calculateTotalSalary(updatedForm);
+    updatedForm.totalSalary = total;
+
+
+    setFormData(updatedForm);
+  };
 
   useEffect(() => {
     fetch("https://software.iqjita.com/hr/employee.php?action=read")
       .then((res) => res.json())
       .then((data) => setEmployees(data));
   }, []);
-const handleEmployeeChange = (e) => {
-  const empId = e.target.value;
-  setSelectedEmpId(empId);
+  const handleEmployeeChange = (e) => {
+    const empId = e.target.value;
+    setSelectedEmpId(empId);
 
-  console.log("Selected Employee ID:", empId);
+    console.log("Selected Employee ID:", empId);
 
-  if (!empId) return;
+    if (!empId) return;
 
-  fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${empId}`)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("API Response:", data);
+    fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${empId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Response:", data);
 
-      if (data.status === "success" && data.data) {
-        const emp = data.data;
-        console.log("Employee Details:", emp);
+        if (data.status === "success" && data.data) {
+          const emp = data.data;
+          console.log("Employee Details:", emp);
 
-        setEmployeeData({
-          name: emp.FullName || "",
-          department: emp.Department || "",
-          designation: emp.Designation || "",
-          baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
-        });
+          setEmployeeData({
+            name: emp.FullName || "",
+            department: emp.Department || "",
+            designation: emp.Designation || "",
+            baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
+          });
 
-        console.log("Updated Form State:", {
-          name: emp.FullName || "",
-          department: emp.Department || "",
-          designation: emp.Designation || "",
-          baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
-        });
-      } else {
-        console.warn("Failed to fetch employee data");
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching employee data:", error);
-    });
-};
+          console.log("Updated Form State:", {
+            name: emp.FullName || "",
+            department: emp.Department || "",
+            designation: emp.Designation || "",
+            baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
+          });
+        } else {
+          console.warn("Failed to fetch employee data");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching employee data:", error);
+      });
+  };
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -409,12 +478,29 @@ const handleEmployeeChange = (e) => {
 
                   <label>
                     Number of Leaves
-                    <input name="numLeaves" type="number" placeholder="Leaves" required />
+                    <input
+                      name="numLeaves"
+                      type="number"
+                      min="0"
+                      placeholder="Leaves"
+                      value={formData.numLeaves}
+                      onChange={handleInputChange}
+                      required
+                    />
+
                   </label>
 
                   <label>
                     Early Out
-                    <input name="earlyOut" type="number" placeholder="Early Out" required />
+                    <input
+                      name="earlyOut"
+                      type="number"
+                      min="0"
+                      placeholder="Early Out"
+                      value={formData.earlyOut}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </label>
                 </div>
 
@@ -422,17 +508,41 @@ const handleEmployeeChange = (e) => {
                 <div className="payroll-hr-form-col">
                   <label>
                     Late Coming
-                    <input name="lateComing" type="number" placeholder="Late Coming" required />
+                    <input
+                      name="lateComing"
+                      type="number"
+                      min="0"
+                      placeholder="Late Coming"
+                      value={formData.lateComing}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </label>
 
                   <label>
                     Reducing Amount
-                    <input name="reducingAmount" type="number" placeholder="Reducing Amount" required />
+                    <input
+                      name="reducingAmount"
+                      type="number"
+                      min="0"
+                      placeholder="Reducing Amount"
+                      value={formData.reducingAmount}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </label>
 
                   <label>
                     Leave Compensation
-                    <input name="leaveCompensation" type="number" placeholder="Leave Compensation" required />
+                    <input
+                      name="leaveCompensation"
+                      type="number"
+                      min="0"
+                      placeholder="Leave Compensation"
+                      value={formData.leaveCompensation}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </label>
 
                   <label>
@@ -440,6 +550,7 @@ const handleEmployeeChange = (e) => {
                     <input
                       name="baseSalary"
                       type="number"
+                      min="0"
                       placeholder="Base Salary"
                       value={employeeData.baseSalary}
                       readOnly
@@ -450,13 +561,28 @@ const handleEmployeeChange = (e) => {
 
                   <label>
                     Total Salary
-                    <input name="totalSalary" type="number" placeholder="Total Salary" required />
+                    <input
+                      name="totalSalary"
+                      type="number"
+                      min="0"
+                      placeholder="Total Salary"
+                      value={formData.totalSalary}
+                      readOnly
+                      required
+                    />
                   </label>
 
                   <label>
                     Pay Date
-                    <input name="payDate" type="date" required />
+                    <input
+                      name="payDate"
+                      type="date"
+                      value={formData.payDate}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </label>
+
 
                   {/* <label>
                     Updated By

@@ -340,7 +340,7 @@
 }
 
 .payroll-hr-close-btn:hover {
-  color: var(--hr-link-hover-color);
+  background: none;
 }
 .payroll-hr-form-grid {
   display: flex;
