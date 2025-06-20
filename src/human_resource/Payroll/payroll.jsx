@@ -79,15 +79,20 @@ const PayrollTable = () => {
   });
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
-    numLeaves: "",
-    earlyOut: "",
-    lateComing: "",
-    reducingAmount: "",
-    leaveCompensation: 1,
-    totalSalary: "",
-    baseSalary: "",
-    payDate: today,
-  });
+  employeeId: "",
+  name: "",
+  department: "",
+  designation: "",
+  numLeaves: 0,
+  earlyOut: 0,
+  lateComing: 0,
+  reducingAmount: 0,
+  leaveCompensation: 1,
+  baseSalary: 0,
+  totalSalary: 0,
+  payDate: today,
+  updatedBy: "admin", // Or use logged-in user's name
+});
 
   const calculateTotalSalary = ({
     numLeaves,
@@ -152,74 +157,76 @@ const PayrollTable = () => {
       .then((res) => res.json())
       .then((data) => setEmployees(data));
   }, []);
-  const handleEmployeeChange = (e) => {
-    const empId = e.target.value;
-    setSelectedEmpId(empId);
+ const handleEmployeeChange = (e) => {
+  const empId = e.target.value;
+  setSelectedEmpId(empId);
 
-    console.log("Selected Employee ID:", empId);
+  if (!empId) return;
 
-    if (!empId) return;
+  fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${empId}`)
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "success" && res.data) {
+        const emp = res.data;
 
-    fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${empId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("API Response:", data);
+        setEmployeeData({
+          name: emp.FullName,
+          department: emp.Department,
+          designation: emp.Designation,
+          baseSalary: parseFloat(emp.SalaryDetails?.NetSalaryMonthly || 0),
+        });
 
-        if (data.status === "success" && data.data) {
-          const emp = data.data;
-          console.log("Employee Details:", emp);
+        setFormData((prev) => ({
+          ...prev,
+          employeeId: emp.EmployeeID,
+          name: emp.FullName,
+          department: emp.Department,
+          designation: emp.Designation,
+          baseSalary: parseFloat(emp.SalaryDetails?.NetSalaryMonthly || 0),
+          leaveCompensation: 1,
+        }));
+      }
+    });
+};
 
-          setEmployeeData({
-            name: emp.FullName || "",
-            department: emp.Department || "",
-            designation: emp.Designation || "",
-            baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
-          });
-
-          console.log("Updated Form State:", {
-            name: emp.FullName || "",
-            department: emp.Department || "",
-            designation: emp.Designation || "",
-            baseSalary: emp.SalaryDetails?.NetSalaryMonthly || ""
-          });
-        } else {
-          console.warn("Failed to fetch employee data");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching employee data:", error);
-      });
-  };
 
   function handleSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    data.numLeaves = parseInt(data.numLeaves);
-    data.earlyOut = parseInt(data.earlyOut);
-    data.lateComing = parseInt(data.lateComing);
-    data.reducingAmount = parseFloat(data.reducingAmount);
-    data.leaveCompensation = parseFloat(data.leaveCompensation);
-    data.baseSalary = parseFloat(data.baseSalary);
-    data.totalSalary = parseFloat(data.totalSalary);
+  e.preventDefault();
 
-    fetch("https://software.iqjita.com/hr/payroll.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        alert(result.message || "Payroll added");
-        setShowModal(false);
-        form.reset();
-      })
-      .catch((err) => {
-        alert("Error adding payroll");
-        console.error(err);
+  const data = { ...formData };
+
+  // Send to backend
+  fetch("https://software.iqjita.com/hr/payroll.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      alert(result.message || "Payroll added");
+      setShowModal(false);
+      setFormData({
+        employeeId: "",
+        name: "",
+        department: "",
+        designation: "",
+        numLeaves: 0,
+        earlyOut: 0,
+        lateComing: 0,
+        reducingAmount: 0,
+        leaveCompensation: 1,
+        baseSalary: 0,
+        totalSalary: 0,
+        payDate: today,
+        updatedBy: "admin",
       });
-  }
+    })
+    .catch((err) => {
+      alert("Error adding payroll");
+      console.error(err);
+    });
+}
+
 
   return (
     <>
@@ -577,6 +584,7 @@ const PayrollTable = () => {
                     <input
                       name="payDate"
                       type="date"
+                      min={today}
                       value={formData.payDate}
                       onChange={handleInputChange}
                       required
@@ -598,7 +606,7 @@ const PayrollTable = () => {
           </div >
         </div >
       )}
-
+ 
     </>
   );
 };
