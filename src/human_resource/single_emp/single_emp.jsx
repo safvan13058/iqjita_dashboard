@@ -1,7 +1,10 @@
 import React, { useState, useEffect,useRef } from 'react';
 import './single_emp.css';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import Barcode from 'react-barcode';
+import { FaDownload, FaWhatsapp } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 const EmployeeDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -11,7 +14,8 @@ const EmployeeDetails = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [machineEmployeeID, setMachineEmployeeID] = useState('');
   const [connectedMachineID, setConnectedMachineID] = useState(null);
-
+ const [showPopup, setShowPopup] = useState(false);
+  const cardRef = useRef(null);
   // const [machineEmployeeID, setMachineEmployeeID] = useState("");
   const [unmappedMachines, setUnmappedMachines] = useState([]);
 const fileInputRef = useRef(null);
@@ -48,6 +52,32 @@ const handleProfileUploadClick = () => {
       alert("Upload failed.");
     }
   };
+
+    const handleDownloadPDF = () => {
+  console.log("pdf working");
+
+  html2canvas(cardRef.current, {
+    scale: 5, // Higher scale for better quality
+    useCORS: true,
+    allowTaint: false,
+    backgroundColor: null
+  }).then((canvas) => {
+    console.log("pdf working3");
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF({
+      orientation: 'landscape', // Use 'portrait' if you rotate the card vertically
+      unit: 'cm',
+      format: [10, 8], // [width, height] in centimeters
+    });
+
+    pdf.addImage(imgData, 'PNG', 0, 0, 10, 8); // Exact fit
+    pdf.save(`${employee.FullName}_IDCard.pdf`);
+    console.log("pdf working4");
+  });
+};
+
+  
   useEffect(() => {
     if (showConnectModal) {
       // Fetch unmapped machines
@@ -267,6 +297,7 @@ useEffect(() => {
               </>
             ) : (
               <>
+                <button className="hr-btn hr-btn-primary" onClick={() => setShowPopup(true)}>ID Card</button>
                 <button className="hr-btn hr-btn-primary" onClick={handleEditClick}>Edit details</button>
                 <button className="hr-btn hr-btn-primary" onClick={handleconnectatt}>Connect Attendence</button>
               </>
@@ -334,9 +365,94 @@ useEffect(() => {
                   </div>
                 </>
               )}
+
             </div>
           </div>
-        )}
+        )}{showPopup && (
+  <div className="hr-idcard-overlay">
+    <div className="hr-idcard-modal">
+      <button onClick={() => setShowPopup(false)} className="hr-idcard-close-btn">×</button>
+      <div ref={cardRef} className="hr-idcard-content">
+        <div className="hr-idcard-background">
+          <img
+            src="./idcard/idcardemp.jpg"
+            className="hr-idcard-bg-image"
+            alt="Background"
+          />
+          <img
+            src={employee.ImageURL}
+            alt="Student"
+            className="hr-idcard-photo"
+            crossOrigin="anonymous"
+          />
+          <div className="hr-idcard-name">
+            <h3>{
+              employee.FullName
+                .toLowerCase()
+                .split(' ')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ')
+            }</h3>
+          </div>
+          <div className="hr-idcard-text">
+            <p>{employee.EmployeeID}</p>
+            <p>{
+              employee.Department
+                .replace(/.*IN\s/i, '')
+                .replace(/\s*\(.*\)/, '')
+                .trim()
+            }</p>
+            <p>{employee.Email}</p>
+            <p>
+              {`+${employee.PhoneNumber.slice(0, 2)} ${employee.PhoneNumber.slice(2)}`}
+            </p>
+          </div>
+          <div className='hr-idcard-designation'>{(employee.Designation).toUpperCase()}</div>
+          <div className="hr-idcard-qrcode">
+            <Barcode
+              value={`https://iqjita.com/f/${employee.EmployeeID}`}
+              width={.4}
+              height={20}
+              displayValue={false}
+              background="none"
+              lineColor="#000000"
+              format="CODE128"
+            />
+            <div className='hr-idcard-qrcode-footer'>{ (employee.FullName).toUpperCase()}</div>
+          </div>
+          <div className='hr-idcard-side'>
+            IQJITA 2025/26
+          </div>
+        </div>
+      </div>
+      <div className="hr-idcard-actions">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hr-idcard-action-btn hr-whatsapp-btn"
+          title="Share on WhatsApp"
+        >
+          <span>Whatsapp</span>
+          <FaWhatsapp className="hr-action-icon" />
+        </a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            handleDownloadPDF();
+          }}
+          className="hr-idcard-action-btn hr-download-btn"
+          title="Download PDF"
+          role="button"
+        >
+          <span>Download PDF</span>
+          <FaDownload className="hr-action-icon" />
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
 
         <h3 className="hr-subsection-heading">Employee Info</h3>
         <div className="hr-details-grid">

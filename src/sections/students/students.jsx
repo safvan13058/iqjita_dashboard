@@ -6,6 +6,10 @@ import { FaPen, FaSpinner } from "react-icons/fa";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 // import recipt from '../Recipts/studentdata.html'
+import { QRCodeSVG } from 'qrcode.react';
+import Barcode from 'react-barcode';
+import { FaDownload, FaWhatsapp } from 'react-icons/fa';
+// Add at top of file
 
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
@@ -34,18 +38,42 @@ const StudentsPage = () => {
   const [showPopup, setShowPopup] = useState(false);
   const cardRef = useRef(null);
 
+  // const handleDownloadPDF = () => {
+  //   html2canvas(cardRef.current, { scale: 2 }).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+  //     const pdf = new jsPDF({
+  //       orientation: 'portrait',
+  //       unit: 'px',
+  //       format: [canvas.width, canvas.height],
+  //     });
+  //     pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+  //     pdf.save(`${selectedStudent.name}_IDCard.pdf`);
+  //   });
+  // };
+
   const handleDownloadPDF = () => {
-    html2canvas(cardRef.current, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width, canvas.height],
+    const background = new Image();
+    background.src = '/idcard/idcardstu.jpg';
+
+    background.onload = () => {
+      html2canvas(cardRef.current, {
+        scale: 5,
+        useCORS: true,
+        allowTaint: false,  // Prevent using tainted canvas
+        backgroundColor: null
+      }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'cm',
+          format: [5, 8],
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, 5, 8);
+        pdf.save(`${selectedStudent.name}_IDCard.pdf`);
       });
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save(`${selectedStudent.name}_IDCard.pdf`);
-    });
+    };
   };
+
 
 
   const [startingDate, setStartingDate] = useState(() => {
@@ -813,28 +841,92 @@ const StudentsPage = () => {
               </>
             )}
             {showPopup && (
-              <div className="idcard-overlay" onClick={() => setShowPopup(false)}>
+              <div className="idcard-overlay" >
                 <div className="idcard-modal">
                   <button onClick={() => setShowPopup(false)} className="idcard-close-btn">×</button>
                   <div ref={cardRef} className="idcard-content">
                     <div className="idcard-background">
                       <img
+                        src="/idcard/idcardstu.jpg"
+                        className="idcard-bg-image"
+                        alt="Background"
+                      />
+                      <img
                         src={`https://software.iqjita.com/${selectedStudent.photo}`}
                         alt="Student"
                         className="idcard-photo"
+                        crossOrigin="anonymous"
                       />
+                      <div className="idcard-name"><h3>{
+                        selectedStudent.name
+                          .toLowerCase()
+                          .split(' ')
+                          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                          .join(' ')
+                      }</h3></div>
                       <div className="idcard-text">
-                        <p><strong>Reg. No:</strong> {selectedStudent.admission_no}</p>
-                        <p><strong>Course:</strong> {selectedStudent.s_course}</p>
-                        <p><strong>Email:</strong> {selectedStudent.email}</p>
-                        <p><strong>Phone No:</strong> {selectedStudent.contact_number}</p>
+                        <p> {selectedStudent.admission_no}</p>
+                        <p>{
+                          selectedStudent.s_course
+                            .replace(/.*IN\s/i, '')      // Removes everything before and including "IN"
+                            .replace(/\s*\(.*\)/, '')    // Removes anything in parentheses (e.g., "(offline)")
+                            .trim()
+                        }</p>
+                        <p> {selectedStudent.email}</p>
+                        <p>
+                          {`+${selectedStudent.contact_number.slice(0, 2)} ${selectedStudent.contact_number.slice(2)}`}
+                        </p>
+                      </div>
+                      <div className="idcard-qrcode">
+                        <Barcode
+                          value={`https://iqjita.com/s/${selectedStudent.admission_no}`}
+                          // value={selectedStudent.admission_no}
+                          width={.4}
+                          height={20}
+                          displayValue={false}
+                          background="none"
+                          lineColor="#000000"
+                          format="CODE128"
+                        />
+                        <div className='idcard-qrcode-footer'>IQJITA 2025/26</div>
+                      </div>
+                      <div className='idcard-footer'>
+                        IQ 1234
                       </div>
                     </div>
                   </div>
-                  <button onClick={handleDownloadPDF} className="idcard-download-btn">
-                    Download PDF
-                  </button>
+                  <div className="idcard-actions">
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="idcard-action-btn whatsapp-btn"
+                      title="Share on WhatsApp"
+                    >
+                      <span>Whatsapp</span>
+                      <FaWhatsapp className="action-icon" />
+                      
+                    </a>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleDownloadPDF();
+                      }}
+                      className="idcard-action-btn download-btn"
+                      title="Download PDF"
+                      role="button"
+                    >
+                      <span>Download PDF</span>
+                      <FaDownload className="action-icon" />
+                      
+                    </a>
+
+                    
+                  </div>
+
+
                 </div>
+
               </div>
             )}
             {showEditModal && (user.role === 'admin' || user.role === 'superadmin') && (
