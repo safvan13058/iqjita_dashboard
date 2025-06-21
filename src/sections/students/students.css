@@ -612,6 +612,84 @@
   top: 10px;
   right: 10px;
 }
+
+.idcard-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.idcard-modal {
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.idcard-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.idcard-content {
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+}
+
+.idcard-background {
+  width: 661px;
+  height: 1039px;
+  background-image: url('idcard/idcardstu.jpg');
+  background-size: cover;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+.idcard-photo {
+  position: absolute;
+  top: 150px;
+  left: 265px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid #C8A57B;
+  object-fit: cover;
+}
+
+.idcard-text {
+  position: absolute;
+  top: 360px;
+  left: 80px;
+  font-size: 16px;
+  color: #000;
+}
+
+.idcard-download-btn {
+  background-color: #0F6D66;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .student-details-grid {
