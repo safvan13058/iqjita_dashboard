@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './students.css';
 import { format } from 'date-fns';
 import { FaPen, FaSpinner } from "react-icons/fa";
-
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 // import recipt from '../Recipts/studentdata.html'
 
 const StudentsPage = () => {
@@ -28,6 +29,25 @@ const StudentsPage = () => {
   const [installmentStarted, setInstallmentStarted] = useState({});
   const [photoFile, setPhotoFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
+
+  const [showPopup, setShowPopup] = useState(false);
+  const cardRef = useRef(null);
+
+  const handleDownloadPDF = () => {
+    html2canvas(cardRef.current, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height],
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`${selectedStudent.name}_IDCard.pdf`);
+    });
+  };
+
+
   const [startingDate, setStartingDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
@@ -166,6 +186,10 @@ const StudentsPage = () => {
     }
   };
   const handleUpdateStatus = async (statusValue) => {
+    const confirmed = window.confirm(`Are you sure you want to set status to "${statusValue}"?`);
+
+    if (!confirmed) return; // exit if user clicks "Cancel"
+
     const res = await fetch("https://software.iqjita.com/update_student_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -178,11 +202,12 @@ const StudentsPage = () => {
     const result = await res.json();
     if (result.success) {
       alert(`Status set to ${statusValue}`);
-      // optionally refresh data or update UI
+      // Optionally refresh data or update UI
     } else {
       alert("Failed to update status: " + result.message);
     }
   };
+
 
 
   const handleInputChange = (e) => {
@@ -746,6 +771,9 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="modal-footer">
+                  <button className="action-btn edit-btn" onClick={() => setShowPopup(true)}>
+                    ID Card
+                  </button>
                   <button
                     className="action-btn edit-btn"
                     onClick={() => handleUpdateStatus("left")}
@@ -783,6 +811,31 @@ const StudentsPage = () => {
                   </button> */}
                 </div>
               </>
+            )}
+            {showPopup && (
+              <div className="idcard-overlay" onClick={() => setShowPopup(false)}>
+                <div className="idcard-modal">
+                  <button onClick={() => setShowPopup(false)} className="idcard-close-btn">×</button>
+                  <div ref={cardRef} className="idcard-content">
+                    <div className="idcard-background">
+                      <img
+                        src={`https://software.iqjita.com/${selectedStudent.photo}`}
+                        alt="Student"
+                        className="idcard-photo"
+                      />
+                      <div className="idcard-text">
+                        <p><strong>Reg. No:</strong> {selectedStudent.admission_no}</p>
+                        <p><strong>Course:</strong> {selectedStudent.s_course}</p>
+                        <p><strong>Email:</strong> {selectedStudent.email}</p>
+                        <p><strong>Phone No:</strong> {selectedStudent.contact_number}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={handleDownloadPDF} className="idcard-download-btn">
+                    Download PDF
+                  </button>
+                </div>
+              </div>
             )}
             {showEditModal && (user.role === 'admin' || user.role === 'superadmin') && (
               <div className="stude-modal-overlay">

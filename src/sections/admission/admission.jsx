@@ -16,8 +16,8 @@ const AdmissionForm = ({ onBack }) => {
     const [courseOptions, setCourseOptions] = useState([]);
     const [discountcal, setdiscountcal] = useState({});
     const [date, setDate] = useState(() => {
-  return new Date().toISOString().split('T')[0]; // Default to today
-});
+        return new Date().toISOString().split('T')[0]; // Default to today
+    });
 
     const [selectedCountry, setSelectedCountry] = useState(() => {
         return localStorage.getItem("selectedCountry") || "";
@@ -907,9 +907,20 @@ const AdmissionForm = ({ onBack }) => {
                                         Calculate
                                     </button>
 
-                                    <button type="button" onClick={() => setStudentData((prev) => ({ ...prev, discount: '', final_fee: prev.exact_fee }))}>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setStudentData((prev) => ({
+                                                ...prev,
+                                                discount: '',
+                                                final_fee: prev.exact_fee,
+                                            }));
+                                            setdiscountcal({}); // clear discount calculation
+                                        }}
+                                    >
                                         Clear
                                     </button>
+
                                 </div>
 
                             </div>

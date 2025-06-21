@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import './single_emp.css';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,40 @@ const EmployeeDetails = () => {
 
   // const [machineEmployeeID, setMachineEmployeeID] = useState("");
   const [unmappedMachines, setUnmappedMachines] = useState([]);
+const fileInputRef = useRef(null);
 
+const handleProfileUploadClick = () => {
+  fileInputRef.current.click();
+};
+
+ const handleProfileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file || !employee.EmployeeID) return;
+
+    const formData = new FormData();
+    formData.append("profileImage", file);
+    formData.append("EmployeeID", employee.EmployeeID);
+
+    try {
+      const response = await fetch("https://software.iqjita.com/hr/updateprofile.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alert("Profile image updated!");
+        // Optionally refresh image or state
+        fetchEmployee()// or update state to reflect new image
+      } else {
+        alert("Upload failed: " + result.message);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed.");
+    }
+  };
   useEffect(() => {
     if (showConnectModal) {
       // Fetch unmapped machines
@@ -90,8 +123,10 @@ const EmployeeDetails = () => {
     console.log(data); // Handle success or failure messages
     setShowConnectModal(false); // Close modal after submit
   };
-
-  useEffect(() => {
+useEffect(() => {
+    fetchEmployee();
+  }, [id]);
+ 
     const fetchEmployee = async () => {
       const response = await fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${id}`);
       const result = await response.json();
@@ -112,8 +147,7 @@ const EmployeeDetails = () => {
         setEmployee(formatted);
       }
     };
-    fetchEmployee();
-  }, [id]);
+   
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -193,7 +227,31 @@ const EmployeeDetails = () => {
         </div>
         <div className="hr-header">
           <div className='hr-header-contact'>
-            <img src={employee.ImageURL || '/default-profile.png'} alt="Employee" className="hr-profile-imgs-emp" />
+            <div className="img-profile" style={{ position: "relative", display: "inline-block" }}>
+              <img
+                src={employee.ImageURL || "/default-profile.png"}
+                alt="Employee"
+                className="hr-profile-imgs-emp"              
+              />
+
+              <button
+                className="edit-profile-btn"
+                onClick={handleProfileUploadClick}
+                title="Edit Profile"
+              >
+                ✎
+              </button>
+
+              {/* Hidden file input */}
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={handleProfileUpload}
+              />
+            </div>
+
             <div className="hr-info">
               <h2 className="hr-heading">{employee.FullName}</h2>
               <p className="hr-subheading">{employee.Designation} | {employee.Department}</p>
@@ -223,7 +281,7 @@ const EmployeeDetails = () => {
               {connectedMachineID ? (
                 <>
                   <p style={{ color: 'white' }}>
-                    This employee is already connected to <strong style={{color:'white'}}>Machine ID :{connectedMachineID}</strong>
+                    This employee is already connected to <strong style={{ color: 'white' }}>Machine ID :{connectedMachineID}</strong>
                   </p>
 
                   <div className="modal-actions">
@@ -286,8 +344,8 @@ const EmployeeDetails = () => {
           {renderEditableField("Email", "Email")}
           {renderEditableField("Phone", "PhoneNumber")}
           {renderEditableField("Joining Date", "JoiningDate")}
-          {renderEditableField("Date of Birth","DateOfBirth")}
-          {renderEditableField("Address","Address")}
+          {renderEditableField("Date of Birth", "DateOfBirth")}
+          {renderEditableField("Address", "Address")}
           {renderEditableField("Emergency Contact", "EmergencyContact")}
           {renderEditableField("Education", "Education")}
           {renderEditableField("Certificates", "Certificates")}

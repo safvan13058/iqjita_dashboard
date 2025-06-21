@@ -16,7 +16,7 @@
   margin-bottom: 1rem;
   flex-wrap: wrap;
   gap: 1rem;
-  width: 90%;
+  /* width: 90%; */
 }
 
 .payroll-filter-left {
@@ -165,7 +165,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000;
 }
 
 .payroll-modal {
@@ -174,11 +174,24 @@
   padding: 25px 30px;
   border-radius: var(--hr-border-radius);
   box-shadow: var(--hr-box-shadow-dark);
-  width: 380px;
+  width:80%;
   max-width: 90%;
+  height: 80%;
   text-align: left;
+  overflow-y: auto;
+  position: relative;  
 }
-
+/* Optional: Smooth scrollbar style */
+.payroll-modal::-webkit-scrollbar {
+  width: 8px;
+}
+.payroll-modal::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+.payroll-modal::-webkit-scrollbar-thumb {
+  background: #3d3f6e;
+  border-radius: 4px;
+}
 .payroll-close-btn {
   background-color: var(--hr-button-primary-bg);
   color: var(--hr-button-primary-text);
@@ -188,6 +201,166 @@
   cursor: pointer;
   margin-top: 20px;
   transition: background-color var(--hr-transition-speed);
+}
+.payroll-heading {
+  margin: 0;
+  color: var(--hr-text-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-close-btns {
+  background: none;
+  border: none;
+  color: var(--hr-text-secondary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  position: absolute;
+    right: 10px;
+  top: 10px;
+
+  padding: 0 8px;
+  transition: var(--hr-transition-speed);
+}
+
+.modal-close-btns:hover {
+  background: none;
+}
+
+/* Modal Body */
+.payroll-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.payroll-columns-container {
+  display: flex;
+  gap: 30px;
+}
+
+.payroll-column {
+  flex: 1;
+}
+
+.financial-column {
+  border-left: 1px solid var(--hr-input-border);
+  padding-left: 30px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px dashed var(--hr-input-border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: var(--hr-text-secondary);
+  font-weight: 500;
+  min-width: 150px;
+}
+
+.detail-value {
+  color: var(--hr-text-primary);
+  text-align: right;
+  font-weight: 400;
+}
+
+.highlight {
+  color: var(--hr-text-light);
+  font-weight: 600;
+}
+
+.amount {
+  font-family: 'Courier New', monospace;
+}
+
+.positive {
+  color: #6bcb77;
+}
+
+.negative {
+  color: #ff6b6b;
+}
+
+.total-row {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--hr-input-border);
+}
+
+.total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--hr-text-light);
+}
+
+.method {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Modal Footer */
+.payroll-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  padding: 20px;
+  border-top: 1px solid var(--hr-input-border);
+  background: var(--hr-background-dark);
+}
+
+.payroll-close-btn, .payroll-print-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--hr-transition-speed);
+}
+
+.payroll-close-btn {
+  background: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+}
+
+.payroll-print-btn {
+  background: var(--hr-button-secondary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+}
+
+.payroll-close-btn:hover, .payroll-print-btn:hover {
+  background: var(--hr-button-hover-bg);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payroll-columns-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .financial-column {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--hr-input-border);
+    padding-top: 20px;
+  }
+  
+  .payroll-modal-footer {
+    justify-content: center;
+  }
 }
 
 .payroll-close-btn:hover {
@@ -256,14 +429,39 @@
   display: flex;
   flex-direction: column;
   border-radius: 0;
+  /* Firefox support */
+  scrollbar-width: thin;
+  scrollbar-color: var(--hr-input-border) transparent;
+}
+/* Webkit browsers (Chrome, Safari, Edge) */
+.payroll-hr-modal::-webkit-scrollbar {
+  width: 8px;
 }
 
+.payroll-hr-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.payroll-hr-modal::-webkit-scrollbar-thumb {
+  background-color: var(--hr-input-border);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.3s ease;
+}
+
+.payroll-hr-modal::-webkit-scrollbar-thumb:hover {
+  background-color: var(--hr-input-focus-border);
+}
+.payroll-hr-form{
+  width: 55%;
+}
 .payroll-hr-modal form {
   display: flex;
   flex-direction: column;
   gap: 12px;
   flex-grow: 1;
-  width: 60%;
+  width: 100%;
 }
 .payroll-hr-form-col label {
   display: flex;
@@ -358,6 +556,182 @@
 .payroll-hr-form-col input {
   width: 100%;
 }
+.payroll-hr-form-main{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+/* .methematical-method{
+  width: 40%;
+  /* height: 100%; */
+  /* height: 400px; */
+  /* background-color:wheat; */
+/* }  */
+.methematical-method {
+  background-color: var(--hr-card-background);
+  border: 1px solid var(--hr-button-primary-bg);
+  border-radius: var(--hr-border-radius);
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: var(--hr-box-shadow-dark);
+  max-width: 400px;
+  height: fit-content;
+  color: var(--hr-text-primary);
+  transition: var(--hr-transition-speed);
+}
+.payroll-hr-rightside{
+  
+}
+.methematical-method:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.methematical-method h4 {
+  color: var(--hr-text-heading);
+  font-family: 'Courier New', monospace;
+  text-decoration: underline;
+  margin-bottom: 15px;
+  text-align: center;
+  letter-spacing: 1px;
+  border-bottom:none
+}
+
+.methematical-method pre {
+  background-color: var(--hr-background-dark);
+  border-left: 3px solid var(--hr-button-secondary-bg);
+  padding: 10px;
+  color: var(--hr-text-secondary);
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  border-radius: 4px;
+}
+
+/* Horizontal rule style for the separator line */
+.methematical-method pre:before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, 
+              transparent 0%, 
+              var(--hr-button-secondary-bg) 20%, 
+              var(--hr-button-secondary-bg) 80%, 
+              transparent 100%);
+  margin: 10px 0;
+}
+
+/* Highlight the final result */
+.methematical-method pre:after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, 
+              transparent 0%, 
+              var(--hr-link-hover-color) 20%, 
+              var(--hr-link-hover-color) 80%, 
+              transparent 100%);
+  margin: 10px 0;
+}
+.proccesing-area {
+  width: auto;
+  background-color: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--hr-box-shadow-light);
+  transition: var(--hr-transition-speed);
+  border: 1px solid var(--hr-input-border);
+}
+.proccesing-area p {
+  color: var(--hr-text-primary);
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.proccesing-area strong {
+  color: var(--hr-text-light);
+  font-weight: 600;
+}
+.action-links {
+  display: flex;
+  flex-direction: column;
+ /* width: 60%; */
+  margin-top: 20px;
+}
+/* Add these styles to your existing CSS */
+
+.action-item.button-style {
+  background-color: var(--hr-button-secondary-bg);
+  padding: 8px 16px;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: var(--hr-transition-speed);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-item.button-style:hover {
+  background-color: var(--hr-button-hover-bg);
+  box-shadow: var(--hr-box-shadow-light);
+}
+
+.action-item.button-style p {
+  color: var(--hr-text-light);
+  font-weight: 500;
+}
+
+.action-item.button-style .action-icon {
+  font-size: 1rem;
+}
+.action-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.action-item p {
+  margin: 0;
+  color: var(--hr-text-secondary);
+  font-size: 0.95rem;
+}
+
+.action-icon {
+  color: var(--hr-text-primary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--hr-transition-speed);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.action-icon:hover {
+  background-color: var(--hr-button-hover-bg);
+  transform: scale(1.1);
+}
+
+.action-icon.new-payroll {
+  color: #6bcb77;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .action-links {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .action-item {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--hr-input-border);
+    padding-bottom: 8px;
+  }
+}
+
 @media (max-width: 768px) {
   .payroll-hr-form-grid {
     flex-direction: column;

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Slip</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        padding: 20px;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+        }
+
+        .page {
+            page-break-inside: avoid;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+
+    .page {
+        width: 210mm;
+        height: 148.5mm;
+        border-bottom: 1px dashed #ccc;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .info,
+    .summary {
+        margin-top: 10px;
+    }
+
+    .info strong {
+        color: #007B9E;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th {
+        background-color: #0F6D66;
+        color: white;
+        padding: 6px;
+        text-align: left;
+    }
+
+    td {
+        padding: 6px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .total-row td {
+        font-weight: bold;
+    }
+
+    .logo {
+        width: 100px;
+        margin-bottom: 10px;
+    }
+
+    .logo img {
+        width: 100%;
+    }
+
+    .receipt-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .details h4 {
+        margin: 4px 0;
+    }
+
+    .seal {
+        margin-top: 40px;
+        text-align: right;
+        font-style: italic;
+        font-size: 14px;
+        color: #555;
+        padding-right: 20px;
+        position: relative;
+    }
+
+    .seal::before {
+        content: "";
+        display: block;
+        width: 180px;
+        height: 1px;
+        background-color: #aaa;
+        position: absolute;
+        right: 20px;
+        top: -10px;
+    }
+</style>
+
+<body>
+    <div class="page">
+        <h1>SALARY SLIP</h1>
+        <div class="receipt-header">
+            <div class="logo">
+                <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+            </div>
+            <div class="details">
+                <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>SMART TRADE CITY, KOTTAKKAL</p>
+                <p>PH: +91 6235774801</p>
+                <p>Email: iqjita@gmail.com</p>
+                <p>Web: www.iqjita.com</p>
+            </div>
+        </div>
+
+        <div class="details">
+            <h4>Date: <span id="date1"></span></h4>
+            <h4>Receipt No: <span id="receipt1"></span></h4>
+            <h4>Employee Name: <span id="name1"></span></h4>
+            <h4>Designation: <span id="designation1"></span></h4>
+            <h4>Month: <span id="month1"></span></h4>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Basic Salary</td>
+                    <td id="basic1"></td>
+                </tr>
+                <tr>
+                    <td>Allowances</td>
+                    <td id="allowances1"></td>
+                </tr>
+                <tr>
+                    <td>Deductions</td>
+                    <td id="deductions1"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Net Salary</td>
+                    <td id="netsalary1"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p><strong>Amount in words:</strong> <span id="amountwords1"></span></p>
+            <p><strong>Processed by:</strong> <span id="user1"></span></p>
+        </div>
+
+        <div class="seal">
+            <p>Sign & seal</p>
+        </div>
+    </div>
+
+    <!-- Duplicate for second copy -->
+    <div class="page">
+        <h1>SALARY SLIP</h1>
+        <div class="receipt-header">
+            <div class="logo">
+                <img src="https://software.iqjita.com/uploads/logo/logo.png" alt="IQJITA Logo">
+            </div>
+            <div class="details">
+                <p><strong>IQJITA INSTITUTE OF EDUCATION</strong><br>SMART TRADE CITY, KOTTAKKAL</p>
+                <p>PH: +91 6235774801</p>
+                <p>Email: iqjita@gmail.com</p>
+                <p>Web: www.iqjita.com</p>
+            </div>
+        </div>
+
+        <div class="details">
+            <h4>Date: <span id="date2"></span></h4>
+            <h4>Receipt No: <span id="receipt2"></span></h4>
+            <h4>Employee Name: <span id="name2"></span></h4>
+            <h4>Designation: <span id="designation2"></span></h4>
+            <h4>Month: <span id="month2"></span></h4>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Basic Salary</td>
+                    <td id="basic2"></td>
+                </tr>
+                <tr>
+                    <td>Allowances</td>
+                    <td id="allowances2"></td>
+                </tr>
+                <tr>
+                    <td>Deductions</td>
+                    <td id="deductions2"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Net Salary</td>
+                    <td id="netsalary2"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p><strong>Amount in words:</strong> <span id="amountwords2"></span></p>
+            <p><strong>Processed by:</strong> <span id="user2"></span></p>
+        </div>
+
+        <div class="seal">
+            <p>Sign & seal</p>
+        </div>
+    </div>
+
+    <script>
+        function numberToWords(num) {
+            const a = [
+                "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+                "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                "Seventeen", "Eighteen", "Nineteen"
+            ];
+            const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+            const numToWords = (n) => {
+                if ((n = n.toString()).length > 9) return 'Overflow';
+                let nStr = ('000000000' + n).substr(-9).match(/.{1,2}/g);
+                let str = '';
+                str += (nStr[0] != 0) ? (a[Number(nStr[0])] || b[nStr[0][0]] + ' ' + a[nStr[0][1]]) + ' Crore ' : '';
+                str += (nStr[1] != 0) ? (a[Number(nStr[1])] || b[nStr[1][0]] + ' ' + a[nStr[1][1]]) + ' Lakh ' : '';
+                str += (nStr[2] != 0) ? (a[Number(nStr[2])] || b[nStr[2][0]] + ' ' + a[nStr[2][1]]) + ' Thousand ' : '';
+                str += (nStr[3] != 0) ? (a[Number(nStr[3])] || b[nStr[3][0]] + ' ' + a[nStr[3][1]]) + ' Hundred ' : '';
+                str += (nStr[4] != 0) ? ((str != '') ? 'and ' : '') +
+                    (a[Number(nStr[4])] || b[nStr[4][0]] + ' ' + a[nStr[4][1]]) + ' ' : '';
+                return str.trim();
+            };
+            return numToWords(Math.floor(num)) + " Rupees Only";
+        }
+
+        const slip = JSON.parse(localStorage.getItem('SalarySlipData'));
+        if (slip) {
+            // Copy 1
+            document.getElementById("date1").textContent = slip.date;
+            document.getElementById("name1").textContent = slip.name;
+            document.getElementById("receipt1").textContent = slip. receiptid;
+            document.getElementById("designation1").textContent = slip.designation;
+            document.getElementById("month1").textContent = slip.month;
+            document.getElementById("basic1").textContent = slip.basic;
+            document.getElementById("allowances1").textContent = slip.allowances;
+            document.getElementById("deductions1").textContent = slip.deductions;
+            document.getElementById("netsalary1").textContent = slip.net;
+            document.getElementById("amountwords1").textContent = numberToWords(slip.net);
+            document.getElementById("user1").textContent = slip.processed_by;
+
+            // Copy 2
+            document.getElementById("date2").textContent = slip.date;
+            document.getElementById("name2").textContent = slip.name;
+            document.getElementById("designation2").textContent = slip.designation;
+            document.getElementById("month2").textContent = slip.month;
+            document.getElementById("receipt2").textContent = slip. receiptid;
+            document.getElementById("basic2").textContent = slip.basic;
+            document.getElementById("allowances2").textContent = slip.allowances;
+            document.getElementById("deductions2").textContent = slip.deductions;
+            document.getElementById("netsalary2").textContent = slip.net;
+            document.getElementById("amountwords2").textContent = numberToWords(slip.net);
+            document.getElementById("user2").textContent = slip.processed_by;
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                window.print();
+                window.close();
+            }, 500);
+        };
+    </script>
+</body>
+
+</html>
