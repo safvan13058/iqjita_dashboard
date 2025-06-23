@@ -419,3 +419,19 @@
 .hr-label {
   font-weight: 600;
 }
+.hr-filter-dropdown {
+  background-color: var(--hr-input-background);
+  color: var(--hr-input-text);
+  border: 1px solid var(--hr-input-border);
+  border-radius: var(--hr-border-radius);
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
+  appearance: none; /* Removes default OS styling */
+}
+
+.hr-filter-dropdown:focus {
+  border-color: var(--hr-input-focus-border);
+  box-shadow: 0 0 0 2px var(--hr-button-hover-shadow);
+}

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import Sidebar from '../sidebar/sidebar';
+import Bottombar from '../bottombar/bottombar';
 import Nav from '../nav/nav';
 import { useAuth } from '../../sections/login/auth';
 
-const HrLayout = ({ allowedRoles}) => {
+const FacLayout = ({ allowedRoles}) => {
   const { isAuthenticated } = useAuth();
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -31,12 +31,11 @@ const HrLayout = ({ allowedRoles}) => {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{marginTop:65}}>
       <Nav />
-      <Sidebar />
+      <Bottombar />
       <div
-        className="main-content hrmaincontent collapsed expanded"
-        style={{ padding: '20px', paddingTop: '60px' }}
+        className=""
       >
         <Outlet />
       </div>
@@ -44,4 +43,4 @@ const HrLayout = ({ allowedRoles}) => {
   );
 };
 
-export default HrLayout;
+export default FacLayout;

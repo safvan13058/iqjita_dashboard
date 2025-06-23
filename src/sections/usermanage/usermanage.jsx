@@ -11,7 +11,7 @@ const UserTable = () => {
     const apiBase = 'https://software.iqjita.com/user_api.php';
     const signupApi = 'https://software.iqjita.com/authentication.php?action=signup';
 
-    const roles = ['admin', 'administrator', 'superadmin', 'staff', 'student'];
+    const roles = ['admin', 'administrator', 'superadmin', 'staff', 'student','Human_Resources','Marketing'];
 
     const [newUser, setNewUser] = useState({
         name: '',

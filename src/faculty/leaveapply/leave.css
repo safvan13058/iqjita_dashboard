@@ -1,0 +1,110 @@
+.faculty-leave-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+}
+
+.faculty-leave-title {
+  font-size: 26px;
+  color: var(--text-heading);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+}
+
+.faculty-leave-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.faculty-leave-form label {
+  color: var(--text-heading);
+  font-weight: 500;
+}
+
+.faculty-leave-form input,
+.faculty-leave-form textarea {
+  padding: 10px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  font-size: 15px;
+  background: var(--input-background);
+  color: var(--input-text);
+}
+
+.faculty-btn-primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  padding: 10px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+.faculty-btn-primary:hover {
+  background: var(--button-hover-bg);
+}
+
+.faculty-leave-subtitle {
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 15px;
+}
+
+.faculty-leave-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faculty-leave-card {
+  background: var(--background-light);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 6px solid var(--primary-color);
+}
+
+.faculty-leave-card p {
+  margin: 4px 0;
+  color: var(--text-paragraph);
+  font-size: 15px;
+}
+
+.faculty-leave-status {
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.faculty-leave-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.faculty-leave-status.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.faculty-leave-status.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.faculty-no-leave {
+  color: var(--text-secondary);
+  font-style: italic;
+}

@@ -137,6 +137,28 @@ const handleProfileUploadClick = () => {
   };
 
 
+  const updateStatus = async (status) => {
+    const confirmed = window.confirm(`Are you sure you want to mark this employee as ${status}?`);
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch('https://software.iqjita.com/hr/update_employee_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employee_id: id,
+          status: status,
+          status_date: new Date().toISOString().split('T')[0]  // yyyy-mm-dd
+        })
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  };
   const handleConnectSubmit = async () => {
     const response = await fetch('https://software.iqjita.com/hr/employee_mapping.php', {
       method: 'POST',
@@ -488,6 +510,18 @@ useEffect(() => {
           <button className="hr-btn hr-btn-primary">View Attendance</button>
           <button className="hr-btn hr-btn-secondary">Performance Review</button>
           <button className="hr-btn hr-btn-graph">Performance Graph</button>
+           <button
+        className="hr-btn hr-btn-graph"
+        onClick={() => updateStatus('resign')}
+      >
+        ReSign
+      </button>
+           <button
+        className="hr-btn hr-btn-graph"
+        onClick={() => updateStatus('termination')}
+      >
+        Termination
+      </button>
         </div>
       </div>
     </div>

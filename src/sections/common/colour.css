@@ -111,7 +111,7 @@
     /* Text Colors */
     --text-primary: #0F6D66;
     --text-secondary: #C48C5A; /* Lighter warm brown */
-    --text-heading: #0D4A46;
+    --text-heading: #0D4A46:
     --text-paragraph: #5C5C5C; /* Softer gray for readability */
     --text-light: #FFFFFF;
   

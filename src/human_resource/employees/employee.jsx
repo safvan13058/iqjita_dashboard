@@ -403,7 +403,7 @@ const EmployeePage = () => {
                         required
                       >
                         <option value="">Select Department</option>
-                        <option value="Human Resources">Human Resources</option>
+                        <option value="Human_Resources">Human Resources</option>
                         <option value="Marketing">Marketing</option>
                         <option value="Sales">Sales</option>
                         <option value="Management">Management</option>
@@ -486,7 +486,7 @@ const EmployeePage = () => {
                     <div className="hr-form-group">
                       <div className="hr-form-group">
                         <label htmlFor="BasicSalary" className='hr-label'>Basic Salary</label>
-                        <input id=" NetSalaryMonthly" name=" NetSalaryMonthly" value={formData.NetSalaryMonthly} onChange={handleChange} />
+                        <input id="NetSalaryMonthly" name="NetSalaryMonthly" value={formData.BasicSalary} onChange={handleChange} />
                       </div>
                       <label htmlFor="NetSalaryHourly" className='hr-label'>Hourly Salary</label>
                       <input id="NetSalaryHourly" name="NetSalaryHourly" value={formData.NetSalaryHourly} onChange={handleChange} />

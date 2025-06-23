@@ -10,7 +10,7 @@ const RoleProtectedRoute = ({ allowedRoles }) => {
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauth" replace />;
+    return <Navigate to="/are_you_fool" replace />;
   }
 
   return <Outlet />;

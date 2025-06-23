@@ -35,6 +35,16 @@ import EmployeeDetails from "./human_resource/single_emp/single_emp"
 import EmployeePerformance from "./human_resource/Performance/performance";
 import Calendar from "./human_resource/calendar/calendar";
 import MailPage from "./human_resource/mailbox/mailbox";
+import EXEmployeePage from "./human_resource/ex_emp/exemp";
+
+
+import FacLayout from "./faculty/layout/faclayout"
+import FacHome from "./faculty/home/home"
+import AttendancePage from "./faculty/attendence/attendence"
+import  EmployeeProfile from "./faculty/profile/profile"
+import SalaryPage from "./faculty/salary_page/salarypage"
+import NotificationsPage from "./faculty/notifications/notification"
+import FacultyLeavePage from "./faculty/leaveapply/leave"
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -62,7 +72,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/pending" element={<Pending />} />
-             <Route path="/faculty" element={<Navigate to="/hr" />} />
+             <Route path="/hr_hr" element={<Navigate to="/hr" />} />
             <Route path="/sales" element={<UnderConstruction />} />
             {/* <Route path="/accounts" element={<Account />} /> */}
            <Route path="/are_you_fool" element={<UnauthorizedPage />} />
@@ -78,9 +88,11 @@ function App() {
             <Route path="/usermanage" element={<UserTable />} />
           </Route>
 
-          <Route path="/hr" element={<HrLayout allowedRoles={['admin', 'superadmin','Human Resource']} />}>
+          <Route path="/hr" element={<HrLayout allowedRoles={['admin', 'superadmin','human_resources']} />}>
             <Route index element={<HrDashboard />} />
             <Route path="employees" element={<EmployeePage/>} />
+            <Route path="exemployees" element={<EXEmployeePage/>} />
+
             <Route path="attendance" element={<AttendanceTable />} />
             <Route path="Leave" element={<LeaveTable/>} />
             <Route path="Payroll" element={<PayrollTable/>} />
@@ -91,6 +103,19 @@ function App() {
             {/* add more HR routes here */}
           </Route>
 
+           <Route path="/faculty" element={<FacLayout allowedRoles={['admin', 'superadmin','human_resources']} />}>
+            <Route index element={<FacHome />} />
+            <Route path="home" element={<EmployeePage/>} />
+            <Route path="attendence" element={<AttendancePage/>} />
+            <Route path="profile" element={<EmployeeProfile/>} />
+            <Route path="SalaryPage" element={<SalaryPage/>} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="LeavePage" element={<FacultyLeavePage />} />
+            
+            {/* add more HR routes here */}
+          </Route>
+
+           
           {/* Redirect all other paths to login if not authenticated */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

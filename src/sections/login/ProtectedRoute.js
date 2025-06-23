@@ -11,9 +11,13 @@ function ProtectedLayout({allowedRoles}) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!["admin", "administrator", "superadmin"].includes(user.role)) {
+  if (!["admin", "administrator", "superadmin","Human_Resources"].includes(user.role)) {
     return <Navigate to="/unauth" replace />;
   }
+   if (['Human_Resources'].includes(user.role)) {
+    return <Navigate to="/hr" replace />;
+  }
+
   
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/are_you_fool"  replace />;

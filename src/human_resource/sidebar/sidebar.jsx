@@ -24,6 +24,7 @@ const Sidebar = () => {
     { path: "/hr/performance", label: "Performance", icon: <MdTrendingUp /> },
     { path: "/hr/calendar", label: "Calendar", icon: <FaRegCalendarAlt /> },
     { path: "/hr/mailbox", label: "Mail Box", icon: <MdEmail /> },
+    { path: "/hr/exemployees", label: "Ex-Employee", icon: <FaUserTie /> },
   ];
 
   return (
@@ -33,6 +34,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="sidebar-navhr">
+        <div className="sidebar-scrollable-nav">
         {navItems.map((item) => (
           <Link
             to={item.path}
@@ -45,6 +47,7 @@ const Sidebar = () => {
 
 
         ))}
+        </div>
         <div className="sidebar-footerhr">
           <Link to="/" className="nav-linkhr">
             <span className="nav-iconhr">
