@@ -1,40 +1,80 @@
-/* Main Container */
+/* Attendance Table Component - Full Responsive CSS */
+
+/* Base Styles */
 .attent-table-container {
   overflow-x: auto;
-  margin-top: 15px;
-  border-radius: 6px;
+  margin: 15px 0;
+  border-radius: 8px;
   background-color: var(--hr-card-background, #151529);
-  padding: 10px;
-  box-shadow: var(--hr-box-shadow-dark, 2px 0 10px rgba(0, 0, 0, 0.5));
+  padding: 12px;
+  box-shadow: var(--hr-box-shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.3));
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-/* Control Panel */
-/* .attent-controls {
+.attent-controls {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  justify-content: space-around;
-} */
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
 
+/* Form Elements */
+.attent-dropdown,
+.attent-button,
 .attent-search-input {
-  padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 200px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--hr-input-border, #3d3f6e);
+  background-color: var(--hr-input-background, #27293d);
+  color: var(--hr-text-primary, #ffffff);
+  font-size: 14px;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.attent-dropdown {
+  width: 220px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
 }
 
 .attent-button {
-  background-color: var(--hr-button-primary-bg, #27293d);
+  background-color: var(--hr-button-primary-bg, #3d3f6e);
   color: var(--hr-button-primary-text, #ffffff);
-  padding: 3px 10px;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  white-space: nowrap;
+  text-align: center;
+  min-width: 100px;
+  font-weight: 500;
 }
 
 .attent-button:hover {
-  background-color: var(--hr-button-hover-bg, #3d3f6e);
+  background-color: var(--hr-button-hover-bg, #575b8c);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.attent-button:active {
+  transform: translateY(0);
+}
+
+.attent-search-input {
+  width: 240px;
+  flex-grow: 1;
+}
+
+.attent-search-input::placeholder {
+  color: var(--hr-text-secondary, #a0a0c0);
+  opacity: 0.8;
+}
+
+.attent-search-input:focus {
+  border-color: var(--hr-input-focus-border, #5d6bbf);
+  box-shadow: 0 0 0 2px rgba(93, 107, 191, 0.2);
 }
 
 /* Table Styles */
@@ -42,18 +82,28 @@
   width: 100%;
   border-collapse: collapse;
   color: var(--hr-table-text, #ffffff);
+  font-size: 14px;
+  table-layout: fixed;
 }
 
 .attent-attendance-table th {
   background-color: var(--hr-table-header-bg, #0e0e23);
   color: var(--hr-table-header-text, #ffffff);
-  padding: 8px;
+  padding: 14px 10px;
   text-align: left;
+  position: sticky;
+  top: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 13px;
 }
 
 .attent-attendance-table td {
-  padding: 8px;
+  padding: 12px 10px;
   text-align: left;
+  border-bottom: 1px solid var(--hr-table-border, #2a2a4a);
+  word-break: break-word;
 }
 
 .attent-table-row {
@@ -61,128 +111,288 @@
 }
 
 .attent-table-row-alt {
-  background-color: var(--hr-table-row-alt-bg, #1f1f3b);
+  background-color: var(--hr-table-row-alt-bg, #1e1e3a);
 }
 
 .attent-attendance-table tr:hover {
-  background-color: var(--hr-background-light, #1a1a2e);
+  background-color: var(--hr-background-light, #252547);
 }
 
-/* Status Colors */
+/* Status Indicators */
 .attent-status-present {
-  color: green;
+  color: #4caf50;
+  font-weight: 500;
 }
 
 .attent-status-absent {
-  color: red;
+  color: #f44336;
+  font-weight: 500;
 }
 
 .attent-status-leave {
-  color: orange;
+  color: #ff9800;
+  font-weight: 500;
 }
 
 .remark-late {
-  /* background-color: yellow; */
-  color: yellow; /* for readability */
+  color: #ffeb3b;
+  font-style: italic;
 }
 
 .remark-ontime {
-  /* background-color: #28a745; bootstrap green or your green */
-  color:  #28a745;
+  color: #28a745;
+  font-weight: 500;
 }
 
-.attent-dropdown {
-  padding: 5px;
-  width:200px;
+/* Scrollbar Styling (WebKit) */
+.attent-table-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.attent-table-container::-webkit-scrollbar-track {
+  background: var(--hr-background-light, #1a1a2e);
   border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: var(--hr-card-background, #151529);
-  color: var(--hr-text-primary, #ffffff);
-}
-.attent-search-input {
-  width: 220px;
-  padding: 8px 12px;
-  font-size: 14px;
-  color: var(--hr-text-primary);
-  background-color: var(--hr-input-background);
-  border: 1.5px solid var(--hr-input-border);
-  border-radius: var(--hr-border-radius);
-  transition: border-color var(--hr-transition-speed), box-shadow var(--hr-transition-speed);
-  outline: none;
 }
 
-.attent-search-input::placeholder {
-  color: var(--hr-text-secondary);
+.attent-table-container::-webkit-scrollbar-thumb {
+  background-color: var(--hr-button-primary-bg, #3d3f6e);
+  border-radius: 4px;
 }
 
-.attent-search-input:hover {
-  border-color: var(--hr-button-hover-bg);
-}
-
-.attent-search-input:focus {
-  border-color: var(--hr-input-focus-border);
-  box-shadow: 0 0 8px var(--hr-input-focus-border);
-}
-.attent-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Responsive behavior */
-@media (max-width: 768px) {
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
   .attent-controls {
-    justify-content: center;
+    gap: 10px;
   }
-
-  .attent-dropdown,
-  .attent-button,
+  
+  .attent-dropdown {
+    width: 200px;
+  }
+  
   .attent-search-input {
-    width: 100%;
-    max-width: 300px;
+    width: 200px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 992px) {
+  .attent-attendance-table th,
+  .attent-attendance-table td {
+    padding: 10px 8px;
+  }
+  
+  /* Hide Shift column */
+  .attent-attendance-table th:nth-child(6),
+  .attent-attendance-table td:nth-child(6) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
   .attent-controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
+  
+  .attent-dropdown,
+  .attent-search-input,
+  .attent-button {
+    width: 100%;
+    max-width: none;
+  }
+  
+  /* Hide Duration column */
+  .attent-attendance-table th:nth-child(7),
+  .attent-attendance-table td:nth-child(7) {
+    display: none;
+  }
+  
+  /* Make status more visible */
+  .attent-status-present,
+  .attent-status-absent,
+  .attent-status-leave {
+    font-weight: 600;
+  }
+}
 
+@media (max-width: 576px) {
+  .attent-table-container {
+    padding: 8px;
+    margin: 10px 0;
+  }
+  
+  .attent-attendance-table {
+    font-size: 13px;
+  }
+  
+  .attent-attendance-table th,
+  .attent-attendance-table td {
+    padding: 8px 6px;
+  }
+  
+  /* Hide ID and Remark columns */
+  .attent-attendance-table th:nth-child(1),
+  .attent-attendance-table td:nth-child(1),
+  .attent-attendance-table th:nth-child(9),
+  .attent-attendance-table td:nth-child(9) {
+    display: none;
+  }
+  
+  /* Compact time display */
+  .attent-attendance-table td:nth-child(4),
+  .attent-attendance-table td:nth-child(5) {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .attent-controls {
+    display: none;
+  }
+  
+  .attent-table-container {
+    overflow: visible;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .attent-attendance-table {
+    width: 100%;
+    color: #000;
+    font-size: 12px;
+  }
+  
+  .attent-attendance-table th {
+    background-color: #f1f1f1 !important;
+    color: #000 !important;
+    padding: 8px 6px;
+  }
+  
+  .attent-table-row,
+  .attent-table-row-alt {
+    background-color: #fff !important;
+  }
+  
+  .attent-attendance-table tr {
+    page-break-inside: avoid;
+  }
+  
+  /* Show all columns for printing */
+  .attent-attendance-table th,
+  .attent-attendance-table td {
+    display: table-cell !important;
+  }
+  
+  /* Status colors for print */
+  .attent-status-present {
+    color: #2e7d32 !important;
+  }
+  .attent-status-absent {
+    color: #c62828 !important;
+  }
+  .attent-status-leave {
+    color: #e65100 !important;
+  }
+}
+
+/* Animation for table rows */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.attent-attendance-table tbody tr {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.attent-attendance-table tbody tr:nth-child(odd) {
+  animation-delay: 0.05s;
+}
+
+/* Loading state */
+.attent-loading {
+  position: relative;
+  min-height: 200px;
+}
+
+.attent-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--hr-button-primary-bg, #3d3f6e);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Mobile Filter Toggle Styles */
+.attent-mobile-filter-btn {
+  display: none;
+  background-color: var(--hr-button-primary-bg, #3d3f6e);
+  color: white;
+  border: none;
+  background:  var(--hr-button-primary-bg, #3d3f6e);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  width: 100%;
+  font-weight: 500;
+}
+.attent-mobile-filter-btn:hover{
+  background: var(--hr-button-primary-bg, #3d3f6e);
+}
+.attent-mobile-filter-btn svg {
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+.attent-mobile-filter-btn.active svg {
+  transform: rotate(180deg);
+}
+
+.attent-controls-wrapper {
+  width: 100%;
+}
+
+/* Show/hide filters on mobile */
+@media (max-width: 768px) {
+  .attent-mobile-filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .attent-controls {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background-color: var(--hr-card-background);
+    border-radius: 8px;
+    margin-top: 5px;
+    box-shadow: var(--hr-box-shadow-dark);
+  }
+  
+  .attent-controls.active {
+    display: flex;
+  }
+  
   .attent-dropdown,
   .attent-button,
   .attent-search-input {
     width: 100%;
   }
-}
-
-/* Already good styles, just leave them */
-.attent-dropdown {
-  padding: 5px;
-  width: 200px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: var(--hr-card-background, #151529);
-  color: var(--hr-text-primary, #ffffff);
-}
-
-.attent-button {
-  background-color: var(--hr-button-primary-bg, #27293d);
-  color: var(--hr-button-primary-text, #ffffff);
-  padding: 3px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.attent-search-input {
-  padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: var(--hr-card-background, #151529);
-  color: var(--hr-text-primary, #ffffff);
 }

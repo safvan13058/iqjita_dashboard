@@ -7,6 +7,12 @@ const AttendanceTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [employeeList, setEmployeeList] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Toggle mobile filters
+  const toggleMobileFilters = () => {
+    setShowMobileFilters(!showMobileFilters);
+  };
   const fetchAttendance = async (filter = '') => {
     try {
       let url = 'https://software.iqjita.com/hr/attendence.php';
@@ -79,34 +85,45 @@ const AttendanceTable = () => {
   return (
     <>
       <h2 className="hr-title">Attendance</h2>
+      <button
+        className={`attent-mobile-filter-btn ${showMobileFilters ? 'active' : ''}`}
+        onClick={toggleMobileFilters}
+      >
+        {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    
+      <div className="attent-controls-wrapper">
+        <div className={`attent-controls ${showMobileFilters ? 'active' : ''}`}>
+          <select className="attent-dropdown" onChange={handleEmployeeFilter}>
+            {employeeList.map((employee, index) => (
+              <option key={index} value={employee}>{employee}</option>
+            ))}
+          </select>
 
-      <div className="attent-controls">
-        <select className="attent-dropdown" onChange={handleEmployeeFilter}>
-          {employeeList.map((employee, index) => (
-            <option key={index} value={employee}>{employee}</option>
-          ))}
-        </select>
+          <button className="attent-button" onClick={() => filterData('Today')}>Today</button>
+          <button className="attent-button" onClick={() => filterData('Yesterday')}>Yesterday</button>
+          <button className="attent-button" onClick={() => filterData('This Month')}>This Month</button>
+          
+          <input
+            type="month"
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            className="attent-search-input"
+          />
 
-        <button className="attent-button" onClick={() => filterData('Today')}>Today</button>
-        <button className="attent-button" onClick={() => filterData('Yesterday')}>Yesterday</button>
-        <button className="attent-button" onClick={() => filterData('This Month')}>This Month</button>
-        {/* <button className="attent-button" onClick={() => fetchAttendance()}>All</button> */}
-        <input
-          type="month"
-          value={selectedMonth}
-          onChange={handleMonthChange}
-          className="attent-search-input"
-          style={{ width: '100px' }}
-        />
-
-        <input
-          type="text"
-          placeholder="Search by Name or Class"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="attent-search-input"
-        />
+          <input
+            type="text"
+            placeholder="Search by Name or Class"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="attent-search-input"
+          />
+        </div>
       </div>
+      
 
       <div className="attent-table-container">
         <table className="attent-attendance-table">

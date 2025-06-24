@@ -730,6 +730,12 @@
     border-bottom: 1px solid var(--hr-input-border);
     padding-bottom: 8px;
   }
+  .payroll-hr-form{
+    width: 100%;
+  }
+  .payroll-hr-form-main{
+  flex-direction: column;
+  }
 }
 
 @media (max-width: 768px) {

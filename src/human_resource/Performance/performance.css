@@ -248,3 +248,130 @@
 .hr-input.hr-input-perf{
   width:90% !important;
 }
+/* Tablet-Specific Performance Page Styles (768px - 1024px) */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Base Container */
+  .hr-page-container {
+    padding: 15px;
+  }
+
+  /* Header Bar */
+  .hr-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Performance Cards Grid */
+  .hr-perform-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  /* Individual Cards */
+  .hr-card-perform {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  /* Employee Header */
+  .hr-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .hr-profile-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* Details Grid */
+  .hr-details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Inputs */
+  .hr-input.hr-input-perf {
+    width: 100% !important;
+  }
+
+  /* Chart Container */
+  .hr-card {
+    height: 350px;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Filter Dropdown */
+  .hr-perform-filter select {
+    width: 120px;
+    padding: 8px;
+  }
+
+  /* Criteria Modal */
+  .hr-criteria-modal {
+    width: 80%;
+    padding: 1.5rem;
+  }
+
+  .hr-criteria-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .hr-criteria-form {
+    flex-wrap: wrap;
+  }
+
+  .hr-criteria-input {
+    min-width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* Buttons */
+  .hr-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Portrait Tablet Specific Adjustments */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .hr-perform-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-card {
+    height: 300px;
+  }
+
+  .hr-criteria-modal {
+    width: 90%;
+  }
+}
+
+/* Landscape Tablet Specific Adjustments */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .hr-perform-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hr-card {
+    height: 400px;
+  }
+}
+
+/* Edge Cases - Smaller Tablets */
+@media (min-width: 768px) and (max-width: 820px) {
+  .hr-card-perform {
+    padding: 0.8rem;
+  }
+
+  .hr-subsection-heading {
+    font-size: 1.1rem;
+  }
+}
