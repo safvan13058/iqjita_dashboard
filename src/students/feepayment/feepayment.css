@@ -1,0 +1,153 @@
+.feepayment-container {
+  /* min-height: 80vh; */
+  /* background-color: #f3f4f6; */
+  position: relative;
+  /* padding-bottom: 100px; */
+  margin-bottom: 50px;
+  padding: 0 10px 100px 10px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.feepayment-inner {
+  max-width: 800px;
+  margin: auto;
+  /* padding-top: 20px; */
+}
+
+.feepayment-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f766e;
+  /* margin-bottom: 16px; */
+  margin: 0;
+}
+
+.feepayment-installment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feepayment-installment {
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.feepayment-installment.paid {
+  background-color: #d1fae5;
+}
+
+.feepayment-installment h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feepayment-installment p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.feepayment-installment-right {
+  text-align: right;
+}
+
+.feepayment-installment-right p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feepayment-status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.feepayment-status.paid {
+  background-color: #bbf7d0;
+  color: #065f46;
+}
+
+.feepayment-status.unpaid {
+  background-color: #fef9c3;
+  color: #92400e;
+}
+
+.feepayment-section {
+  margin-top: 20px;
+}
+
+.feepayment-balance-box {
+  background-color: white;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #dc2626;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.feepayment-table-container {
+  overflow-x: auto;
+}
+
+.feepayment-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.feepayment-table th,
+.feepayment-table td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.feepayment-table thead {
+  background-color: #e5e7eb;
+}
+
+.feepayment-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.feepayment-bottom-bar {
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid #d1d5db;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.feepayment-button {
+  width: 100%;
+  background-color: #0f766e;
+  color: white;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.feepayment-button:hover {
+  background-color: #115e59;
+}
