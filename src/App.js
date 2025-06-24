@@ -45,6 +45,9 @@ import  EmployeeProfile from "./faculty/profile/profile"
 import SalaryPage from "./faculty/salary_page/salarypage"
 import NotificationsPage from "./faculty/notifications/notification"
 import FacultyLeavePage from "./faculty/leaveapply/leave"
+import AllLeavePage from "./faculty/leaveapply/allleave"
+import MarketingBannerPage from "./faculty/marketing/staffmarketing/staffmark"
+import  StuMarketingBannerPage from "./faculty/marketing/studentmarketing/studentsmark"
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -72,7 +75,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/pending" element={<Pending />} />
-             <Route path="/hr_hr" element={<Navigate to="/hr" />} />
+             <Route path="/hrhr" element={<Navigate to="/hr" />} />
             <Route path="/sales" element={<UnderConstruction />} />
             {/* <Route path="/accounts" element={<Account />} /> */}
            <Route path="/are_you_fool" element={<UnauthorizedPage />} />
@@ -111,6 +114,9 @@ function App() {
             <Route path="SalaryPage" element={<SalaryPage/>} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="LeavePage" element={<FacultyLeavePage />} />
+            <Route path="all-leaves" element={<AllLeavePage />} />
+            <Route path="staffmarketing" element={<MarketingBannerPage />} />
+            <Route path="stumarketing" element={< StuMarketingBannerPage />} />
             
             {/* add more HR routes here */}
           </Route>

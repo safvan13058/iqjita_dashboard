@@ -1,0 +1,93 @@
+.all-leaves-container {
+  padding: 10px;
+  font-family: sans-serif;
+}
+
+.all-leaves-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #0F6D66;
+}
+
+.status-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.status-tab {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #f4f4f4;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.status-tab.active {
+  background: #0F6D66;
+  color: white;
+  border-color: #0F6D66;
+}
+
+.leave-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leave-card {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-left: 6px solid transparent;
+  border-radius: 8px;
+  background: white;
+}
+
+.leave-card.pending {
+  border-left-color: orange;
+}
+
+.leave-card.approved {
+  border-left-color: green;
+}
+
+.leave-card.rejected {
+  border-left-color: red;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.status.pending {
+  background-color: #fff4e5;
+  color: #c77d00;
+}
+
+.status.approved {
+  background-color: #e6ffed;
+  color: #1a7f37;
+}
+
+.status.rejected {
+  background-color: #ffe5e5;
+  color: #cc1f1a;
+}
+
+.no-data {
+  color: #888;
+  font-style: italic;
+}

@@ -26,7 +26,7 @@ const Sidebar = () => {
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
     { path: "/alumni", label: "Alumni", icon: <GiGraduateCap /> },
-    { path: "/faculty", label: "Human Resources", icon: <RiTeamLine /> },
+    { path: "/hrhr", label: "Human Resources", icon: <RiTeamLine /> },
     { path: "/usermanage", label: "User Manage", icon: <FaUserShield /> },
 
 

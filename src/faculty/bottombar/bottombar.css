@@ -1,4 +1,3 @@
-Bottombar Styles
 .fac-bottombar {
   position: fixed;
   bottom: 0;
@@ -12,6 +11,7 @@ Bottombar Styles
   justify-content: center;
   z-index: 1000;
   box-shadow: var(--box-shadow-dark);
+  padding-bottom: env(safe-area-inset-bottom); /* for iPhones with notch */
 }
 
 .fac-bottombar-nav {
@@ -41,6 +41,7 @@ Bottombar Styles
   transition: all var(--transition-speed);
   min-width: 50px;
   height: 100%;
+  font-size: 0.75rem;
 }
 
 .fac-nav-link.fac-active {
@@ -55,12 +56,18 @@ Bottombar Styles
   font-size: 1.5rem;
 }
 
-/* Responsive adjustments */
+/* Show only on mobile devices */
+@media (min-width: 769px) {
+  .fac-bottombar {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .fac-bottombar {
     height: 60px;
   }
-  
+
   .fac-nav-icon {
     font-size: 1.3rem;
   }
@@ -71,12 +78,13 @@ Bottombar Styles
     justify-content: space-between;
     padding: 0 5px;
   }
-  
+
   .fac-nav-link {
     min-width: 40px;
     padding: 8px 6px;
+    font-size: 0.7rem;
   }
-  
+
   .fac-nav-icon {
     font-size: 1.2rem;
   }

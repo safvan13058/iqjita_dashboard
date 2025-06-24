@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import "./leave.css";
+import { useNavigate } from 'react-router-dom';
 
 const FacultyLeavePage = () => {
+  const navigate = useNavigate();
   const [leaves, setLeaves] = useState([]);
   const [formData, setFormData] = useState({
     startDate: "",
     endDate: "",
-    reason: ""
+    reason: "",
+    category: ""
   });
 
   const handleChange = (e) => {
@@ -34,23 +37,42 @@ const FacultyLeavePage = () => {
       <h2 className="faculty-leave-title">Apply for Leave</h2>
 
       <form className="faculty-leave-form" onSubmit={handleSubmit}>
-        <label>Start Date</label>
-        <input
-          type="date"
-          name="startDate"
-          value={formData.startDate}
-          onChange={handleChange}
-          required
-        />
+        <div className="leave-date">
+          <div>
+            <label>Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
 
-        <label>End Date</label>
-        <input
-          type="date"
-          name="endDate"
-          value={formData.endDate}
+            <label>End Date</label>
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+        <label>Category</label>
+        <select
+          name="category"
+          value={formData.category}
           onChange={handleChange}
           required
-        />
+        >
+          <option value="">Select a category</option>
+          <option value="Sick Leave">Sick Leave</option>
+          <option value="Personal Leave">Personal Leave</option>
+          <option value="Casual Leave">Casual Leave</option>
+        </select>
+
 
         <label>Reason</label>
         <textarea
@@ -63,8 +85,12 @@ const FacultyLeavePage = () => {
 
         <button type="submit" className="faculty-btn-primary">Submit Leave</button>
       </form>
-
-      <h3 className="faculty-leave-subtitle">Your Leave Applications</h3>
+      <div className="faculty-leave-header">
+        <h3 className="faculty-leave-subtitle">Your Leave Applications</h3>
+        <button className="see-all-btn" onClick={() => navigate("/faculty/all-leaves")}>
+          See All
+        </button>
+      </div>
       <div className="faculty-leave-cards">
         {leaves.length === 0 ? (
           <p className="faculty-no-leave">No leave applications yet.</p>

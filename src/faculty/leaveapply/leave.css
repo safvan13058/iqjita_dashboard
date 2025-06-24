@@ -1,12 +1,16 @@
 .faculty-leave-container {
   max-width: 900px;
-  margin: 40px auto;
-  padding: 30px;
+  /* margin:  auto; */
+  padding: 10px;
   background: var(--card-background);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow-light);
 }
-
+.leave-date{
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
 .faculty-leave-title {
   font-size: 26px;
   color: var(--text-heading);
@@ -107,4 +111,18 @@
 .faculty-no-leave {
   color: var(--text-secondary);
   font-style: italic;
+}
+.faculty-leave-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.see-all-btn {
+  background: none;
+  border: none;
+  color: #0F6D66;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
 }

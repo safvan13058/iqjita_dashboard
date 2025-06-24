@@ -239,4 +239,9 @@
           color: #777;
           font-size: 12px;
         }
-  
+  .faculty-feature-card-marketing{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+
+  }
