@@ -901,15 +901,10 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                           required
                         />
                       </label>
-                      <label>
+                      {/* <label className='desknetsalary'>
                         NET SALARY :
                         <h1 style={{ color: "white" }}>Rs.{formData.totalSalary}/-</h1>
-                      </label>
-                    </div>
-
-
-                    <div className="payroll-hr-form-col">
-
+                      </label> */}
                       <label>
                         Allowances
                         <input
@@ -922,6 +917,12 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                           required
                         />
                       </label>
+                    </div>
+
+
+                    <div className="payroll-hr-form-col">
+
+                      
 
 
                       <label>
@@ -1012,6 +1013,10 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                           <option value="upi">UPI</option>
                           <option value="cash">Cash</option>
                         </select>
+                      </label>
+                      <label className='mobnetsalary'>
+                        NET SALARY :
+                        <h1 style={{ color: "white" }}>Rs.{formData.totalSalary}/-</h1>
                       </label>
 
 
