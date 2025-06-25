@@ -8,14 +8,17 @@ const SalaryPage = () => {
   const employeeID = JSON.parse(localStorage.getItem('user'))?.username;
 
   useEffect(() => {
-     if (employeeID) {
+    if (employeeID) {
       fetch(`https://software.iqjita.com/employee_full_data.php?action=full_profile&employee_id=${employeeID}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
+            console.log("salary==", data)
             setEmployeeData(data);
-            if (Array.isArray(data.salary)) {
-              setSalaryData(data.salary);
+            if (Array.isArray(data.payroll_history
+            )) {
+              setSalaryData(data.payroll_history
+              );
             }
           } else {
             console.error("Failed to load employee data");
@@ -52,7 +55,9 @@ const SalaryPage = () => {
                 <h3>{salary.SalaryMonth}</h3>
                 <p><strong>Base Salary:</strong> ₹{salary.BaseSalary}</p>
                 <p><strong>Total:</strong> ₹{salary.TotalSalary}</p>
-                <p><strong>Status:</strong> Paid</p>
+                <p><strong>
+                  ReceiptID
+                  :</strong> {salary.ReceiptID}</p>
                 <p><strong>Paid On:</strong> {salary.PayDate}</p>
               </div>
               <div className="salary-card-actions">

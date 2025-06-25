@@ -20,7 +20,7 @@ const FacLayout = ({ allowedRoles}) => {
 
   const role = user.role.toLowerCase();
 
-  if (!["admin", "administrator", "superadmin", "human_resources"].includes(role)) {
+  if (!["sales","marketing","management","academics"].includes(role)) {
     // Role not in general allowed list
     return <Navigate to="/unauth" replace />;
   }

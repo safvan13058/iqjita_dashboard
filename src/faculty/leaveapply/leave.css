@@ -1,7 +1,7 @@
 .faculty-leave-container {
   max-width: 900px;
   /* margin:  auto; */
-  padding: 10px;
+  padding: 5px 10px 100px 10px;
   background: var(--card-background);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow-light);

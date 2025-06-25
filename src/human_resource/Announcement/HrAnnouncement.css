@@ -1,6 +1,6 @@
 
 .hr-announcement-container {
-  padding: 2rem;
+  /* padding: 2rem; */
   background: var(--hr-primary-color);
   color: var(--hr-text-light);
   font-family: sans-serif;
@@ -39,6 +39,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color:white;
 }
 
 .hr-announcement-button {

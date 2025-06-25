@@ -8,14 +8,21 @@ const LeaveTable = () => {
   const [selectedLeave, setSelectedLeave] = useState(null);
 
   // Fetch leave list from API
-  useEffect(() => {
+  const fetchLeaves = () => {
     fetch("https://software.iqjita.com/hr/leave_api.php?action=list_all")
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setLeaves(data);
-        else if (data.success && Array.isArray(data.leaves)) setLeaves(data.leaves);
+        if (Array.isArray(data)) {
+          setLeaves(data);
+        } else if (data.success && Array.isArray(data.leaves)) {
+          setLeaves(data.leaves);
+        }
       })
       .catch(err => console.error("Error fetching leaves:", err));
+  };
+
+  useEffect(() => {
+    fetchLeaves(); // call on first render
   }, []);
 
   // Filtered leaves
@@ -25,11 +32,30 @@ const LeaveTable = () => {
   );
 
   const openModal = (leave) => {
+     if (leave.IsRead !== "1") {
+    fetch(`https://software.iqjita.com/hr/leave_api.php?action=mark_as_read&leave_id=${leave.LeaveID}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // body: JSON.stringify({ leave_id: leave.LeaveID }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Optionally update UI state if needed
+          leave.IsRead = "1"; // Only works if item is from a stateful array
+        }
+      })
+      .catch(err => console.error("Error marking leave as read", err));
+  }
     setSelectedLeave(leave);
+    fetchLeaves()
     setRemarks(leave.Remark || '');
   };
 
   const closeModal = () => {
+     fetchLeaves()
     setSelectedLeave(null);
     setRemarks('');
   };
@@ -38,11 +64,11 @@ const LeaveTable = () => {
     if (!selectedLeave?.LeaveID) return;
 
     fetch("https://software.iqjita.com/hr/leave_api.php", {
-      method: "POST",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "update",
-        id: selectedLeave.LeaveID,
+        leave_id: selectedLeave.LeaveID,
         status: newStatus,
         remark: remarks
       })
@@ -56,6 +82,7 @@ const LeaveTable = () => {
               : leave
           );
           setLeaves(updated);
+          fetchLeaves()
           closeModal();
         } else {
           alert("Update failed");
@@ -81,7 +108,7 @@ const LeaveTable = () => {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Reason</th>
+              <th>Emp-Id</th>
               <th>From</th>
               <th>To</th>
               <th>Status</th>
@@ -92,8 +119,8 @@ const LeaveTable = () => {
             {filteredData.length ? (
               filteredData.map((item, idx) => (
                 <tr key={idx} className={idx % 2 === 0 ? 'leavetable-row' : 'leavetable-row-alt'}>
-                  <td>{item.name}</td>
-                  <td>{item.Reason}</td>
+                  <td> {item.IsRead !== "1" && <span className="unread-dot-inline" />}{item.EmployeeName}</td>
+                  <td>{item.EmployeeID}</td>
                   <td>{item.StartDate}</td>
                   <td>{item.EndDate}</td>
                   <td>{item.Status}</td>
@@ -124,7 +151,7 @@ const LeaveTable = () => {
             <p className="hrleave-info hr-text-primary">
               <label>
                 <span>Name:</span>
-                <input type="text" value={selectedLeave.name} readOnly className="hrleave-display-input" />
+                <input type="text" value={selectedLeave.EmployeeName} readOnly className="hrleave-display-input" />
               </label>
             </p>
 

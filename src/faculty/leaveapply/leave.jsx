@@ -15,17 +15,21 @@ const FacultyLeavePage = () => {
   const employeeId = JSON.parse(localStorage.getItem('user'))?.username; // Replace with dynamic employee ID (e.g., from context/login)
    
   // 📥 Fetch leaves for this employee
-  useEffect(() => {
-    fetch(`https://software.iqjita.com/hr/leave_api.php?action=list&employee_id=${employeeId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const firstThree = data.slice(0, 3); // 👈 Only first 3 leave entries
-          setLeaves(firstThree);
-        }
-      })
-      .catch(err => console.error("Failed to fetch leaves:", err));
-  }, []);
+ const fetchLeaves = () => {
+  fetch(`https://software.iqjita.com/hr/leave_api.php?action=list&employee_id=${employeeId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        const firstThree = data.slice(0, 3); // Only first 3 leave entries
+        setLeaves(firstThree);
+        console.log("Leaves fetched:", data);
+      }
+    })
+    .catch(err => console.error("Failed to fetch leaves:", err));
+};
+useEffect(() => {
+  fetchLeaves();
+}, []);
 
 
   // 📝 Handle input change
@@ -58,9 +62,13 @@ const FacultyLeavePage = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
+          console.log("Leaves fetched:", data);
           // Add newly submitted leave to list
-          setLeaves([data.leave, ...leaves]);
+         
+         fetchLeaves();
           setFormData({ startDate: "", endDate: "", reason: "", category: "" });
+          
+
         } else {
           alert(data.message || "Error submitting leave");
         }
