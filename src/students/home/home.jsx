@@ -10,14 +10,19 @@ import './home.css'; // Make sure your CSS is loaded
 import { FaUsersCog } from "react-icons/fa";
 const StuHome = () => {
   const navigate = useNavigate();
+  const [announcements, setAnnouncements] = useState([]);
   // Dynamic banner images
-  const bannerImages = [
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=Welcome+Back',
-    'https://via.placeholder.com/800x200/9B5A2A/FFFFFF?text=Upcoming+Events',
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=New+Features',
-    'https://via.placeholder.com/800x200/9B5A2A/FFFFFF?text=School+Updates',
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=Professional+Development'
-  ];
+  const [bannerImages, setBannerImages] = useState([]);
+
+  useEffect(() => {
+    fetch('https://software.iqjita.com/bannerimage.php?type=student')
+      .then(res => res.json())
+      .then(data => {
+        const urls = data.map(item => item.image_url);
+        setBannerImages(urls);
+      })
+      .catch(err => console.error('Failed to load banners:', err));
+  }, []);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [notifications, setNotifications] = useState(3); // Example notification count
@@ -30,6 +35,9 @@ const StuHome = () => {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
   const user = {
+    data: {
+      course: "Math" // Use actual user course here
+    },
     name: "John Doe",
     department: "Marketing", // Not Academics
     performance: {
@@ -82,6 +90,18 @@ const StuHome = () => {
       },
     },
   };
+  useEffect(() => {
+    fetch(`https://software.iqjita.com/announcement_api.php?action=list&type=${user.data.course}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setAnnouncements(data.announcements.slice(0, 3));
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch announcements", err);
+      });
+  }, [user.data.course]);
 
   return (
     <div className="faculty-container">
@@ -119,9 +139,9 @@ const StuHome = () => {
           ))}
         </div>
       </div>
-        <>
-          {/* Quick Stats */}
-          {/* <div className="faculty-stats-container">
+      <>
+        {/* Quick Stats */}
+        {/* <div className="faculty-stats-container">
             <div className="faculty-stat-card">
               <FaUserGraduate className="faculty-stat-icon" />
               <div>
@@ -145,51 +165,51 @@ const StuHome = () => {
             </div>
           </div> */}
 
-          {/* Main Features */}
-          <div className="faculty-features-container">
-            <h5 className="faculty-section-title">welcome {user.name}</h5>
-            <div className="faculty-features-grid">
-              <div className="faculty-feature-card" onClick={() => navigate("/students/attendence")} style={{ cursor: "pointer" }}>
-                <div className="faculty-feature-icon faculty-feature-icon-primary">
-                  <FaUserGraduate />
-                </div>
-                <h5>Attendance</h5>
+        {/* Main Features */}
+        <div className="faculty-features-container">
+          <h5 className="faculty-section-title">welcome {user.name}</h5>
+          <div className="faculty-features-grid">
+            <div className="faculty-feature-card" onClick={() => navigate("/students/attendence")} style={{ cursor: "pointer" }}>
+              <div className="faculty-feature-icon faculty-feature-icon-primary">
+                <FaUserGraduate />
               </div>
-              <div className="faculty-feature-card">
-                <div className="faculty-feature-icon faculty-feature-icon-secondary">
-                  <MdOutlineEventAvailable />
-                </div>
-                <h5>fee payment</h5>
+              <h5>Attendance</h5>
+            </div>
+            <div className="faculty-feature-card">
+              <div className="faculty-feature-icon faculty-feature-icon-secondary">
+                <MdOutlineEventAvailable />
               </div>
-              <div className="faculty-feature-card">
-                <div className="faculty-feature-icon faculty-feature-icon-primary">
-                  <MdNotes />
-                </div>
-                <h5>Notes</h5>
+              <h5>fee payment</h5>
+            </div>
+            <div className="faculty-feature-card">
+              <div className="faculty-feature-icon faculty-feature-icon-primary">
+                <MdNotes />
               </div>
-              <div className="faculty-feature-card" onClick={() => navigate("/students/notifications")} style={{ cursor: "pointer" }}>
-                <div className="faculty-feature-icon faculty-feature-icon-secondary">
-                  <FaBell />
-                </div>
-                <h5>Notifications</h5>
+              <h5>Notes</h5>
+            </div>
+            <div className="faculty-feature-card" onClick={() => navigate("/students/notifications")} style={{ cursor: "pointer" }}>
+              <div className="faculty-feature-icon faculty-feature-icon-secondary">
+                <FaBell />
               </div>
-              <div className="faculty-feature-card">
-                <div className="faculty-feature-icon faculty-feature-icon-primary">
-                  <FaCalendarAlt />
-                </div>
-                <h5>Timetable</h5>
+              <h5>Notifications</h5>
+            </div>
+            <div className="faculty-feature-card">
+              <div className="faculty-feature-icon faculty-feature-icon-primary">
+                <FaCalendarAlt />
               </div>
-              <div className="faculty-feature-card">
-                <div className="faculty-feature-icon faculty-feature-icon-secondary">
-                  <FaBook />
-                </div>
-                <h5>review</h5>
+              <h5>Timetable</h5>
+            </div>
+            <div className="faculty-feature-card">
+              <div className="faculty-feature-icon faculty-feature-icon-secondary">
+                <FaBook />
               </div>
+              <h5>review</h5>
             </div>
           </div>
-        </>
-     
-     
+        </div>
+      </>
+
+
 
 
 
@@ -197,35 +217,28 @@ const StuHome = () => {
       <div className="faculty-activity-container">
         <h5 className="faculty-section-title">Announcements</h5>
         <div className="faculty-activity-list">
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <FaBell />
+          {announcements.map((item, index) => (
+            <div key={item.id} className="faculty-activity-item">
+              <div className="faculty-activity-icon">
+                {index === 0 ? <FaBell /> : index === 1 ? <FaClipboardCheck /> : <MdNotes />}
+              </div>
+              <div>
+                <p className="faculty-activity-text">{item.title}</p>
+                <p className="faculty-activity-time">
+                  {new Date(item.created_at).toLocaleString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                    day: "numeric",
+                    month: "short"
+                  })}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="faculty-activity-text">New leave request from Student A</p>
-              <p className="faculty-activity-time">10 minutes ago</p>
-            </div>
-          </div>
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <FaClipboardCheck />
-            </div>
-            <div>
-              <p className="faculty-activity-text">Attendance marked for Class 5B</p>
-              <p className="faculty-activity-time">2 hours ago</p>
-            </div>
-          </div>
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <MdNotes />
-            </div>
-            <div>
-              <p className="faculty-activity-text">New notes uploaded for Mathematics</p>
-              <p className="faculty-activity-time">Yesterday</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
+    
 
     </div>
   );
