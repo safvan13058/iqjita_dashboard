@@ -1,38 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './leave.css';
 
-const leaveData = [
-  { name: 'John Doe', reason: 'Sick Leave', date: '2025-05-14', status: 'approved' },
-  { name: 'Jane Smith', reason: 'Personal', date: '2025-05-12', status: 'approved' },
-];
-
 const LeaveTable = () => {
+  const [leaves, setLeaves] = useState([]);
   const [remarks, setRemarks] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLeave, setSelectedLeave] = useState(null);
 
-  const filteredData = leaveData.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.reason.toLowerCase().includes(searchTerm.toLowerCase())
+  // Fetch leave list from API
+  useEffect(() => {
+    fetch("https://software.iqjita.com/hr/leave_api.php?action=list_all")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setLeaves(data);
+        else if (data.success && Array.isArray(data.leaves)) setLeaves(data.leaves);
+      })
+      .catch(err => console.error("Error fetching leaves:", err));
+  }, []);
+
+  // Filtered leaves
+  const filteredData = leaves.filter(item =>
+    item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.Reason?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const openModal = (leave) => {
     setSelectedLeave(leave);
+    setRemarks(leave.Remark || '');
   };
 
   const closeModal = () => {
     setSelectedLeave(null);
+    setRemarks('');
   };
 
-  const handleStatusChange = (status) => {
-    // Example logic: You can send this to a backend or update UI
-    console.log(`Leave ${status}:`, selectedLeave);
-    console.log("Remarks:", remarks);
+  const handleStatusChange = (newStatus) => {
+    if (!selectedLeave?.LeaveID) return;
 
-    // Close the modal after action
-    closeModal();
+    fetch("https://software.iqjita.com/hr/leave_api.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "update",
+        id: selectedLeave.LeaveID,
+        status: newStatus,
+        remark: remarks
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const updated = leaves.map(leave =>
+            leave.LeaveID === selectedLeave.LeaveID
+              ? { ...leave, Status: newStatus, Remark: remarks }
+              : leave
+          );
+          setLeaves(updated);
+          closeModal();
+        } else {
+          alert("Update failed");
+        }
+      })
+      .catch(err => console.error("Update error:", err));
   };
-
 
   return (
     <>
@@ -52,7 +82,8 @@ const LeaveTable = () => {
             <tr>
               <th>Name</th>
               <th>Reason</th>
-              <th>Date</th>
+              <th>From</th>
+              <th>To</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -62,14 +93,12 @@ const LeaveTable = () => {
               filteredData.map((item, idx) => (
                 <tr key={idx} className={idx % 2 === 0 ? 'leavetable-row' : 'leavetable-row-alt'}>
                   <td>{item.name}</td>
-                  <td>{item.reason}</td>
-                  <td>{item.date}</td>
-                  <td>{item.status}</td>
+                  <td>{item.Reason}</td>
+                  <td>{item.StartDate}</td>
+                  <td>{item.EndDate}</td>
+                  <td>{item.Status}</td>
                   <td>
-                    <button
-                      className="leavetable-action-btn"
-                      onClick={() => openModal(item)}
-                    >
+                    <button className="leavetable-action-btn" onClick={() => openModal(item)}>
                       View
                     </button>
                   </td>
@@ -77,7 +106,7 @@ const LeaveTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '15px' }}>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '15px' }}>
                   No results found.
                 </td>
               </tr>
@@ -88,71 +117,65 @@ const LeaveTable = () => {
 
       {/* Modal */}
       {selectedLeave && (
-       <div className="hrleave-modal-overlay" onClick={closeModal}>
-  <div className="hrleave-modal" onClick={(e) => e.stopPropagation()}>
-    <h3 className="hrleave-heading hr-text-heading">Leave Details</h3>
+        <div className="hrleave-modal-overlay" onClick={closeModal}>
+          <div className="hrleave-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="hrleave-heading hr-text-heading">Leave Details</h3>
 
-    <p className="hrleave-info hr-text-primary">
-  <label>
-    <span>Name:</span>
-    <input type="text" value={selectedLeave.name} readOnly className="hrleave-display-input" />
-  </label>
-</p>
+            <p className="hrleave-info hr-text-primary">
+              <label>
+                <span>Name:</span>
+                <input type="text" value={selectedLeave.name} readOnly className="hrleave-display-input" />
+              </label>
+            </p>
 
-<p className="hrleave-info hr-text-primary leavedate">
-  <div >
-     <label>
-    <span>Starting Date:</span>
-    <input type="text" value={selectedLeave.date} readOnly className="hrleave-display-input" />
-  </label>
-  </div>
-  <div>
-     <label>
-    <span>Ending Date:</span>
-    <input type="text" value={selectedLeave.date} readOnly className="hrleave-display-input" />
-  </label>
-  </div>
- 
- 
-</p>
+            <p className="hrleave-info hr-text-primary leavedate">
+              <div>
+                <label>
+                  <span>Start Date:</span>
+                  <input type="text" value={selectedLeave.StartDate} readOnly className="hrleave-display-input" />
+                </label>
+              </div>
+              <div>
+                <label>
+                  <span>End Date:</span>
+                  <input type="text" value={selectedLeave.EndDate} readOnly className="hrleave-display-input" />
+                </label>
+              </div>
+            </p>
 
-<p className="hrleave-info hr-text-primary">
-  <label>
-    <span>Status:</span>
-    <input type="text" value={selectedLeave.status} readOnly className="hrleave-display-input" />
-  </label>
-</p>
+            <p className="hrleave-info hr-text-primary">
+              <label>
+                <span>Status:</span>
+                <input type="text" value={selectedLeave.Status} readOnly className="hrleave-display-input" />
+              </label>
+            </p>
 
-<p className="hrleave-info hr-text-primary">
-  <label>
-    <span>Reason:</span>
-    <input type="text" value={selectedLeave.reason} readOnly className="hrleave-display-input" />
-  </label>
-</p>
+            <p className="hrleave-info hr-text-primary">
+              <label>
+                <span>Reason:</span>
+                <input type="text" value={selectedLeave.Reason} readOnly className="hrleave-display-input" />
+              </label>
+            </p>
 
+            <div className="hrleave-remark-group">
+              <label className="hrleave-label hr-text-secondary" htmlFor="remarks">Remarks (optional)</label>
+              <textarea
+                className="hrleave-input"
+                id="remarks"
+                placeholder="Enter remarks here..."
+                rows="3"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              ></textarea>
+            </div>
 
-    <div className="hrleave-remark-group">
-      <label className="hrleave-label hr-text-secondary" htmlFor="remarks">Remarks (optional)</label>
-      <textarea
-        className="hrleave-input"
-        id="remarks"
-        placeholder="Enter remarks here..."
-        rows="3"
-        value={remarks}
-        onChange={(e) => setRemarks(e.target.value)}
-      ></textarea>
-    </div>
-
-    <div className="hrleave-button-group">
-      <button className="hrleave-button hrleave-approve-btn hr-text-light" onClick={() => handleStatusChange("Approved")}>Approve</button>
-      <button className="hrleave-button hrleave-reject-btn hr-text-light" onClick={() => handleStatusChange("Rejected")}>Reject</button>
-      <button className="hrleave-button hrleave-close-btn hr-text-light" onClick={closeModal}>Close</button>
-    </div>
-  </div>
-</div>
-
-
-
+            <div className="hrleave-button-group">
+              <button className="hrleave-button hrleave-approve-btn hr-text-light" onClick={() => handleStatusChange("Approved")}>Approve</button>
+              <button className="hrleave-button hrleave-reject-btn hr-text-light" onClick={() => handleStatusChange("Rejected")}>Reject</button>
+              <button className="hrleave-button hrleave-close-btn hr-text-light" onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

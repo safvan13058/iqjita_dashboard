@@ -115,6 +115,7 @@ const handleDelete = async (id) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData)
 
     try {
       const response = await fetch(`${API_URL}?action=create`, {
@@ -122,8 +123,9 @@ const handleDelete = async (id) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+      console.log(response)
       const result = await response.json();
+      
       if (result.success) {
         alert("Announcement sent!");
 
@@ -148,6 +150,7 @@ const handleDelete = async (id) => {
         alert("Error: " + result.message);
       }
     } catch (error) {
+
       console.error("Submit error:", error);
       alert("Network error while sending announcement.");
     }

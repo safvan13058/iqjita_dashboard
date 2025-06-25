@@ -19,6 +19,7 @@ const Sidebar = () => {
     { path: "/hr", label: "Dashboard", icon: <IoHomeOutline /> },
     { path: "/hr/employees", label: "Employee", icon: <FaUserTie /> },
     { path: "/hr/attendance", label: "Attendance", icon: <MdAccessTime /> },
+    { path: "/hr/HrAnnouncement", label: "Announcement", icon: <FaUserTie /> },
     { path: "/hr/leave", label: "Leave", icon: <FaUmbrellaBeach /> },
     { path: "/hr/payroll", label: "Payroll", icon: <FaMoneyCheckAlt /> },
     { path: "/hr/performance", label: "Performance", icon: <MdTrendingUp /> },

@@ -14,11 +14,10 @@ const Bottombar = () => {
     const location = useLocation();
 
     const navItems = [
-        { path: "/students", label: "Home", icon: <IoHomeOutline /> },
-        { path: "/students/notification", label: "Notifications", icon: <FaBell /> },
-        { path: "/students/fees", label: "Fee Payment", icon: <FaMoneyCheckAlt /> },
-        { path: "/students/profile", label: "Profile", icon: <BiSolidUserDetail /> },
-
+        { path: "/student", label: "Home", icon: <IoHomeOutline /> },
+        { path: "/student/notification", label: "Notifications", icon: <FaBell /> },
+        { path: "/student/fees", label: "Fee Payment", icon: <FaMoneyCheckAlt /> },
+        { path: "/student/profile", label: "Profile", icon: <BiSolidUserDetail /> },
         //   { path: "/students/payment-history", label: "History", icon: <MdHistory /> },
     ];
 

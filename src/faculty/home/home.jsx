@@ -10,14 +10,47 @@ import './home.css'; // Make sure your CSS is loaded
 import { FaUsersCog } from "react-icons/fa";
 const FacHome = () => {
   const navigate = useNavigate();
+  const [announcements, setAnnouncements] = useState([]);
+
+  useEffect(() => {
+    fetch("https://software.iqjita.com/hr/staff_announcements_api.php?action=list")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.announcements)) {
+          // Get only the first 3 announcements
+          const topThree = data.announcements.slice(0, 3).map(item => ({
+            id: item.id,
+            title: item.title,
+            message: item.message,
+            created_at: new Date(item.created_at)
+          }));
+          setAnnouncements(topThree);
+        }
+      })
+      .catch(err => console.error("Failed to load announcements:", err));
+  }, []);
+  const formatTimeAgo = (date) => {
+    const now = new Date();
+    const diff = Math.floor((now - date) / 60000); // in minutes
+
+    if (diff < 1) return "Just now";
+    if (diff < 60) return `${diff} minutes ago`;
+    if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
+    return `${Math.floor(diff / 1440)} days ago`;
+  };
+
   // Dynamic banner images
-  const bannerImages = [
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=Welcome+Back',
-    'https://via.placeholder.com/800x200/9B5A2A/FFFFFF?text=Upcoming+Events',
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=New+Features',
-    'https://via.placeholder.com/800x200/9B5A2A/FFFFFF?text=School+Updates',
-    'https://via.placeholder.com/800x200/0F6D66/FFFFFF?text=Professional+Development'
-  ];
+  const [bannerImages, setBannerImages] = useState([]);
+
+  useEffect(() => {
+    fetch('https://software.iqjita.com/bannerimage.php?type=staff')
+      .then(res => res.json())
+      .then(data => {
+        const urls = data.map(item => item.image_url);
+        setBannerImages(urls);
+      })
+      .catch(err => console.error('Failed to load banners:', err));
+  }, []);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [notifications, setNotifications] = useState(3); // Example notification count
@@ -31,6 +64,7 @@ const FacHome = () => {
   }, [bannerImages.length]);
   const user = {
     name: "John Doe",
+    // department: "Academics", // Not Academics
     department: "Marketing", // Not Academics
     performance: {
       Jan: 85,
@@ -298,35 +332,24 @@ const FacHome = () => {
       <div className="faculty-activity-container">
         <h5 className="faculty-section-title">Announcements</h5>
         <div className="faculty-activity-list">
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <FaBell />
-            </div>
-            <div>
-              <p className="faculty-activity-text">New leave request from Student A</p>
-              <p className="faculty-activity-time">10 minutes ago</p>
-            </div>
-          </div>
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <FaClipboardCheck />
-            </div>
-            <div>
-              <p className="faculty-activity-text">Attendance marked for Class 5B</p>
-              <p className="faculty-activity-time">2 hours ago</p>
-            </div>
-          </div>
-          <div className="faculty-activity-item">
-            <div className="faculty-activity-icon">
-              <MdNotes />
-            </div>
-            <div>
-              <p className="faculty-activity-text">New notes uploaded for Mathematics</p>
-              <p className="faculty-activity-time">Yesterday</p>
-            </div>
-          </div>
+          {announcements.length === 0 ? (
+            <p style={{ padding: "10px", fontStyle: "italic" }}>No recent announcements</p>
+          ) : (
+            announcements.map((item, index) => (
+              <div key={item.id} className="faculty-activity-item">
+                <div className="faculty-activity-icon">
+                  {index === 0 ? <FaBell /> : index === 1 ? <FaClipboardCheck /> : <MdNotes />}
+                </div>
+                <div>
+                  <p className="faculty-activity-text">{item.title}</p>
+                  <p className="faculty-activity-time">{formatTimeAgo(item.created_at)}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
+      );
 
     </div>
   );

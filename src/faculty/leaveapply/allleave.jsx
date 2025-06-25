@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AllLeavesPage.css'; // CSS styling
-
-const dummyLeaves = [
-  { id: 1, type: 'Sick Leave', date: '2025-06-22', status: 'Pending' },
-  { id: 2, type: 'Casual Leave', date: '2025-06-20', status: 'Approved' },
-  { id: 3, type: 'Personal Leave', date: '2025-06-18', status: 'Rejected' },
-  { id: 4, type: 'Sick Leave', date: '2025-06-15', status: 'Pending' },
-];
+import './AllLeavesPage.css'; // Make sure this CSS file exists
 
 const AllLeavesPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('All');
+  const [leaves, setLeaves] = useState([]);
+
+  const employeeId = 1; // ✅ Replace with dynamic user ID from login or context
+
+  useEffect(() => {
+    fetch(`https://software.iqjita.com/hr/leave_api.php?action=list&employee_id=${employeeId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setLeaves(data);
+        } else if (data.success && Array.isArray(data.leaves)) {
+          setLeaves(data.leaves);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching leaves:", err);
+      });
+  }, [employeeId]);
 
   const filteredLeaves = filter === 'All'
-    ? dummyLeaves
-    : dummyLeaves.filter(leave => leave.status === filter);
+    ? leaves
+    : leaves.filter(leave => leave.Status === filter); // Ensure Status matches your DB column
 
   return (
     <div className="all-leaves-container">
@@ -38,13 +49,20 @@ const AllLeavesPage = () => {
 
       <div className="leave-cards">
         {filteredLeaves.map(leave => (
-          <div key={leave.id} className={`leave-card ${leave.status.toLowerCase()}`}>
-            <h4>{leave.type}</h4>
-            <p>Date: {leave.date}</p>
-            <span className={`status ${leave.status.toLowerCase()}`}>{leave.status}</span>
+          <div key={leave.LeaveID} className={`leave-card ${leave.Status.toLowerCase()}`}>
+            <h4>{leave.LeaveType || 'Leave'}</h4>
+            <p><strong>From:</strong> {leave.StartDate}</p>
+            <p><strong>To:</strong> {leave.EndDate}</p>
+            <p><strong>Reason:</strong> {leave.Reason}</p>
+            <span className={`status ${leave.Status.toLowerCase()}`}>{leave.Status}</span>
+            {leave.Remark && (
+              <p className="remark-text"><strong>Remark:</strong> {leave.Remark}</p>
+            )}
           </div>
         ))}
-        {filteredLeaves.length === 0 && <p className="no-data">No leaves found.</p>}
+        {filteredLeaves.length === 0 && (
+          <p className="no-data">No leave applications found.</p>
+        )}
       </div>
     </div>
   );
