@@ -55,9 +55,7 @@ const SalaryPage = () => {
                 <h3>{salary.SalaryMonth}</h3>
                 <p><strong>Base Salary:</strong> ₹{salary.BaseSalary}</p>
                 <p><strong>Total:</strong> ₹{salary.TotalSalary}</p>
-                <p><strong>
-                  ReceiptID
-                  :</strong> {salary.ReceiptID}</p>
+                <p><strong>Receipt ID:</strong> {salary.ReceiptID}</p>
                 <p><strong>Paid On:</strong> {salary.PayDate}</p>
               </div>
               <div className="salary-card-actions">
@@ -69,8 +67,8 @@ const SalaryPage = () => {
                 </button>
                 <a
                   className="btn-secondary"
-                  href={salary.payslipUrl || "#"}
-                  target="_blank"
+                  // href={salary.payslipUrl || "#"}
+                  // target="_blank"
                   rel="noopener noreferrer"
                 >
                   Payslip
