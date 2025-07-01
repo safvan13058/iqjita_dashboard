@@ -27,7 +27,33 @@ const FacHome = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [performanceData, setPerformanceData] = useState(null);
   const [notifications] = useState(3); // Example notification count
-
+  const [attendanceStats, setAttendanceStats] = useState({
+    total: 0,
+    present: 0,
+    late: 0,
+    absent: 0,
+    percentage: 0,
+  });
+ const employeeId = JSON.parse(localStorage.getItem('user'))?.username;
+  useEffect(() => {
+    fetch(`https://software.iqjita.com/get_students_by_designation.php?employee_id=${employeeId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // setStudents(data.students);
+          setAttendanceStats({
+            total: data.total_students,
+            present: data.present,
+            late: data.late,
+            absent: data.absent,
+            percentage: data.attendance_percentage
+          });
+        } else {
+          console.error(data.message);
+        }
+      })
+      .catch(err => console.error(err));
+  }, []);
   // Format time ago
   const formatTimeAgo = (date) => {
     const now = new Date();
@@ -149,21 +175,23 @@ const FacHome = () => {
               <FaUserGraduate className="faculty-stat-icon" />
               <div>
                 <h3 className="faculty-stat-title">Students</h3>
-                <p className="faculty-stat-value">42</p>
+                <p className="faculty-stat-value">{attendanceStats.total}</p>
               </div>
             </div>
+
             <div className="faculty-stat-card">
               <FaClipboardCheck className="faculty-stat-icon" />
               <div>
                 <h3 className="faculty-stat-title">Attendance</h3>
-                <p className="faculty-stat-value">92%</p>
+                <p className="faculty-stat-value">{attendanceStats.percentage}%</p>
               </div>
             </div>
+
             <div className="faculty-stat-card">
               <MdOutlineEventAvailable className="faculty-stat-icon" />
               <div>
                 <h3 className="faculty-stat-title">Leave Requests</h3>
-                <p className="faculty-stat-value">2</p>
+                <p className="faculty-stat-value">0</p> {/* Replace with dynamic leave count if you have it */}
               </div>
             </div>
           </div>

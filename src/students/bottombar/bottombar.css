@@ -57,11 +57,11 @@
 }
 
 /* Show only on mobile devices */
-@media (min-width: 769px) {
+/* @media (min-width: 769px) {
   .fac-bottombar {
     display: none;
   }
-}
+} */
 
 @media (max-width: 768px) {
   .fac-bottombar {

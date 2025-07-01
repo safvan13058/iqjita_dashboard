@@ -23,6 +23,7 @@ import Account from "./sections/accounts/account";
 import UserTable from "./sections/usermanage/usermanage";
 import AnnouncementPanel from "./sections/announcement/announcement"
 import AlumniStudentsPage from "./sections/alumni/alumni";
+import Student_attent from "./sections/students_attent/students_attenttence"
 
 import BodyBackgroundHandler from './human_resource/hr_layout/BodyBackgroundHandler';
 import HrLayout from "./human_resource/hr_layout/hr_layout";
@@ -36,7 +37,7 @@ import EmployeePerformance from "./human_resource/Performance/performance";
 import Calendar from "./human_resource/calendar/calendar";
 import MailPage from "./human_resource/mailbox/mailbox";
 import EXEmployeePage from "./human_resource/ex_emp/exemp";
-
+import HrAnnouncement from "./human_resource/Announcement/HrAnnouncement"
 
 import FacLayout from "./faculty/layout/faclayout"
 import FacHome from "./faculty/home/home"
@@ -84,6 +85,7 @@ function App() {
             <Route path="/pending" element={<Pending />} />
             <Route path="/hrhr" element={<Navigate to="/hr" />} />
             <Route path="/sales" element={<UnderConstruction />} />
+            <Route path="/stuattent" element={<Student_attent/>} />
             {/* <Route path="/accounts" element={<Account />} /> */}
             <Route path="/are_you_fool" element={<UnauthorizedPage />} />
             <Route path="/admission" element={<AdmissionForm />} />
@@ -109,11 +111,12 @@ function App() {
             <Route path="Performance" element={<EmployeePerformance />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="mailbox" element={<MailPage />} />
+            <Route path="HrAnnouncement" element={<HrAnnouncement />} />
             <Route path="employee/:id" element={<EmployeeDetails />} />
             {/* add more HR routes here */}
           </Route>
 
-          <Route path="/faculty" element={<FacLayout allowedRoles={['admin', 'superadmin', 'human_resources']} />}>
+          <Route path="/faculty" element={<FacLayout allowedRoles={["Sales","Marketing","Management","Academics"]} />}>
             <Route index element={<FacHome />} />
             <Route path="home" element={<EmployeePage />} />
             <Route path="attendence" element={<AttendancePage />} />
@@ -127,7 +130,8 @@ function App() {
 
             {/* add more HR routes here */}
           </Route>
-          <Route path="/students" element={<StuLayout allowedRoles={['admin', 'superadmin', 'human_resources']} />}>
+
+          <Route path="/student" element={<StuLayout allowedRoles={['admin', 'superadmin', 'human_resources']} />}>
             <Route index element={<StuHome />} />
             <Route path="profile" element={<StudentsProfile />} />
             <Route path="fees" element={<FeePaymentPage />} />

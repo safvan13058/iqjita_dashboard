@@ -34,10 +34,77 @@ const StudentsPage = () => {
   const [photoFile, setPhotoFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const [disshowPopup, setdisShowPopup] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState('');
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [reason, setReason] = useState('');
 
   const [showPopup, setShowPopup] = useState(false);
-  const cardRef = useRef(null);
 
+  const [isLogOpen, setIsLogOpen] = useState(false);
+  const [discountLog, setDiscountLog] = useState([]);
+
+  const openDiscountLog = async () => {
+    try {
+      const res = await fetch(`https://software.iqjita.com/add_extra_discount.php?admission_number=${selectedStudent.admission_number}`);
+      const data = await res.json();
+      if (data.success) {
+        setDiscountLog(data.discounts);
+        setIsLogOpen(true);
+      } else {
+        alert('No discount records found.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error fetching discount log.');
+    }
+  };
+  const cardRef = useRef(null);
+  const openPopup = () => {
+    setdisShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setdisShowPopup(false);
+    setDiscountPercent('');
+    setDiscountAmount(0);
+    setReason('');
+  };
+  const calculateDiscount = () => {
+    const percent = parseFloat(discountPercent);
+    if (!isNaN(percent)) {
+      const amount = (selectedStudent.final_fees * percent) / 100;
+      setDiscountAmount(amount.toFixed(2));
+    }
+  };
+
+  const handleSubmit = () => {
+    const payload = {
+      admission_number: selectedStudent.admission_number,
+      discount: parseFloat(discountAmount),
+      reason: reason
+    };
+
+    fetch('https://software.iqjita.com/add_extra_discount.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        if (data.success) {
+          alert('Discount applied successfully!');
+          closePopup();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Something went wrong.');
+      });
+  };
   // const handleDownloadPDF = () => {
   //   html2canvas(cardRef.current, { scale: 2 }).then((canvas) => {
   //     const imgData = canvas.toDataURL('image/png');
@@ -759,6 +826,14 @@ const StudentsPage = () => {
                     <p><strong>One-time payment:</strong> {selectedStudent.a_one_time_payment_discount_percentage}%</p>
                     <p><strong>Group Discount:</strong> {selectedStudent.a_group_discount_percentage}%</p>
                     <p><strong>Final Fee:</strong> {selectedStudent.final_fees}</p>
+                    <div className="extra-discount">
+                      <p><strong>Extra Discount:</strong> {selectedStudent.extra_discount}</p>
+                      <div>
+                        <button onClick={openPopup}>Apply discount</button>
+                        <button onClick={openDiscountLog}>Log</button>
+                      </div>
+
+                    </div>
                   </div>
 
                   <div className="detail-section">
@@ -840,6 +915,41 @@ const StudentsPage = () => {
                 </div>
               </>
             )}
+            {disshowPopup && (
+              <div className="discountpopup">
+                <div className="discountpopup-content">
+                  <h3>Apply Extra Discount</h3>
+                  <p><strong>Final Fee:</strong> ₹ {selectedStudent.final_fees}</p>
+
+                  <label>
+                    Discount %:
+                    <input
+                      type="number"
+                      value={discountPercent}
+                      onChange={e => setDiscountPercent(e.target.value)}
+                    />
+                  </label>
+
+                  <button onClick={calculateDiscount}>Calculate</button>
+
+                  <p><strong>Discount Amount:</strong> ₹ {discountAmount}</p>
+
+                  <label>
+                    Reason:
+                    <input
+                      type="text"
+                      value={reason}
+                      onChange={e => setReason(e.target.value)}
+                    />
+                  </label>
+
+                  <div className="apply-discount-btn" style={{ marginTop: '10px' }}>
+                    <button onClick={handleSubmit}>Submit</button>
+                    <button onClick={closePopup}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
             {showPopup && (
               <div className="idcard-overlay" >
                 <div className="idcard-modal">
@@ -904,7 +1014,7 @@ const StudentsPage = () => {
                     >
                       <span>Whatsapp</span>
                       <FaWhatsapp className="action-icon" />
-                      
+
                     </a>
                     <a
                       href="#"
@@ -918,10 +1028,10 @@ const StudentsPage = () => {
                     >
                       <span>Download PDF</span>
                       <FaDownload className="action-icon" />
-                      
+
                     </a>
 
-                    
+
                   </div>
 
 
@@ -1087,6 +1197,41 @@ const StudentsPage = () => {
                     <button onClick={handleStartBatch}>OK</button>
                     <button onClick={() => setShowModal(false)}>Cancel</button>
                   </div>
+                </div>
+              </div>
+            )}
+            {isLogOpen && (
+              <div className="discount-log-overlay">
+                <div className="discount-log-modal">
+                  <h3>Discount Log</h3>
+
+                  <div className="discount-log-table-container">
+                    <table className="discount-log-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Amount</th>
+                          <th>Reason</th>
+                          <th>Added At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {discountLog.map((entry, index) => (
+                          <tr key={entry.id}>
+                            <td>{index + 1}</td>
+                            <td>{entry.discount_amount}</td>
+                            <td>{entry.reason}</td>
+                            <td>{entry.added_at}</td>
+                          </tr>
+                        ))}
+
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <button className="discount-log-close" onClick={() => setIsLogOpen(false)}>
+                    Close
+                  </button>
                 </div>
               </div>
             )}

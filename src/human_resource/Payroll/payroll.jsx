@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './payroll.css';
 import { FaFileDownload, FaPrint, FaWhatsapp, FaSms, FaEnvelope, FaPlusCircle } from "react-icons/fa"
 import html2pdf from "html2pdf.js";
+import { FaTimes } from 'react-icons/fa';
+import { FaFilePdf } from 'react-icons/fa';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 const payrollData = [
   {
     employeeId: 'EMP001',
@@ -39,6 +43,9 @@ const PayrollTable = () => {
   const [employeeList, setEmployeeList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [showReport, setShowReport] = useState(false);
+  const [reportData, setReportData] = useState(null);
+  const [error, setError] = useState('');
   const getPreviousMonth = () => {
     const now = new Date();
     now.setMonth(now.getMonth() - 1); // Go to previous month
@@ -64,30 +71,30 @@ const PayrollTable = () => {
     const formatted = `${year}-${String(month).padStart(2, "0")}`;
     setSelectedMonth(formatted);
   };
-  
-const numberToWords = (num) => {
-  const a = [
-    "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-    "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-    "Seventeen", "Eighteen", "Nineteen"
-  ];
-  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
 
-  const numToWords = (n) => {
-    if ((n = n.toString()).length > 9) return 'Overflow';
-    let nStr = ('000000000' + n).substr(-9).match(/.{1,2}/g);
-    let str = '';
-    str += (nStr[0] != 0) ? (a[Number(nStr[0])] || b[nStr[0][0]] + ' ' + a[nStr[0][1]]) + ' Crore ' : '';
-    str += (nStr[1] != 0) ? (a[Number(nStr[1])] || b[nStr[1][0]] + ' ' + a[nStr[1][1]]) + ' Lakh ' : '';
-    str += (nStr[2] != 0) ? (a[Number(nStr[2])] || b[nStr[2][0]] + ' ' + a[nStr[2][1]]) + ' Thousand ' : '';
-    str += (nStr[3] != 0) ? (a[Number(nStr[3])] || b[nStr[3][0]] + ' ' + a[nStr[3][1]]) + ' Hundred ' : '';
-    str += (nStr[4] != 0) ? ((str != '') ? 'and ' : '') +
-      (a[Number(nStr[4])] || b[nStr[4][0]] + ' ' + a[nStr[4][1]]) + ' ' : '';
-    return str.trim();
+  const numberToWords = (num) => {
+    const a = [
+      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+      "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+      "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    const numToWords = (n) => {
+      if ((n = n.toString()).length > 9) return 'Overflow';
+      let nStr = ('000000000' + n).substr(-9).match(/.{1,2}/g);
+      let str = '';
+      str += (nStr[0] != 0) ? (a[Number(nStr[0])] || b[nStr[0][0]] + ' ' + a[nStr[0][1]]) + ' Crore ' : '';
+      str += (nStr[1] != 0) ? (a[Number(nStr[1])] || b[nStr[1][0]] + ' ' + a[nStr[1][1]]) + ' Lakh ' : '';
+      str += (nStr[2] != 0) ? (a[Number(nStr[2])] || b[nStr[2][0]] + ' ' + a[nStr[2][1]]) + ' Thousand ' : '';
+      str += (nStr[3] != 0) ? (a[Number(nStr[3])] || b[nStr[3][0]] + ' ' + a[nStr[3][1]]) + ' Hundred ' : '';
+      str += (nStr[4] != 0) ? ((str != '') ? 'and ' : '') +
+        (a[Number(nStr[4])] || b[nStr[4][0]] + ' ' + a[nStr[4][1]]) + ' ' : '';
+      return str.trim();
+    };
+
+    return numToWords(Math.floor(num)) + " Rupees Only";
   };
-
-  return numToWords(Math.floor(num)) + " Rupees Only";
-};
   const fetchPayrolls = async (month = "", empId = "") => {
     try {
       let url = "https://software.iqjita.com/hr/payroll.php";
@@ -189,10 +196,14 @@ const numberToWords = (num) => {
 
     // Deduct 0.5 day for every 2 late/early, starting from 2 (not ignoring any)
     const halfDays = Math.floor(totalLateEarly / 2) * 0.5;
+
     const lateEarlyDeduction = oneDaySalary * halfDays;
 
     // Leave deduction: 1st leave is compensated
-    const leaveDeduction = Math.max(numLeaves - 1, 0) * oneDaySalary;
+    const leaveDeduction = parseFloat(
+      (Math.max(numLeaves - 1, 0) * oneDaySalary).toFixed(2)
+    );
+
 
     // Leave compensation: default to 1 day if not given
     const effectiveLeaveCompensation =
@@ -213,7 +224,221 @@ const numberToWords = (num) => {
     };
   };
 
+  // const handleDownloadPDF = () => {
+  //   if (!reportData) return;
 
+  //   const doc = new jsPDF({
+  //     orientation: 'portrait',
+  //     unit: 'mm',
+  //     format: 'a4'
+  //   });
+
+  //   // Title
+  //   doc.setFontSize(18);
+  //   doc.setTextColor(33, 33, 33);
+  //   doc.text(`Salary Report`, 105, 20, { align: 'center' });
+
+  //   doc.setFontSize(12);
+  //   doc.text(`Month: ${selectedMonth}`, 105, 28, { align: 'center' });
+  //   doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 34, { align: 'center' });
+
+  //   let finalY = 40;
+
+  //   // Employees WITH Bank Details
+  //   doc.setFontSize(14);
+  //   doc.text('Employees WITH Bank Details', 14, finalY);
+
+  //   autoTable(doc, {
+  //     startY: finalY + 4,
+  //     head: [['Emp ID', 'Name', 'Phone', 'Account Number', 'Total Salary']],
+  //     body: reportData.with_bank_details.map(emp => [
+  //       emp.EmployeeID,
+  //       emp.FullName,
+  //       emp.PhoneNumber,
+  //       emp.AccountNumber,
+  //       `Rs.${parseFloat(emp.TotalSalary).toFixed(2)}/-`
+  //     ]),
+  //     styles: { fontSize: 9 },
+  //     headStyles: {
+  //       fillColor: [14, 14, 35], // Deep navy
+  //       textColor: [255, 255, 255]
+  //     },
+  //     alternateRowStyles: { fillColor: [240, 240, 240] },
+  //     margin: { left: 14, right: 14 }
+  //   });
+
+  //   finalY = doc.lastAutoTable.finalY + 10;
+
+  //   // Employees WITHOUT Bank Details
+  //   doc.setFontSize(14);
+  //   doc.text('Employees WITHOUT Bank Details', 14, finalY);
+
+  //   autoTable(doc, {
+  //     startY: finalY + 4,
+  //     head: [['Emp ID', 'Name', 'Phone', 'Account Number', 'Total Salary']],
+  //     body: reportData.without_bank_details.map(emp => [
+  //       emp.EmployeeID,
+  //       emp.FullName,
+  //       emp.PhoneNumber,
+  //       '-',
+  //       `Rs. ${parseFloat(emp.TotalSalary).toFixed(2)}/-`
+  //     ]),
+  //     styles: { fontSize: 9 },
+  //     headStyles: {
+  //       fillColor: [14, 14, 35],
+  //       textColor: [255, 255, 255]
+  //     },
+  //     alternateRowStyles: { fillColor: [240, 240, 240] },
+  //     margin: { left: 14, right: 14 }
+  //   });
+
+  //   // Grand total
+  //   finalY = doc.lastAutoTable.finalY + 10;
+  //   doc.setFontSize(12);
+  //   doc.setTextColor(33, 33, 33);
+  //   doc.text(
+  //     `Grand Total Salary: Rs. ${parseFloat(reportData.grand_total_salary).toFixed(2)}/-`,
+  //     14,
+  //     finalY
+  //   );
+
+  //   doc.save(`Salary_Report_${selectedMonth.replace('-', '_')}.pdf`);
+  // };
+  const handleDownloadPDF = () => {
+    if (!reportData) return;
+
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(33, 33, 33);
+    doc.text(`Salary Report`, 105, 20, { align: 'center' });
+
+    doc.setFontSize(12);
+    doc.text(`Month: ${selectedMonth}`, 105, 28, { align: 'center' });
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 34, { align: 'center' });
+
+    let finalY = 40;
+
+    // Employees WITH Bank Details
+    doc.setFontSize(14);
+    doc.text('Employees WITH Bank Details', 14, finalY);
+
+    const withBankTotal = reportData.with_bank_details.reduce(
+      (sum, emp) => sum + parseFloat(emp.TotalSalary), 0
+    );
+
+    autoTable(doc, {
+      startY: finalY + 4,
+      head: [['Emp ID', 'Name', 'Phone', 'Account Number', 'Total Salary']],
+      body: [
+        ...reportData.with_bank_details.map(emp => [
+          emp.EmployeeID,
+          emp.FullName,
+          emp.PhoneNumber,
+          emp.AccountNumber,
+          `Rs. ${parseFloat(emp.TotalSalary).toFixed(2)}/-`
+        ]),
+        [
+          { content: 'Total', colSpan: 4, styles: { halign: 'right', fontStyle: 'bold' } },
+          `Rs. ${withBankTotal.toFixed(2)}/-`
+        ]
+      ],
+      styles: { fontSize: 9 },
+      headStyles: {
+        fillColor: [14, 14, 35],
+        textColor: [255, 255, 255]
+      },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { left: 14, right: 14 }
+    });
+
+    finalY = doc.lastAutoTable.finalY + 10;
+
+    // Employees WITHOUT Bank Details
+    doc.setFontSize(14);
+    doc.text('Employees WITHOUT Bank Details', 14, finalY);
+
+    const withoutBankTotal = reportData.without_bank_details.reduce(
+      (sum, emp) => sum + parseFloat(emp.TotalSalary), 0
+    );
+
+    autoTable(doc, {
+      startY: finalY + 4,
+      head: [['Emp ID', 'Name', 'Phone', 'Account Number', 'Total Salary']],
+      body: [
+        ...reportData.without_bank_details.map(emp => [
+          emp.EmployeeID,
+          emp.FullName,
+          emp.PhoneNumber,
+          '-',
+          `Rs. ${parseFloat(emp.TotalSalary).toFixed(2)}/-`
+        ]),
+        [
+          { content: 'Total', colSpan: 4, styles: { halign: 'right', fontStyle: 'bold' } },
+          `Rs. ${withoutBankTotal.toFixed(2)}/-`
+        ]
+      ],
+      styles: { fontSize: 9 },
+      headStyles: {
+        fillColor: [14, 14, 35],
+        textColor: [255, 255, 255]
+      },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { left: 14, right: 14 }
+    });
+
+    // Grand total
+    finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(12);
+    doc.setTextColor(33, 33, 33);
+    doc.text(
+      `Grand Total Salary: Rs. ${parseFloat(reportData.grand_total_salary).toFixed(2)}/-`,
+      14,
+      finalY
+    );
+
+    doc.save(`Salary_Report_${selectedMonth.replace('-', '_')}.pdf`);
+  };
+
+  const handlePrint = () => {
+    const printContents = document.getElementById('print-area').innerHTML;
+    const printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.write('<html><head><title>Salary Report</title>');
+    printWindow.document.write('<style>table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #000; padding: 8px; text-align: left; }</style>');
+    printWindow.document.write('</head><body >');
+    printWindow.document.write(printContents);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+
+  const fetchReport = () => {
+    console.log(selectedMonth)
+    if (!selectedMonth) {
+      setError('Please select a month.');
+      return;
+    }
+
+    setError('');
+    fetch(`https://software.iqjita.com/hr/payroll_report.php?month=${selectedMonth}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch report');
+        return res.json();
+      })
+      .then(data => {
+        setReportData(data);
+      })
+      .catch(err => {
+        setError(err.message);
+      });
+  };
 
   useEffect(() => {
     if (employeeData?.baseSalary) {
@@ -441,11 +666,11 @@ const numberToWords = (num) => {
     const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
   }
-  
-const downloadPDF = (Payroll) => {
-  const container = document.createElement("div");
 
-  container.innerHTML = `
+  const downloadPDF = (Payroll) => {
+    const container = document.createElement("div");
+
+    container.innerHTML = `
     <div style="
       width: 190mm;
       min-height: 148.5mm;
@@ -478,10 +703,10 @@ const downloadPDF = (Payroll) => {
       </div>
 
       <div style="margin-top: 10px;">
-        <h4 style="margin: 4px 0; border-bottom: none;">Receipt No: ${Payroll.receiptId||Payroll.ReceiptID}</h4>
-        <h4 style="margin: 4px 0; border-bottom: none;">Employee Name: ${Payroll.name||Payroll.Name}</h4>
-        <h4 style="margin: 4px 0; border-bottom: none;">Designation: ${Payroll.designation||Payroll.Designation}</h4>
-        <h4 style="margin: 4px 0; border-bottom: none;">Month: ${Payroll.salarymonth||Payroll.SalaryMonth}</h4>
+        <h4 style="margin: 4px 0; border-bottom: none;">Receipt No: ${Payroll.receiptId || Payroll.ReceiptID}</h4>
+        <h4 style="margin: 4px 0; border-bottom: none;">Employee Name: ${Payroll.name || Payroll.Name}</h4>
+        <h4 style="margin: 4px 0; border-bottom: none;">Designation: ${Payroll.designation || Payroll.Designation}</h4>
+        <h4 style="margin: 4px 0; border-bottom: none;">Month: ${Payroll.salarymonth || Payroll.SalaryMonth}</h4>
       </div>
 
       <table style="
@@ -498,26 +723,26 @@ const downloadPDF = (Payroll) => {
         <tbody>
           <tr>
             <td style="padding: 6px; border-bottom: 1px solid #ddd;">Basic Salary</td>
-            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.baseSalary||Payroll.BaseSalary}</td>
+            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.baseSalary || Payroll.BaseSalary}</td>
           </tr>
           <tr>
             <td style="padding: 6px; border-bottom: 1px solid #ddd;">Allowances</td>
-            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.allowances||Payroll.Allowances}</td>
+            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.allowances || Payroll.Allowances}</td>
           </tr>
           <tr>
             <td style="padding: 6px; border-bottom: 1px solid #ddd;">Deductions</td>
-            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.reducingAmount||Payroll.ReducingAmount}</td>
+            <td style="padding: 6px; border-bottom: 1px solid #ddd;">₹${Payroll.reducingAmount || Payroll.ReducingAmount}</td>
           </tr>
           <tr>
             <td style="padding: 6px; font-weight: bold;">Net Salary</td>
-            <td style="padding: 6px; font-weight: bold;">₹${Payroll.totalSalary||Payroll.TotalSalary}</td>
+            <td style="padding: 6px; font-weight: bold;">₹${Payroll.totalSalary || Payroll.TotalSalary}</td>
           </tr>
         </tbody>
       </table>
 
       <div style="margin-top: 10px;">
-        <p><strong>Amount in words:</strong> ${numberToWords(Payroll.totalSalary||Payroll.TotalSalary)}</p>
-        <p><strong>Processed by:</strong> ${Payroll.UpdatedBy||user.name}</p>
+        <p><strong>Amount in words:</strong> ${numberToWords(Payroll.totalSalary || Payroll.TotalSalary)}</p>
+        <p><strong>Processed by:</strong> ${Payroll.UpdatedBy || user.name}</p>
       </div>
 
       <div style="
@@ -542,19 +767,19 @@ const downloadPDF = (Payroll) => {
     </div>
   `;
 
-  html2pdf()
-    .set({
-      margin: 0.3,
-      filename: `SalarySlip_${sanitize(Payroll.name||Payroll.Name)}_${sanitize(Payroll.payDate||Payroll.PayDate)}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-    })
-    .from(container)
-    .save();
-};
+    html2pdf()
+      .set({
+        margin: 0.3,
+        filename: `SalarySlip_${sanitize(Payroll.name || Payroll.Name)}_${sanitize(Payroll.payDate || Payroll.PayDate)}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      })
+      .from(container)
+      .save();
+  };
 
-const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
   const ReceiptPrint = (Receipt) => {
     // Store student data in localStorage
@@ -587,7 +812,111 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
           <button className="payroll-hr-button" onClick={() => setShowModal(true)}> Pay Salary  </button>
           <button className="payroll-filter-btn" onClick={() => handleMonthFilter('thisMonth')}>This Month</button>
           <button className="payroll-filter-btn" onClick={() => handleMonthFilter('previousMonth')}>Previous Month</button>
+          <button
+            className="hr-report-filter-btn"
+            onClick={() => {
+              setShowReport(true);
+              fetchReport();
+            }}
+          >
+            Report
+          </button>
 
+          {showReport && (
+            <div className="hr-report-modal-overlay">
+              <div className="hr-report-modal">
+                <div className="hr-report-modal-header">
+                  <h2>Payroll Report</h2>
+                  <button className="hr-report-close-btn" onClick={() => setShowReport(false)}>
+                    <FaTimes />
+                  </button>
+                </div>
+
+                <div className="hr-report-modal-body">
+                  {/* <button className="hr-report-fetch-btn" onClick={fetchReport}>
+                    Load Report
+                  </button> */}
+
+                  {error && <p className="hr-report-error">{error}</p>}
+
+                  {reportData && (
+                    <>
+                      <div className='hr-report-main-table'>
+                        <h3>Employees WITH Bank Details</h3>
+                        <table className="hr-report-table">
+                          <thead>
+                            <tr>
+                              <th>Emp ID</th>
+                              <th>Name</th>
+                              <th>Phone</th>
+                              <th>Account Number</th>
+                              <th>Total Salary</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reportData.with_bank_details.map(emp => (
+                              <tr key={emp.EmployeeID}>
+                                <td>{emp.EmployeeID}</td>
+                                <td>{emp.FullName}</td>
+                                <td>{emp.PhoneNumber}</td>
+                                <td>{emp.AccountNumber}</td>
+                                <td>₹ {parseFloat(emp.TotalSalary).toFixed(2)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+
+                        <h3>Employees WITHOUT Bank Details</h3>
+                        <table className="hr-report-table">
+                          <thead>
+                            <tr>
+                              <th>Emp ID</th>
+                              <th>Name</th>
+                              <th>Phone</th>
+                              <th>Account Number</th>
+                              <th>Total Salary</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reportData.without_bank_details.map(emp => (
+                              <tr key={emp.EmployeeID}>
+                                <td>{emp.EmployeeID}</td>
+                                <td>{emp.FullName}</td>
+                                <td>{emp.PhoneNumber}</td>
+                                <td>-</td>
+                                <td>₹ {parseFloat(emp.TotalSalary).toFixed(2)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className='hr-report-footer'>
+                        <div className="hr-report-total">
+                          <strong style={{ color: 'white' }}>
+                            Grand Total Salary: ₹ {parseFloat(reportData.grand_total_salary).toFixed(2)}
+                          </strong>
+
+                        </div>
+
+                        <div className="hr-report-pdf">
+                          <div className="hr-report-action" onClick={handleDownloadPDF}>
+                            <FaFilePdf className="hr-report-action-icon pdf-icon" /> Download PDF
+                          </div>
+                          <div className="hr-report-action" onClick={handlePrint}>
+                            <FaPrint className="hr-report-action-icon print-icon" /> Print
+                          </div>
+
+
+                        </div>
+
+                      </div>
+                    </>
+                  )}
+
+                </div>
+              </div>
+            </div>
+          )}
           <input
             type="month"
             className="payroll-month-picker"
@@ -595,7 +924,7 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             onChange={e => setSelectedMonth(e.target.value)}
           />
 
-          <select
+          {/* <select
             className="payroll-employee-id-input"
             value={selectedEmployeeId}
             onChange={(e) => setSelectedEmployeeId(e.target.value)}
@@ -606,7 +935,7 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 {employee.EmployeeID} - {employee.FullName}
               </option>
             ))}
-          </select>
+          </select> */}
 
         </div>
       </div>
@@ -922,7 +1251,7 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
                     <div className="payroll-hr-form-col">
 
-                      
+
 
 
                       <label>
@@ -1086,7 +1415,7 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                                   designation: lastPayroll.Designation || lastPayroll.designation,
                                   month: lastPayroll.SalaryMonth || lastPayroll.salarymonth,
                                   receiptid: lastPayroll.receiptId,
-                                  date: lastPayroll.payDate||0,
+                                  date: lastPayroll.payDate || 0,
                                   basic: lastPayroll.baseSalary || 0,
                                   allowances: lastPayroll.allowances || 0,
                                   deductions: lastPayroll.reducingAmount || 0,
@@ -1142,9 +1471,83 @@ const sanitize = (str) => (str || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             </div>
 
           </div >
-       
+
         </div >
       )}
+      <div style={{ display: 'none' }}>
+        <div id="print-area">
+          {/* Same content you build for PDF: headings, tables, total */}
+          <h1 style={{ textAlign: 'center' }}>Salary Report</h1>
+          <p style={{ textAlign: 'center' }}>Month: {selectedMonth}</p>
+          <p style={{ textAlign: 'center' }}>
+            Generated: {new Date().toLocaleString()}
+          </p>
+
+          <h2>Employees WITH Bank Details</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Emp ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Account Number</th>
+                <th>Total Salary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportData?.with_bank_details.map(emp => (
+                <tr key={emp.EmployeeID}>
+                  <td>{emp.EmployeeID}</td>
+                  <td>{emp.FullName}</td>
+                  <td>{emp.PhoneNumber}</td>
+                  <td>{emp.AccountNumber}</td>
+                  <td>Rs. {parseFloat(emp.TotalSalary).toFixed(2)}/-</td>
+                </tr>
+              ))}
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                <td style={{ fontWeight: 'bold' }}>
+                  Rs. {reportData?.with_bank_details.reduce((sum, emp) => sum + parseFloat(emp.TotalSalary), 0).toFixed(2)}/-
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Employees WITHOUT Bank Details</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Emp ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Account Number</th>
+                <th>Total Salary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportData?.without_bank_details.map(emp => (
+                <tr key={emp.EmployeeID}>
+                  <td>{emp.EmployeeID}</td>
+                  <td>{emp.FullName}</td>
+                  <td>{emp.PhoneNumber}</td>
+                  <td>-</td>
+                  <td>Rs. {parseFloat(emp.TotalSalary).toFixed(2)}/-</td>
+                </tr>
+              ))}
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                <td style={{ fontWeight: 'bold' }}>
+                  Rs. {reportData?.without_bank_details.reduce((sum, emp) => sum + parseFloat(emp.TotalSalary), 0).toFixed(2)}/-
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Grand Total Salary: Rs. {parseFloat(reportData?.grand_total_salary).toFixed(2)}/-</h3>
+        </div>
+      </div>
+
+
 
     </>
   );

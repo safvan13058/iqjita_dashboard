@@ -1,5 +1,5 @@
 .faculty-attendance-container {
-    padding: 10px;
+    padding: 10px 10px 50px 10px;
     max-width: 1200px;
     margin: 0 auto;
     /* background-color: var(--background-light); */
@@ -69,12 +69,31 @@
     min-width: 150px;
     justify-content: space-between;
 }
-.faculty-student-name{
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    padding: 10px 10px;
+.faculty-student-name {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  padding: 10px;
+  gap:5px;
+  line-height: 1.4;
 }
+
+.faculty-student-name .student-name-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.faculty-student-name .student-id-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.faculty-student-name .student-batch-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
 .faculty-batch-selector {
     display: flex;
     gap: 8px;

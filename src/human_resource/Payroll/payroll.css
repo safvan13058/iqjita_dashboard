@@ -715,6 +715,157 @@
 .action-icon.new-payroll {
   color: #6bcb77;
 }
+.hr-report-container {
+  background: var(--hr-background-dark);
+  padding: 2rem;
+  color: var(--hr-text-primary);
+}
+
+.hr-report-label {
+  margin-right: 1rem;
+  color: var(--hr-text-secondary);
+}
+
+.hr-report-month-input {
+  background: var(--hr-input-background);
+  border: 1px solid var(--hr-input-border);
+  color: var(--hr-input-text);
+  padding: 0.5rem;
+  border-radius: var(--hr-border-radius);
+}
+
+.hr-report-filter-btn {
+  background: var(--hr-button-primary-bg);
+  color: var(--hr-button-primary-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-left: 1rem;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background var(--hr-transition-speed);
+}
+
+.hr-report-filter-btn:hover {
+  background: var(--hr-button-hover-bg);
+}
+
+.hr-report-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(14, 14, 35, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:1000;
+}
+
+.hr-report-modal {
+  background: var(--hr-card-background);
+  padding: 2rem;
+  width: 90%;
+  max-width: 900px;
+  border-radius: var(--hr-border-radius);
+  box-shadow: var(--hr-box-shadow-dark);
+  color: var(--hr-text-primary);
+}
+
+.hr-report-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hr-report-close-btn {
+  background: none;
+  border: none;
+  color: var(--hr-text-primary);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.hr-report-modal-body {
+  margin-top: 1rem;
+}
+
+.hr-report-fetch-btn {
+  background: var(--hr-button-secondary-bg);
+  color: var(--hr-button-secondary-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--hr-border-radius);
+  cursor: pointer;
+  transition: background var(--hr-transition-speed);
+}
+
+.hr-report-fetch-btn:hover {
+  background: var(--hr-button-hover-bg);
+}
+
+.hr-report-error {
+  color: red;
+  margin-top: 1rem;
+}
+.hr-report-main-table {
+  max-height: 60vh; /* adjust as needed */
+  overflow-y: auto;
+  margin-top: 1rem;
+  border: 1px solid var(--hr-input-border);
+  padding: 1rem;
+  background: var(--hr-card-background);
+  border-radius: var(--hr-border-radius);
+}
+.hr-report-footer{
+  display:flex;
+  justify-content: space-between;
+}
+.hr-report-pdf{
+  display: flex;
+  gap: 20px;
+  align-items:end;
+  align-content:end;
+}
+.hr-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  color: var(--hr-table-text);
+}
+
+.hr-report-table th,
+.hr-report-table td {
+  border: 1px solid var(--hr-input-border);
+  padding: 0.5rem;
+}
+
+.hr-report-table th {
+  background: var(--hr-table-header-bg);
+  color: var(--hr-table-header-text);
+}
+
+.hr-report-table tbody tr:nth-child(odd) {
+  background: var(--hr-table-row-bg);
+}
+
+.hr-report-table tbody tr:nth-child(even) {
+  background: var(--hr-table-row-alt-bg);
+}
+
+.hr-report-total {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: var(--hr-text-heading);
+}
+
+.pdf-icon {
+  color: #E63946; /* Red */
+}
+
+.print-icon {
+  color: blue; /* Blue */
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

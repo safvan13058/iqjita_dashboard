@@ -7,7 +7,7 @@ import { MdPending } from 'react-icons/md';
 import { MdOutlinePersonOutline, MdAccountBalanceWallet, MdOutlinePeopleAlt } from "react-icons/md";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { FaGraduationCap, FaHourglassHalf } from "react-icons/fa";
-import { FaBullhorn, FaUserShield, FaUsers, FaUserTie } from "react-icons/fa";
+import { FaBullhorn, FaUserShield, FaUsers, FaUserTie ,FaUserCheck} from "react-icons/fa";
 // import { BsGraphUpArrow } from "react-icons/bs";
 import { GiGraduateCap } from "react-icons/gi";
 import { RiTeamLine } from "react-icons/ri";
@@ -22,14 +22,13 @@ const Sidebar = () => {
     { path: "/", label: "Home", icon: <IoHomeOutline /> },
     { path: "/students", label: "Students", icon: <PiStudentFill /> },
     { path: "/pending", label: "Pending Fee", icon: <FaHourglassHalf style={{ fontSize: '18px' }} /> },
+    { path: "/stuattent", label: "Attendance", icon: <FaUserCheck style={{ fontSize: '18px' }} /> },
     { path: "/AnnouncementPanel", label: "Announcements", icon: <FaBullhorn /> },
     { path: "/sales", label: "Sales", icon: <BsGraphUpArrow /> },
     { path: "/accounts", label: "Accounts", icon: <MdAccountBalanceWallet /> },
     { path: "/alumni", label: "Alumni", icon: <GiGraduateCap /> },
     { path: "/hrhr", label: "Human Resources", icon: <RiTeamLine /> },
     { path: "/usermanage", label: "User Manage", icon: <FaUserShield /> },
-
-
   ];
 
   return (

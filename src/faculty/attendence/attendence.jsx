@@ -1,188 +1,190 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaFilter, FaCheck, FaTimes, FaClock } from 'react-icons/fa';
-import "./attendence.css"
+import { FaSearch, FaCheck, FaTimes, FaClock, FaArrowLeft } from 'react-icons/fa';
+import "./attendence.css";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa"; // or any back icon you prefer
 
 const AttendancePage = () => {
-    const navigate = useNavigate();
-    // Sample data
-    const batches = ['Batch A', 'Batch B', 'Batch C', 'Batch D'];
-    const students = [
-        { id: 1, name: 'Rahul Sharma', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=RS', batch: 'Batch A' },
-        { id: 2, name: 'Priya Patel', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=PP', batch: 'Batch A' },
-        { id: 3, name: 'Amit Singh', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=AS', batch: 'Batch B' },
-        { id: 4, name: 'Neha Gupta', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=NG', batch: 'Batch B' },
-        { id: 5, name: 'Vikram Joshi', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=VJ', batch: 'Batch C' },
-        { id: 6, name: 'Ananya Reddy', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=AR', batch: 'Batch C' },
-        { id: 7, name: 'Suresh Kumar', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=SK', batch: 'Batch D' },
-        { id: 8, name: 'Divya Mishra', photo: 'https://via.placeholder.com/80/0F6D66/FFFFFF?text=DM', batch: 'Batch D' },
-    ];
+  const navigate = useNavigate();
+  const employeeId =JSON.parse(localStorage.getItem('user'))?.username; // ✅ Or get dynamically
 
-    // State management
-    const [selectedBatch, setSelectedBatch] = useState('All Batches');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [attendanceStatus, setAttendanceStatus] = useState({});
-    const [showBatchDropdown, setShowBatchDropdown] = useState(false);
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [students, setStudents] = useState([]);
+  const [selectedBatch, setSelectedBatch] = useState('All Batches');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [attendanceStatus, setAttendanceStatus] = useState({});
+  const [date] = useState(new Date().toISOString().split('T')[0]);
 
-    // Filter students based on batch and search term
-    const filteredStudents = students.filter(student => {
-        const matchesBatch = selectedBatch === 'All Batches' || student.batch === selectedBatch;
-        const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesBatch && matchesSearch;
+  const batches = ['11 AM - 1 PM', '9 AM - 11 AM','2 PM - 4 PM']; // ✅ Make sure these match your DB!
+
+  // useEffect(() => {
+  //   fetch(`https://software.iqjita.com/get_students_by_designation.php?employee_id=${employeeId}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       if (data.success) {
+  //         setStudents(data.students);
+  //       } else {
+  //         console.error(data.message);
+  //       }
+  //     })
+  //     .catch(err => console.error(err));
+  // }, []);
+  const fetchStudents = () => {
+    fetch(`https://software.iqjita.com/get_students_by_designation.php?employee_id=${employeeId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setStudents(data.students);
+        } else {
+          console.error(data.message);
+        }
+      })
+      .catch(err => console.error(err));
+  };
+  
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  // ✅ Filter students by batch + search term
+  const filteredStudents = students.filter(student => {
+    const matchesBatch = selectedBatch === 'All Batches' || student.batch_time === selectedBatch;
+    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesBatch && matchesSearch;
+  });
+
+  // ✅ When students or batch changes, set status:
+  useEffect(() => {
+    const initialStatus = {};
+    students.forEach(student => {
+      if (student.attendance_status) {
+        initialStatus[student.admission_number] = student.attendance_status; // ✅ Existing DB value
+      } else {
+        initialStatus[student.admission_number] = 'absent'; // ✅ Default fallback
+      }
     });
+    setAttendanceStatus(initialStatus);
+  }, [students, selectedBatch]);
 
-    // Initialize attendance status
-    useEffect(() => {
-        const initialStatus = {};
-        students.forEach(student => {
-            initialStatus[student.id] = attendanceStatus[student.id] || 'present';
-        });
-        setAttendanceStatus(initialStatus);
-    }, [selectedBatch]);
+  // ✅ When user clicks button → update status + call backend
+  const handleStatusChange = (studentId, status) => {
+    console.log("working")
+    setAttendanceStatus(prev => ({
+      ...prev,
+      [studentId]: status
+    }));
 
-    // Handle attendance status change
-    const handleStatusChange = (studentId, status) => {
-        setAttendanceStatus(prev => ({
-            ...prev,
-            [studentId]: status
-        }));
-    };
+    fetch("https://software.iqjita.com/mark_attendance.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        student_id: studentId,
+        employee_id: employeeId,
+        status: status,
+        date: date,
+        batch_time: selectedBatch
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        if (!data.success) {
+          alert("Failed to save: " + data.message);
+        } else {
+          // ✅ Re-fetch students to get fresh status
+          fetchStudents();
+        }
+      })
+      .catch(err => console.error(err));
+  };
 
-    // Submit attendance
-    const handleSubmit = () => {
-        const attendanceRecord = {
-            date,
-            batch: selectedBatch,
-            records: filteredStudents.map(student => ({
-                studentId: student.id,
-                status: attendanceStatus[student.id]
-            }))
-        };
-        console.log('Attendance submitted:', attendanceRecord);
-        alert('Attendance submitted successfully!');
-    };
-
-    return (
-        <div className="faculty-attendance-container">
-            {/* <h2 className="faculty-page-title">Mark Attendance</h2> */}
-
-            {/* Filters */}
-            <div className="faculty-attendance-filters">
-                <div className="faculty-date-picker">
-                    {/* <label>Date:{date}</label> */}
-                    <div className="faculty-back-nav" onClick={() => navigate(-1)}>
-                        <FaArrowLeft className="faculty-back-icon" />
-                        <span>Back</span>
-                    </div>
-                    {/* <input 
-            type="date" 
-            value={date} 
-            onChange={(e) => setDate(e.target.value)} 
-            readOnly
-          /> */}
-                    <div className="faculty-search-box">
-                        <FaSearch className="faculty-search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Search students..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-
-
-                <div className="faculty-batch-filter">
-                    {/* <button
-                        className="faculty-filter-button"
-                        onClick={() => setShowBatchDropdown(!showBatchDropdown)}
-                    >
-                        <FaFilter /> {selectedBatch}
-                    </button> */}
-                    <div className="faculty-batch-selector-scroll">
-                        <div className="faculty-batch-selector">
-                            <div
-                                className={`faculty-batch-tab ${selectedBatch === 'All Batches' ? 'active' : ''}`}
-                                onClick={() => setSelectedBatch('All Batches')}
-                            >
-                                All Batches
-                            </div>
-                            {batches.map(batch => (
-                                <div
-                                    key={batch}
-                                    className={`faculty-batch-tab ${selectedBatch === batch ? 'active' : ''}`}
-                                    onClick={() => setSelectedBatch(batch)}
-                                >
-                                    {batch}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Attendance Table */}
-            
-            <h3>Students</h3>
-            <div className="faculty-attendance-table">
-                {/* <div className="faculty-attendance-header">
-                    <div>Photo</div>
-                    <div>Student Name</div>
-                    <div>Batch</div>
-                    <div>Status</div>
-                </div> */}
-
-
-                {filteredStudents.length > 0 ? (
-                    filteredStudents.map(student => (
-                        <div key={student.id} className="faculty-attendance-row">
-                            <div className="faculty-student-photo">
-                                <img src={student.photo} alt={student.name} />
-                            </div>
-                            <div className="faculty-student-name"><div>{student.name}</div><div>{student.name}</div><div>{student.name}</div></div>
-                            {/* <div className="faculty-student-batch">{student.batch}</div> */}
-                            <div className="faculty-status-buttons">
-                                <button
-                                    className={`faculty-status-btn faculty-status-btn-Present ${attendanceStatus[student.id] === 'present' ? 'active' : ''}`}
-                                    onClick={() => handleStatusChange(student.id, 'present')}
-                                >
-                                    <FaCheck /> Present
-                                </button>
-                                <button
-                                    className={`faculty-status-btn faculty-status-btn-late ${attendanceStatus[student.id] === 'late' ? 'active' : ''}`}
-                                    onClick={() => handleStatusChange(student.id, 'late')}
-                                >
-                                    <FaClock /> Late
-                                </button>
-                                <button
-                                    className={`faculty-status-btn faculty-status-btn-absent ${attendanceStatus[student.id] === 'absent' ? 'active' : ''}`}
-                                    onClick={() => handleStatusChange(student.id, 'absent')}
-                                >
-                                    <FaTimes /> Absent
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="faculty-no-results">No students found matching your criteria</div>
-                )}
-            </div>
-
-            {/* Submit Button */}
-            <div className="faculty-submit-container">
-                <button className="faculty-submit-btn" onClick={handleSubmit}>
-                    Submit Attendance
-                </button>
-            </div>
-
-            {/* CSS Styles */}
-
+  return (
+    <div className="faculty-attendance-container">
+      {/* Filters */}
+      <div className="faculty-attendance-filters">
+        <div className="faculty-date-picker">
+          <div className="faculty-back-nav" onClick={() => navigate(-1)}>
+            <FaArrowLeft className="faculty-back-icon" />
+            <span>Back</span>
+          </div>
+          <div className="faculty-search-box">
+            <FaSearch className="faculty-search-icon" />
+            <input
+              type="text"
+              placeholder="Search students..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
-    );
+
+        <div className="faculty-batch-filter">
+          <div className="faculty-batch-selector-scroll">
+            <div className="faculty-batch-selector">
+              <div
+                className={`faculty-batch-tab ${selectedBatch === 'All Batches' ? 'active' : ''}`}
+                onClick={() => setSelectedBatch('All Batches')}
+              >
+                All Batches
+              </div>
+              {batches.map(batch => (
+                <div
+                  key={batch}
+                  className={`faculty-batch-tab ${selectedBatch === batch ? 'active' : ''}`}
+                  onClick={() => setSelectedBatch(batch)}
+                >
+                  {batch}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Students</h3>
+      <div className="faculty-attendance-table">
+        {filteredStudents.length > 0 ? (
+          filteredStudents.map(student => (
+            <div key={student.admission_number} className="faculty-attendance-row">
+              <div className="faculty-student-photo">
+                <img
+                  src={student.photo ? `https://software.iqjita.com/${student.photo}` : 'https://via.placeholder.com/80?text=Photo'}
+                  alt={student.name}
+                />
+              </div>
+             <div className="faculty-student-name">
+  <div className="student-name-text">{student.name}</div>
+  <div className="student-id-text">ID: {student.admission_number}</div>
+  <div className="student-id-text">Phone: {student.contact_number}</div>
+  <div className="student-batch-text">Batch: {student.batch_time}</div>
+</div>
+
+              <div className="faculty-status-buttons">
+                <button
+                  className={`faculty-status-btn faculty-status-btn-Present ${attendanceStatus[student.admission_number] === 'present' ? 'active' : ''}`}
+                  onClick={() => handleStatusChange(student.admission_number, 'present')}
+                >
+                  <FaCheck /> Present
+                </button>
+                <button
+                  className={`faculty-status-btn faculty-status-btn-late ${attendanceStatus[student.admission_number] === 'late' ? 'active' : ''}`}
+                  onClick={() => handleStatusChange(student.admission_number, 'late')}
+                >
+                  <FaClock /> Late
+                </button>
+                <button
+                  className={`faculty-status-btn faculty-status-btn-absent ${attendanceStatus[student.admission_number] === 'absent' ? 'active' : ''}`}
+                  onClick={() => handleStatusChange(student.admission_number, 'absent')}
+                >
+                  <FaTimes /> Absent
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="faculty-no-results">No students found</div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default AttendancePage;
