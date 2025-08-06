@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./nav.css";
+
 import "../../sections/common/colour.css";
 import { useAuth } from "../../sections/login/auth";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import pic3 from '../../sections/images/profile_pic/pic3.png'
 import pic4 from '../../sections/images/profile_pic/pic7.png'
 import pic5 from '../../sections/images/profile_pic/pic5.png'
 import pic6 from '../../sections/images/profile_pic/pic6.png'
-
+import "../../faculty/nav/nav.css"
 const Navbar = () => {
   const [theme, setTheme] = useState("light-theme");
   const [menuOpen, setMenuOpen] = useState(false);

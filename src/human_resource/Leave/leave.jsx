@@ -76,6 +76,7 @@ const LeaveTable = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
+          console.log(data)
           const updated = leaves.map(leave =>
             leave.LeaveID === selectedLeave.LeaveID
               ? { ...leave, Status: newStatus, Remark: remarks }

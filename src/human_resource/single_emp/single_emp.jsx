@@ -1,10 +1,12 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './single_emp.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import Barcode from 'react-barcode';
 import { FaDownload, FaWhatsapp } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import fitty from 'fitty';
+
 const EmployeeDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -14,17 +16,38 @@ const EmployeeDetails = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [machineEmployeeID, setMachineEmployeeID] = useState('');
   const [connectedMachineID, setConnectedMachineID] = useState(null);
- const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+
+  useEffect(() => {
+    fitty('.fit-designation', {
+      minSize: 4,   // px
+      maxSize: 20,  // px
+      multiLine: true
+    });
+  }, []);
   const cardRef = useRef(null);
+  const spanRef = useRef(null);
+  const fitText = (el) => {
+    if (!el) return; // Skip on first render.
+    const box = el.parentElement;
+    const scale = Math.min(
+      box.offsetWidth / el.scrollWidth,
+      box.offsetHeight / el.scrollHeight,
+      1
+    );
+    el.style.transform = `scale(${scale})`;
+    el.style.transformOrigin = 'center';
+  };
   // const [machineEmployeeID, setMachineEmployeeID] = useState("");
   const [unmappedMachines, setUnmappedMachines] = useState([]);
-const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-const handleProfileUploadClick = () => {
-  fileInputRef.current.click();
-};
+  const handleProfileUploadClick = () => {
+    fileInputRef.current.click();
+  };
 
- const handleProfileUpload = async (event) => {
+  const handleProfileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file || !employee.EmployeeID) return;
 
@@ -53,31 +76,31 @@ const handleProfileUploadClick = () => {
     }
   };
 
-    const handleDownloadPDF = () => {
-  console.log("pdf working");
+  const handleDownloadPDF = () => {
+    console.log("pdf working");
 
-  html2canvas(cardRef.current, {
-    scale: 5, // Higher scale for better quality
-    useCORS: true,
-    allowTaint: false,
-    backgroundColor: null
-  }).then((canvas) => {
-    console.log("pdf working3");
-    const imgData = canvas.toDataURL('image/png');
+    html2canvas(cardRef.current, {
+      scale: 5, // Higher scale for better quality
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: null
+    }).then((canvas) => {
+      console.log("pdf working3");
+      const imgData = canvas.toDataURL('image/png');
 
-    const pdf = new jsPDF({
-      orientation: 'landscape', // Use 'portrait' if you rotate the card vertically
-      unit: 'cm',
-      format: [10, 8], // [width, height] in centimeters
+      const pdf = new jsPDF({
+        orientation: 'landscape', // Use 'portrait' if you rotate the card vertically
+        unit: 'cm',
+        format: [10, 8], // [width, height] in centimeters
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, 10, 8); // Exact fit
+      pdf.save(`${employee.FullName}_IDCard.pdf`);
+      console.log("pdf working4");
     });
+  };
 
-    pdf.addImage(imgData, 'PNG', 0, 0, 10, 8); // Exact fit
-    pdf.save(`${employee.FullName}_IDCard.pdf`);
-    console.log("pdf working4");
-  });
-};
 
-  
   useEffect(() => {
     if (showConnectModal) {
       // Fetch unmapped machines
@@ -175,31 +198,31 @@ const handleProfileUploadClick = () => {
     console.log(data); // Handle success or failure messages
     setShowConnectModal(false); // Close modal after submit
   };
-useEffect(() => {
+  useEffect(() => {
     fetchEmployee();
   }, [id]);
- 
-    const fetchEmployee = async () => {
-      const response = await fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${id}`);
-      const result = await response.json();
-      if (result.status === 'success') {
-        const data = result.data;
-        const formatted = {
-          ...data,
-          ImageURL: data.ProfileImage,
-          BankName: data.BankDetails?.BankName,
-          BankBranchName: data.BankDetails?.BranchName,
-          AccountNumber: data.BankDetails?.AccountNumber,
-          IFSCCode: data.BankDetails?.IFSCCode,
-          AccountType: data.BankDetails?.AccountType,
-          NetSalaryHourly: data.SalaryDetails?.NetSalaryHourly,
-          NetSalaryDaily: data.SalaryDetails?.NetSalaryDaily,
-          NetSalaryMonthly: data.SalaryDetails?.NetSalaryMonthly
-        };
-        setEmployee(formatted);
-      }
-    };
-   
+
+  const fetchEmployee = async () => {
+    const response = await fetch(`https://software.iqjita.com/hr/employee.php?action=read_single&EmployeeID=${id}`);
+    const result = await response.json();
+    if (result.status === 'success') {
+      const data = result.data;
+      const formatted = {
+        ...data,
+        ImageURL: data.ProfileImage,
+        BankName: data.BankDetails?.BankName,
+        BankBranchName: data.BankDetails?.BranchName,
+        AccountNumber: data.BankDetails?.AccountNumber,
+        IFSCCode: data.BankDetails?.IFSCCode,
+        AccountType: data.BankDetails?.AccountType,
+        NetSalaryHourly: data.SalaryDetails?.NetSalaryHourly,
+        NetSalaryDaily: data.SalaryDetails?.NetSalaryDaily,
+        NetSalaryMonthly: data.SalaryDetails?.NetSalaryMonthly
+      };
+      setEmployee(formatted);
+    }
+  };
+
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -211,9 +234,31 @@ useEffect(() => {
     setFormData({});
   };
 
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let updatedFormData = {
+      ...formData,
+      [name]: value,
+    };
+
+    if (name === "NetSalaryMonthly") {
+      const monthly = parseFloat(value) || 0;
+      const daily = monthly / 30;
+      const hourly = daily / 8;
+
+      updatedFormData = {
+        ...updatedFormData,
+        NetSalaryDaily: daily.toFixed(2),
+        NetSalaryHourly: hourly.toFixed(2),
+      };
+    }
+
+    setFormData(updatedFormData);
   };
 
   const handleUpdate = async () => {
@@ -283,7 +328,7 @@ useEffect(() => {
               <img
                 src={employee.ImageURL || "/default-profile.png"}
                 alt="Employee"
-                className="hr-profile-imgs-emp"              
+                className="hr-profile-imgs-emp"
               />
 
               <button
@@ -391,89 +436,95 @@ useEffect(() => {
             </div>
           </div>
         )}{showPopup && (
-  <div className="hr-idcard-overlay">
-    <div className="hr-idcard-modal">
-      <button onClick={() => setShowPopup(false)} className="hr-idcard-close-btn">×</button>
-      <div ref={cardRef} className="hr-idcard-content">
-        <div className="hr-idcard-background">
-          <img
-            src="./idcard/idcardemp.jpg"
-            className="hr-idcard-bg-image"
-            alt="Background"
-          />
-          <img
-            src={employee.ImageURL}
-            alt="Student"
-            className="hr-idcard-photo"
-            crossOrigin="anonymous"
-          />
-          <div className="hr-idcard-name">
-            <h3>{
-              employee.FullName
-                .toLowerCase()
-                .split(' ')
-                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ')
-            }</h3>
+          <div className="hr-idcard-overlay">
+            <div className="hr-idcard-modal">
+              <button onClick={() => setShowPopup(false)} className="hr-idcard-close-btn">×</button>
+              <div ref={cardRef} className="hr-idcard-content">
+                <div className="hr-idcard-background">
+                  <img
+                    src="./idcard/idcardemp.jpg"
+                    className="hr-idcard-bg-image"
+                    alt="Background"
+                  />
+                  <img
+                    src={employee.ImageURL}
+                    alt="Student"
+                    className="hr-idcard-photo"
+                    crossOrigin="anonymous"
+                  />
+                  <div className="hr-idcard-name">
+                    <h3>{
+                      employee.FullName
+                        .toLowerCase()
+                        .split(' ')
+                        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(' ')
+                    }</h3>
+                  </div>
+                  <div className="hr-idcard-text">
+                    <p>{employee.EmployeeID}</p>
+                    <p>{
+                      employee.Department
+                        .replace(/.*IN\s/i, '')
+                        .replace(/\s*\(.*\)/, '')
+                        .trim()
+                    }</p>
+                    <p>{employee.Email}</p>
+                    <p>
+                      {`${employee.PhoneNumber.slice(0, 2)} ${employee.PhoneNumber.slice(2)}`}
+                    </p>
+                  </div>
+                  {/* <div className='hr-idcard-designation'>
+                    <span className="fit-designation">{(employee.Designation).toUpperCase()}</span>
+                  </div> */}
+                  <div className="hr-idcard-designation">
+                    <span ref={fitText}>{employee.Designation.toUpperCase()}</span>
+                  </div>
+
+                  <div className="hr-idcard-qrcode">
+                    <Barcode
+                      value={`https://iqjita.com/f/${employee.EmployeeID}`}
+                      width={.4}
+                      height={20}
+                      displayValue={false}
+                      background="none"
+                      lineColor="#000000"
+                      format="CODE128"
+                    />
+                    <div className='hr-idcard-qrcode-footer'>{(employee.FullName).toUpperCase()}</div>
+                  </div>
+                  <div className='hr-idcard-side'>
+                    IQJITA 2025/26
+                  </div>
+                </div>
+              </div>
+              <div className="hr-idcard-actions">
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hr-idcard-action-btn hr-whatsapp-btn"
+                  title="Share on WhatsApp"
+                >
+                  <span>Whatsapp</span>
+                  <FaWhatsapp className="hr-action-icon" />
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDownloadPDF();
+                  }}
+                  className="hr-idcard-action-btn hr-download-btn"
+                  title="Download PDF"
+                  role="button"
+                >
+                  <span>Download PDF</span>
+                  <FaDownload className="hr-action-icon" />
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="hr-idcard-text">
-            <p>{employee.EmployeeID}</p>
-            <p>{
-              employee.Department
-                .replace(/.*IN\s/i, '')
-                .replace(/\s*\(.*\)/, '')
-                .trim()
-            }</p>
-            <p>{employee.Email}</p>
-            <p>
-              {`+${employee.PhoneNumber.slice(0, 2)} ${employee.PhoneNumber.slice(2)}`}
-            </p>
-          </div>
-          <div className='hr-idcard-designation'>{(employee.Designation).toUpperCase()}</div>
-          <div className="hr-idcard-qrcode">
-            <Barcode
-              value={`https://iqjita.com/f/${employee.EmployeeID}`}
-              width={.4}
-              height={20}
-              displayValue={false}
-              background="none"
-              lineColor="#000000"
-              format="CODE128"
-            />
-            <div className='hr-idcard-qrcode-footer'>{ (employee.FullName).toUpperCase()}</div>
-          </div>
-          <div className='hr-idcard-side'>
-            IQJITA 2025/26
-          </div>
-        </div>
-      </div>
-      <div className="hr-idcard-actions">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hr-idcard-action-btn hr-whatsapp-btn"
-          title="Share on WhatsApp"
-        >
-          <span>Whatsapp</span>
-          <FaWhatsapp className="hr-action-icon" />
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            handleDownloadPDF();
-          }}
-          className="hr-idcard-action-btn hr-download-btn"
-          title="Download PDF"
-          role="button"
-        >
-          <span>Download PDF</span>
-          <FaDownload className="hr-action-icon" />
-        </a>
-      </div>
-    </div>
-  </div>
-)}
+        )}
 
 
         <h3 className="hr-subsection-heading">Employee Info</h3>
@@ -492,9 +543,9 @@ useEffect(() => {
 
         <h3 className="hr-subsection-heading">Salary Info</h3>
         <div className="hr-details-grid">
-          {renderEditableField("Hourly Salary", "NetSalaryHourly")}
-          {renderEditableField("Daily Salary", "NetSalaryDaily")}
           {renderEditableField("Monthly Salary", "NetSalaryMonthly")}
+          {renderEditableField("Daily Salary", "NetSalaryDaily")}
+          {renderEditableField("Hourly Salary", "NetSalaryHourly")}
         </div>
 
         <h3 className="hr-subsection-heading">Bank Info</h3>
@@ -510,18 +561,18 @@ useEffect(() => {
           <button className="hr-btn hr-btn-primary">View Attendance</button>
           <button className="hr-btn hr-btn-secondary">Performance Review</button>
           <button className="hr-btn hr-btn-graph">Performance Graph</button>
-           <button
-        className="hr-btn hr-btn-graph"
-        onClick={() => updateStatus('resign')}
-      >
-        ReSign
-      </button>
-           <button
-        className="hr-btn hr-btn-graph"
-        onClick={() => updateStatus('termination')}
-      >
-        Termination
-      </button>
+          <button
+            className="hr-btn hr-btn-graph"
+            onClick={() => updateStatus('resign')}
+          >
+            ReSign
+          </button>
+          <button
+            className="hr-btn hr-btn-graph"
+            onClick={() => updateStatus('termination')}
+          >
+            Termination
+          </button>
         </div>
       </div>
     </div>

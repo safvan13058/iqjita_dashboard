@@ -783,8 +783,9 @@
 .idcard-name {
   position: absolute;
   top: 155px;
-  color: #000;
+  color:#0F6D66;
   width: 100%;
+  font-weight: 700;
   align-items: center;
   text-align: center;
 }

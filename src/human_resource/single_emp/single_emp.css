@@ -82,7 +82,7 @@
   background-color: var(--hr-background-light);
   padding: 0.8rem 1rem;
   border-radius: var(--hr-border-radius);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .hr-detail-label {
@@ -153,13 +153,15 @@
     margin-top: 4px;
   }
 }
+
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(14, 14, 35, 0.8); /* --hr-background-dark with transparency */
+  background: rgba(14, 14, 35, 0.8);
+  /* --hr-background-dark with transparency */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -273,6 +275,7 @@
   object-fit: cover;
   border: 3px solid var(--hr-input-border);
 }
+
 .img-profile {
   position: relative;
   display: inline-block;
@@ -291,7 +294,7 @@
   position: absolute;
   bottom: -3px;
   right: -3px;
-  background-color:var(--hr-background-light);
+  background-color: var(--hr-background-light);
   border: none;
   color: white;
   border-radius: 50%;
@@ -300,15 +303,21 @@
   font-size: 14px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-.edit-profile-btn:hover{
+
+.edit-profile-btn:hover {
   background: none;
 }
+
 .profile-upload-input {
   display: none;
 }
+
 .hr-idcard-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -338,6 +347,7 @@
   color: #000;
   padding: none;
 }
+
 .hr-idcard-close-btn:hover {
   background: none;
 }
@@ -367,18 +377,19 @@
 }
 
 .hr-idcard-photo {
-    position: absolute;
-    top: 85.5px;
-    left: 57.1px;
-    width: 73.5px;
-    height: 73.5px;
-    border-radius: 50%;
-    object-fit: cover;
+  position: absolute;
+  top: 70.3px;
+  left: 55px;
+  width: 73.5px;
+  height: 73.5px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #0F6D66;
 }
 
 .hr-idcard-text {
   position: absolute;
-  top: 184px;
+  top: 181px;
   left: 70px;
   color: #000;
   display: flex;
@@ -393,10 +404,10 @@
 }
 
 .hr-idcard-qrcode {
-    position: absolute;
-    top: 190px;
-    left: 215px;
-    text-align: center;
+  position: absolute;
+  top: 190px;
+  left: 215px;
+  text-align: center;
 }
 
 .hr-idcard-qrcode-footer {
@@ -412,20 +423,37 @@
   font-size: 6px;
   color: black;
   transform: rotate(-90deg);
-  transform-origin: right bottom; /* optional: adjust as needed */
+  transform-origin: right bottom;
+  /* optional: adjust as needed */
 }
+
 .hr-idcard-designation {
-    position: absolute;
-    top: 248px;
-    left: 25px;
-    width: 3.5cm;
-    height: .75cm;
-    color: #000;
-    /* background-color: #25D366; */
-    align-items: center;
-    text-align: center;
-    align-content: center;
+  position: absolute;
+  top: 248px;
+  left: 25px;
+  width: 3.5cm;
+  height: 0.75cm;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
 }
+
+.hr-idcard-designation span {
+  display: inline-block;
+  width: 100%;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.1;
+  padding: 2px;
+  font-weight: 700;
+  color: white;
+
+  /* Dynamic font-size */
+  font-size: clamp(6px, 1.8vw, 12px);
+}
+
 
 .hr-idcard-footer,
 .hr-idcard-qrcode-footer {
@@ -457,9 +485,10 @@
 
 .hr-idcard-name {
   position: absolute;
-  top: 155px;
-  color: #000;
+  top: 145px;
+  color: #0F6D66;
   width: 50%;
+  font-weight: 700;
   align-items: center;
   text-align: center;
 }
@@ -512,9 +541,11 @@
 .hr-download-btn .hr-action-icon {
   color: #3b82f6;
 }
+
 .hr-download-btn span {
   color: #000;
 }
+
 .hr-download-btn .hr-action-icon:hover {
   background-color: transparent;
 }
@@ -523,9 +554,11 @@
 .hr-whatsapp-btn .hr-action-icon {
   color: #25D366;
 }
+
 .hr-whatsapp-btn .hr-action-icon:hover {
   background-color: transparent;
 }
+
 .hr-whatsapp-btn span {
   color: #000;
 }

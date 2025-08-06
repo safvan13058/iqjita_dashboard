@@ -197,7 +197,8 @@ const PayrollTable = () => {
     // Deduct 0.5 day for every 2 late/early, starting from 2 (not ignoring any)
     const halfDays = Math.floor(totalLateEarly / 2) * 0.5;
 
-    const lateEarlyDeduction = oneDaySalary * halfDays;
+    const lateEarlyDeduction = parseFloat((oneDaySalary * halfDays).toFixed(2));
+
 
     // Leave deduction: 1st leave is compensated
     const leaveDeduction = parseFloat(
@@ -209,8 +210,10 @@ const PayrollTable = () => {
     const effectiveLeaveCompensation =
       leaveCompensation > 0 ? leaveCompensation : numLeaves > 0 ? oneDaySalary : 0;
 
-    const totalSalary =
+    let totalSalary =
       baseSalary - leaveDeduction - lateEarlyDeduction - reducingAmount + allowances;
+
+    totalSalary = Math.round(totalSalary);
 
     // return totalSalary >= 0 ? Math.round(totalSalary) : 0;
     return {
@@ -552,6 +555,7 @@ const PayrollTable = () => {
       const result = await res.json();
 
       if (result.success === true) {
+        console.log('payroll',result)
         setStatus("success");
         setLastPayroll({
           ...data,
@@ -623,9 +627,9 @@ const PayrollTable = () => {
       baseSalary: 0,
       totalSalary: 0,
       allowances: 0,
-      salarymonth: getCurrentMonth(),
+      salarymonth: getPreviousMonth(),
       payment_method: "bank",
-      payDate: `${getCurrentMonth()}-01`,
+      payDate: new Date().toISOString().slice(0, 10),
       updatedBy: user.name,
     });
   }
@@ -1197,7 +1201,7 @@ const PayrollTable = () => {
                         <input
                           name="numLeaves"
                           type="number"
-                          min="0"
+                          // min="0"
                           placeholder="Leaves"
                           value={formData.numLeaves}
                           onChange={handleInputChange}

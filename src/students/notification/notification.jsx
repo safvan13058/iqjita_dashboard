@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./notification.css";
+import "../../faculty/notifications/notifications.css";
 
 const StuNotificationsPage = () => {
   const [notifications, setNotifications] = useState([]);

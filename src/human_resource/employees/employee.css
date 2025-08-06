@@ -435,6 +435,13 @@
   border-color: var(--hr-input-focus-border);
   box-shadow: 0 0 0 2px var(--hr-button-hover-shadow);
 }
+
+ .hr-error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    display: block;
+  }
 /* Mobile and Tablet Responsive Styles */
 @media (max-width: 1024px) {
   .hr-container {

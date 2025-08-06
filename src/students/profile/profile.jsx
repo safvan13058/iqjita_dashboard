@@ -1,5 +1,5 @@
 import React from 'react';
-import './profile.css'; // We'll create this CSS file next
+import '../../faculty/profile/profile.css'; // We'll create this CSS file next
 
 const StudentsProfile = () => {
   // Sample student data (in a real app, this would come from props or API)

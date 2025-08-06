@@ -8,6 +8,13 @@ const EmployeePage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [employees, setEmployees] = useState([]);
+  const [emailCheckTimeout, setEmailCheckTimeout] = useState(null);
+  const [errors, setErrors] = useState({
+    FullName: false,
+    Email: false,
+    EmailExists: false,
+    EmailInvalid: false
+  });
   const user = JSON.parse(localStorage.getItem('user'))
   // const employees = [
   //   { id: 1, name: 'John Doe', email: 'john@company.com', department: 'HR', joiningDate: '2022-01-15' },
@@ -23,8 +30,8 @@ const EmployeePage = () => {
           const validData = data.filter(
             (emp) =>
               emp.FullName &&
-              emp.Email &&
-              emp.JoiningDate !== "0000-00-00" &&
+              // emp.Email &&
+              // emp.JoiningDate !== "0000-00-00" &&
               emp.EmployeeID
           );
           setEmployees(validData);
@@ -182,9 +189,52 @@ const EmployeePage = () => {
   const handleView = (id) => {
     navigate(`/hr/employee/${id}`);
   };
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await fetch('https://software.iqjita.com/hr/check_user_exists.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
+      const data = await response.json();
+      return data.status === "exists";
+    } catch (error) {
+      console.error("Error checking email:", error);
+      return false; // Assume email doesn't exist if there's an error
+    }
+  };
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    handleChange(e); // Update form data
 
-  const nextStep = () => setCurrentStep(prev => (prev < 3 ? prev + 1 : prev));
+    // Clear previous timeout
+    if (emailCheckTimeout) clearTimeout(emailCheckTimeout);
+
+    // Only check if email is valid format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(email)) {
+      // Set new timeout
+      setEmailCheckTimeout(
+        setTimeout(async () => {
+          const exists = await checkEmailExists(email);
+          setErrors(prev => ({ ...prev, EmailExists: exists }));
+        }, 500) // Wait 500ms after typing stops
+      );
+    }
+  };
+  // const nextStep = () => setCurrentStep(prev => (prev < 3 ? prev + 1 : prev));
+  const nextStep = () => {
+    if (currentStep === 1) {
+      // Validate required fields before proceeding
+      if (errors.EmailExists||!formData.FullName || !formData.Email || !/^\S+@\S+\.\S+$/.test(formData.Email)) {
+        return; // Don't proceed to next step
+      }
+    }
+    setCurrentStep(prev => (prev < 3 ? prev + 1 : prev));
+  };
   const prevStep = () => setCurrentStep(prev => (prev > 1 ? prev - 1 : prev));
   return (
     <div className="hr-container">
@@ -308,6 +358,9 @@ const EmployeePage = () => {
                     <div className="hr-form-group">
                       <label htmlFor="FullName" className='hr-label'>Full Name</label>
                       <input id="FullName" name="FullName" value={formData.FullName} onChange={handleChange} />
+                      {!formData.FullName && (
+                        <span className="hr-error-message">Full Name is required</span>
+                      )}
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="PhoneNumber" className='hr-label'>Phone Number</label>
@@ -390,7 +443,22 @@ const EmployeePage = () => {
                   <div className="hr-form-column">
                     <div className="hr-form-group">
                       <label htmlFor="Email" className='hr-label'>Email</label>
-                      <input id="Email" name="Email" value={formData.Email} onChange={handleChange} />
+                      <input
+                        id="Email"
+                        name="Email"
+                        value={formData.Email}
+                        onChange={handleEmailChange}  // Use the new handler
+                      // className={errors.Email || errors.EmailInvalid || errors.EmailExists ? "error" : ""}
+                      />
+                      {!formData.Email && (
+                        <span className="hr-error-message">Email is required</span>
+                      )}
+                      {formData.Email && !/^\S+@\S+\.\S+$/.test(formData.Email) && (
+                        <span className="hr-error-message">Please enter a valid email address</span>
+                      )}
+                      {errors.EmailExists && (
+                        <span className="hr-error-message">This email is already registered</span>
+                      )}
                     </div>
                     <div className="hr-form-group">
                       <label htmlFor="Department" className='hr-label'>Department</label>

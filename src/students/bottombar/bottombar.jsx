@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import "./bottombar.css";
+import "../../faculty/bottombar/bottombar.css";
 import { IoHomeOutline } from "react-icons/io5";
 import { FaUserTie, FaUmbrellaBeach, FaMoneyCheckAlt } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";

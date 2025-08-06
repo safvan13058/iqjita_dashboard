@@ -6,7 +6,8 @@ import {
 } from 'react-icons/fa';
 import { MdOutlineEventAvailable, MdNotes } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import './home.css'; // Make sure your CSS is loaded
+// import './home.css'; // Make sure your CSS is loaded
+import "../../faculty/home/home.css"
 import { FaUsersCog } from "react-icons/fa";
 const StuHome = () => {
   const navigate = useNavigate();
